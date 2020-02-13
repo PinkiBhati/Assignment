@@ -1,0 +1,95 @@
+ 
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>EmployeeData</title>
+	<script >
+		var Employee = [
+    						{ Name: 'Azeem', age: 22, salary: 500 ,DOB:'15/01/1996'},
+   							{ Name: 'Pinki', age: 18, salary: 10000 ,DOB:'02/02/1999'},
+    						{ Name: 'Suraj', age: 37, salary: 5000 ,DOB:'25/07/1980'},
+    						{ Name: 'Bhansali', age: 40, salary: 15000 ,DOB:'16/03/1980'},
+    						{ Name: 'Chetna', age: 25, salary: 25000 ,DOB:'10/04/1995'},
+    						{ Name: 'Gaurav', age: 45, salary: 900 ,DOB:'19/10/1990'},
+    						{ Name: 'Parineeta', age: 21, salary: 80000 ,DOB:'03/03/1989'},
+						];
+
+
+						///part a
+						document.write( "<b>All employee's Details are:<br> </b>");
+
+						
+						for(var i in Employee)
+						{
+							document.write("Name: "+Employee[i].Name +" Age:"+ Employee[i].age + " Salary:" + Employee[i].salary +      " DOB:" + Employee[i].DOB + "<br>");
+						}
+
+
+						/////////////part b
+						document.write( "<br> <b>all employees with salary greater than 5000 : </b><br>");
+
+						
+						var c = Employee.filter(function(e) 
+												{
+         											 return e.salary > 5000;
+         					 
+         										}
+
+         										);
+						for(var i in c)
+						{
+						 	document.write(" "+c[i].Name+"<br>");
+						}
+
+
+						/////////////part c
+						document.write("<br><b>employee on the basis of their age:</b><br>");
+	
+		 
+                        document.write("age less than 20:")
+						var n = Employee.filter(function(e) 
+												{
+         											 return e.age <20;
+         					 
+         										}
+
+         										);
+						for(var i in n)
+						{
+						 	document.write(" "+n[i].Name+"<br>");
+						}
+						
+						document.write("<br>age more than 20 : ")
+
+						var m = Employee.filter(function(e) 
+												{
+         											 return e.age>20;
+         					 
+         										}
+
+         										);
+						for(var i in m)
+						{
+						 	document.write(" "+m[i].Name+"");
+						}
+						/////////////part d
+						document.write("<br><b>employees with salary less than 1000 and age greater than 20. Then give them an increment 5 times their salary.</b>");
+						
+						for(var i in Employee){
+							if(Employee[i].salary<=1000&&Employee[i].age>20)
+							{
+								document.write("<br>");
+								var old=Employee[i].salary;
+								Employee[i].salary=Employee[i].salary*5;
+								document.write("name: "+Employee[i].Name+" old salary: "+old+" new salary: "+Employee[i].salary);
+							}
+						}
+
+
+
+
+
+	</script>
+</head>
+</html>

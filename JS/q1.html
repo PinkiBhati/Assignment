@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="utf-8">
+	<title>SIMPLE INTEREST</title>
+	<style type="text/css">
+		
+		#btn{
+			margin-top: 100px;
+			height: 40px;
+			width:400px;
+
+		}
+	</style>
+</head>
+<script type="text/javascript">
+	function sim() {
+
+		var p = parseFloat(prompt("Enter principle amount:"));
+        var r = parseFloat(prompt("Enter rate:"));
+        var y = parseFloat(prompt("Enter years:"));
+        var si=(p*r*y)/100;
+       
+        document.write("<h3>Simple Interest (calculated anually) is: </h3>"+ si);
+		}
+</script>
+<body>
+   		 <center>
+        <input type="button" value="Calculate Simple Interest" id="btn" onclick="sim()" />
+        </center>
+</body>
+</html>

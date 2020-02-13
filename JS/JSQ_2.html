@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		.container
+		{
+			padding-top: 100px;
+			padding-left: 100px;
+		}
+		#btn{
+
+                margin-left: 180px;
+                height: 40px;
+                width: 100px;
+                color: green;
+            }
+	</style>
+	<title>Palindrome</title>
+</head>
+<body>
+	<div class="container">
+		
+		<form>
+			<label for="title">Enter a String:</label>
+    		<input type="text" id="str" required>
+    		<br><br>
+    		<input type="submit" value="Check" onclick="checkPalindrome();" id="btn">
+		</form>
+
+	</div>
+
+
+
+<script language="javascript">
+	function checkPalindrome() 
+	{
+		var revStr = "";
+		var str = document.getElementById("str").value;
+		var i = str.length;
+		for(var j=i; j>=0; j--) 
+		{
+			revStr = revStr+str.charAt(j);
+		}
+		if(str == revStr) 
+		{
+			alert(str+" is Palindrome");
+		} 
+		else 
+		{
+			alert(str+" is not a Palindrome");
+		}
+	}
+</script>
+</body>
+
+
+
+</html>

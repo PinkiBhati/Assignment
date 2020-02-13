@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		.container
+		{
+			padding-top: 100px;
+			padding-left: 100px;
+		}
+
+		#btn{
+
+                margin-left: 232px;
+                height: 40px;
+                width: 100px;
+                color: green;
+            }
+	</style>
+	<title>Area of Circle</title>
+</head>
+<body>
+
+
+<div class="container">
+		
+		<form>
+			<label>Enter radius for Circle:</label>
+    		<input type="text" id="no" required="true">
+    		<br><br>
+    		<input type="submit" value="Check" onclick="area();" id="btn">
+		</form>
+
+	</div>
+
+	<script language="javascript">
+        
+        function area()
+        {
+          var d=no.value;
+          document.write("<h1>Area of circle is </h1>" +(3.14)*d*d+"sq.");
+        }
+        
+</script>
+
+</body>
+</html>
