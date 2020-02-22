@@ -40,7 +40,7 @@ public class Q3First{
         Institute institute1=new Institute();
         Institute institute2=new Institute();
         NewThread nt1=new NewThread(institute1,"Pinki");
-        NewThread nt2=new NewThread(institute1,"Chetna");
+        NewThread nt2=new NewThread(institute2,"Chetna");
         nt1.start();
         nt2.start();
 
