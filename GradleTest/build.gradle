@@ -1,0 +1,65 @@
+//making custom plugin and adding a custom task to it.
+
+class PluginNew implements Plugin<Project> {
+        void apply(Project project) {
+            project.task('displayDate',type:CustomDisplayDate)
+        }
+    }
+
+
+plugins {
+    id 'java'
+}
+
+//adding custom plugin
+
+apply plugin: PluginNew
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+//for Ques 2
+
+jar{
+    manifest.attributes('Main-Class' : 'DisplayClass')
+}
+
+//adding the maven global repository that actually contain a lot of dependencies
+
+repositories {
+    mavenCentral()
+}
+
+//adding dependencies
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
+    runtime  group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
+    testRuntime group:'commons-lang' ,name:'commons-lang' ,version: '2.5'
+}
+
+//Creation of custom Task
+
+class CustomDisplayDate extends DefaultTask{
+    String showMessage= 'Current date is :'
+    @TaskAction
+    void displayDate(){
+        println showMessage + new Date()
+    }
+}
+
+
+
+//Creation of task that is of type DisplayDate.
+//
+task newDisplayDate(type : CustomDisplayDate){
+    showMessage='New date is :'
+}
+
+//wrapper {
+//    version='4.2.1'
+//}
+

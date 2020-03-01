@@ -1,0 +1,126 @@
+1)
+//adding the maven global repository that actually contain a lot of dependencies
+
+repositories {
+    mavenCentral()
+}
+
+//adding dependencies
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'joda-time', name: 'joda-time', version: '2.10.5'
+    runtime  group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
+    testRuntime group:'commons-lang' ,name:'commons-lang' ,version: '2.5'
+}
+
+
+
+// I have used the dependency of joda-time in my NewGradle.Java file to print the date .
+
+import org.joda.time.LocalDate;
+
+public class NewGradle {
+    public static void main(String[] args) {
+        LocalDate localDate=new LocalDate(LocalDate.now());
+        System.out.println(localDate);
+    }
+
+}
+
+Q2)
+
+Ans)
+        java -jar GradleTest-1.0-SNAPSHOT.jar
+
+
+Ques 3
+
+Ans)
+
+    • Compile:  The dependencies required to compile the production source of the project.
+
+    • Runtime:  The dependencies required by the production classes at runtime. By default, also includes the compile time dependencies.
+
+    • TestCompile:  The dependencies required to compile the test source of the project. By default, it includes compiled production classes and the compile time dependencies.
+
+    • TestRuntime:   The dependencies required to run the tests. By default, it includes runtime and test compile dependencies.
+
+Q4)
+
+//making a custom plugin
+
+class PluginNew implements Plugin<Project> {
+        void apply(Project project) {
+            project.task('displayDate',type:CustomDisplayDate)
+        }
+    }
+
+//applying the custom plugin to the project
+
+apply plugin: PluginNew
+
+
+//Creation of custom Task
+
+class CustomDisplayDate extends DefaultTask{
+    String showMessage= 'Current date is :'
+    @TaskAction
+    void displayDate(){
+        println showMessage + new Date()
+    }
+}
+
+
+
+//Creation of task that is of type DisplayDate.
+
+
+task newDisplayDate(type : CustomDisplayDate){
+    showMessage='New date is :'
+}
+
+
+
+
+
+Q5)
+Ans) java  -jar cf  Javacode1-2.jar src/main/javaCode1/javaFile1  src/main/javaCode2/javaFile2
+
+A new jar is created i.e Javacode1-2.jar
+
+
+
+
+Q6)
+
+Ans)
+    • Firstly the version i was using is 5.2.1
+    • Then is changed it to 4.2.1 in gradle/wrapper/gradle-wrapper.properties file
+    • Then the new version starts getting downloaded.
+
+
+
+
+
+Q7)
+
+Ans)  Command is
+
+			gradle   - - profile
+
+Output is in build/reports/profile
+
+
+
+
+
+
+
+
+
+
+
+
+
+
