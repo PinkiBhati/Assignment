@@ -1,0 +1,45 @@
+Que 1) 
+
+Ans) springDemo/src/main/java/com/example/springDemo/TightlyCoupled.java 
+
+Que 2)
+
+Ans)springDemo/src/main/java/com/example/springDemo/LooselyCoupled.java
+
+Que 3)
+
+Ans) 
+
+   springDemo/src/main/java/com/example/springDemo/Student.java
+   
+   springDemo/src/main/java/com/example/springDemo/Courses.java
+   
+   springDemo/src/main/java/com/example/springDemo/SpringDemoApplication.java
+   
+   
+Que 4)
+
+Ans)   springDemo/src/main/java/com/example/springDemo/SpringDemoApplication.java
+
+Que 5)
+
+Ans)
+
+     springDemo/src/main/java/com/example/springDemo/User.java
+     
+     springDemo/src/main/java/com/example/springDemo/GuestUser.java
+     
+     springDemo/src/main/java/com/example/springDemo/AdminUser.java
+     
+     springDemo/src/main/java/com/example/springDemo/SpringDemoApplication.java
+     
+ Que 6) 
+ 
+ Ans) // I have used constructor injection in Student class
+ 
+   springDemo/src/main/java/com/example/springDemo/Student.java
+   
+   springDemo/src/main/java/com/example/springDemo/Courses.java
+   
+   springDemo/src/main/java/com/example/springDemo/SpringDemoApplication.java
+   
