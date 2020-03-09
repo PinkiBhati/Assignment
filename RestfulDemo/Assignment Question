@@ -1,0 +1,194 @@
+Que 1)
+
+Ans)
+
+   @GetMapping("/Welcome")
+
+   public String welcomeToSpring()
+   {
+       return "Welcome to spring boot.";
+   }
+   
+   Que 2)
+   
+   Ans)  Model Class:
+       com.Rest.RestfulDemo.ModelClasses.Employee
+       
+       DaoService:
+       com.Rest.RestfulDemo.DaoService.EmployeeDaoService
+       
+  Que 3)
+  
+  Ans)  EmployeeDaoService:
+  
+  public List<Employee> findAllEmployees() {
+        return emp;
+    }
+  
+  
+  EmpployeeController:
+  
+  @GetMapping("/employees")
+
+    public List<Employee> getEmployees()
+    {
+        return employeeDaoService.findAllEmployees();
+    }
+    
+    
+    Que4)
+    Ans)
+    
+    EmployeeDaoService:
+    
+    public Employee findOneEmployee(int id) {
+        for (Employee employee : emp) {
+            if (employee.getId() == id) {
+                return employee;
+            }
+        }
+        return null;
+    }
+    
+    EmployeeController:
+    
+       @GetMapping("/employees/{id}")
+
+    public EntityModel<Employee> getParticularEmployee(@PathVariable int id)
+    {
+     Employee employee2= employeeDaoService.findOneEmployee(id);
+
+        if(employee2==null)
+        {
+            throw  new EmployeeNotFoundException("id"+id);
+        }
+
+        EntityModel<Employee> resource = new EntityModel<Employee>(employee2);
+
+       WebMvcLinkBuilder linkTo =
+                WebMvcLinkBuilder.linkTo(methodOn(this.getClass()).getEmployees());
+
+        resource.add(linkTo.withRel("all-employees"));
+
+
+
+        return resource;
+    }
+    
+    
+    Que 5)
+    Ans)
+       EmployeeDaoService:
+    
+     public Employee createNewEmployee(Employee employee) {
+        if (employee.getId() == NULL)
+            employee.setId(++empCount);
+        emp.add(employee);
+        return employee;
+    }
+    
+    EmployeeController:
+    
+     @PostMapping("/employees")
+
+   public ResponseEntity createEmployee(@Valid @RequestBody  Employee employee)
+    {
+       Employee employee1=employeeDaoService.createNewEmployee(employee);
+
+       URI location= ServletUriComponentsBuilder
+                     .fromCurrentRequest()
+                     .path("/{id}")
+                     .buildAndExpand(employee1.getId())
+                     .toUri();
+
+       return ResponseEntity.created(location).build();
+    }
+
+
+Que6)
+Ans)
+
+
+
+EmployeeNotFoundException:
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class EmployeeNotFoundException extends RuntimeException {
+	public EmployeeNotFoundException(String message) {
+		super(message);
+	}
+}
+
+
+Que 7)
+Ans)
+EmployeeDaoService:
+
+  public Employee deleteEmployeeById(int id) {
+        Iterator<Employee> iterator = emp.iterator();
+        while (iterator.hasNext()){
+            Employee employee = iterator.next();
+            if (employee.getId() == id) {
+                iterator.remove();
+                return employee;
+            }
+        }
+        return null;
+    }
+
+EmployeeController:
+ @DeleteMapping("/employees/{id}")
+
+    public Employee deleteEmp(@PathVariable int id)
+    {
+       return employeeDaoService.deleteEmployeeById(id);
+
+    }
+    
+    Que 8)
+    Ans)
+    
+    EmployeeDaoService:
+    
+  public Employee updateEmp(Employee employee)
+  {
+      emp.add(employee);
+      return employee;
+  }
+  
+  EmployeeController:
+  
+    @PutMapping("/employees/{id}")
+    public Employee updateEmployee(@PathVariable int id, @RequestBody Employee employee) {
+
+        Employee emp = employeeDaoService.findOneEmployee(id);
+        if (emp == null) {
+            throw new EmployeeNotFoundException("id: " + id);
+        }
+
+
+        emp.setId(employee.getId());
+        emp.setAge(employee.getAge());
+        emp.setName(employee.getName());
+        Employee updateEmployee = employeeDaoService.updateEmp(emp);
+
+
+        return updateEmployee;
+
+    }
+
+
+Que 9)
+Ans)
+
+Applied Validation on Employee Class on name and age.
+
+
+Que 10)
+ans)
+compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.2.5.RELEASE'
+compile group: 'org.springframework.data', name: 'spring-data-rest-hal-browser', version: '3.2.5.RELEASE'
+
+
+       
+       
