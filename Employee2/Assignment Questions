@@ -1,0 +1,137 @@
+//JPQL
+
+1.Display the first name, last name of all employees having salary greater than average salary
+  ordered in ascending by their age and in descending by their salary.
+
+  Ans)
+      @Query(value = "select AVG(salary) as avgSal from Employee")
+       public int findAvgSalary();
+
+       @Query(value = "select em.firstName, em.lastName from Employee em where em.salary >:avgSal")
+       List<Object[]> findFirstNameAndLastNameGreaterThanAverageSalary(@Param("avgSal")int avgSal,Sort sort);
+
+
+
+
+     	@Test
+     	public void testFindFirstNameAndLastNameGreaterThanAverageSalary() {
+     		List<Object[]> emp = employeeRepository.findFirstNameAndLastNameGreaterThanAverageSalary(employeeRepository
+     				            .findAvgSalary(),Sort.by(Sort.Order.asc("age"),(Sort.Order.desc("salary"))));
+     		for (Object[] objects : emp) {
+     			System.out.println("First Name: " + objects[0]);
+     			System.out.println("Last Name: " + objects[1]);
+     		}
+     	}
+
+
+
+2.Update salary of all employees by a salary passed as a parameter whose existing salary is less than
+the average salary.
+
+Ans)
+
+   @Transactional
+      @Modifying
+      @Query(value = "update Employee set salary =:avgSal where salary <:avgSal")
+      public void updateSalary(@Param("avgSal") int avgSal);
+
+
+      	@Test
+      	public void testUpdateEmployeeWithSalaryGreaterThanAverageSalary(){
+      		System.out.println(">>>>>>>>>>>>>>>>Average Salary>>>>>>>>>>>>: "+ employeeRepository.findAvgSalary());
+
+      		employeeRepository.updateSalary(employeeRepository.findAvgSalary());
+      		employeeRepository.findAllEmployees().forEach(e-> System.out.println(e));
+
+
+
+3.Delete all employees with minimum salary.
+
+Ans)
+
+   @Query(value = "select MIN(salary) as minSal from Employee")
+    public int findMinSalary();
+
+    @Transactional
+    @Modifying
+    @Query("delete from Employee e where e.salary = :minSal")
+    public void deleteMinSalaryEmployees(@Param("minSal") int minSal);
+
+
+
+  	@Test
+  	public void testDeleteMinSalary(){
+  		System.out.println(">>>>>>>>>>>>>>>>Minimum Salary>>>>>>>>>>>>>>: "+ employeeRepository.findMinSalary());
+
+  		employeeRepository.deleteMinSalaryEmployees(employeeRepository.findMinSalary());
+  		employeeRepository.findAllEmployees().forEach(e-> System.out.println(e));
+  	}
+
+
+
+//Native SQL Query:
+
+1.Display the id, first name, age of all employees where last name ends with "singh"
+
+Ans)
+       @Query(value = "select emp_id,emp_first_name,emp_age from employee where emp_last_name='Singh'",nativeQuery = true)
+      public  List<Object[]> findByLastName();
+
+
+      	@Test
+      	public void testfindByLastName(){
+      		List<Object[]> employeeList= employeeRepository.findByLastName();
+      		for(Object[] objects:employeeList)
+      		{
+      			System.out.println(objects[0]);
+      			System.out.println(objects[1]);
+      			System.out.println(objects[2]);
+
+      		}
+      	}
+2.Delete all employees with age greater than 45(Should be passed as a parameter)
+
+Ans)
+   @Transactional
+    @Modifying
+    @Query(value = "delete from employee where emp_age >:age", nativeQuery = true)
+    public void deleteEmployee(@Param("age") int age);
+
+
+
+    	@Test
+    	public void testDeleteEmployeeByAge(){
+    		employeeRepository.deleteEmployee(45);
+    	}
+
+
+//Inheritance Mapping:
+
+1.Implement and demonstrate Single Table strategy.
+
+Ans) Classes Involved are:
+       Employee
+       RegularEmployee
+       TraineeEmployee
+2.Implement and demonstrate Joined strategy.
+
+Ans) Classes Involved are:
+      Person
+      Coder
+      Tester
+3.Implement and demonstrate Table Per Class strategy.
+
+Ans) Classes Involved are:
+    Payment
+    CreditCard
+    Cheque
+
+//Component Mapping:
+
+1.Implement and demonstrate Embedded mapping using employee table having following fields:
+id, firstName, lastName, age, basicSalary, bonusSalary, taxAmount, specialAllowanceSalary.
+
+Ans) Classes Involved are:
+
+      Employee1
+      Salary
