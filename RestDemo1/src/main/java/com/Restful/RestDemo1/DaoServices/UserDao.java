@@ -18,10 +18,10 @@ public class UserDao {
     private static int Usercount=4;
 
     static {
-        listOfUser.add(new User("pinki",1,22));
-        listOfUser.add(new User("chetna",2,24));
-        listOfUser.add(new User("parineeta",3,26));
-        listOfUser.add(new User("Himanshu",4,29));
+        listOfUser.add(new User("pinki",1,22,"pinki123"));
+        listOfUser.add(new User("chetna",2,24,"chetna123"));
+        listOfUser.add(new User("parineeta",3,26,"parineeta123"));
+        listOfUser.add(new User("Himanshu",4,29,"Himanshu123"));
     }
 
 
