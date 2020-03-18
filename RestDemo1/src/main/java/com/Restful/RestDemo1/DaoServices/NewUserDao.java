@@ -18,11 +18,11 @@ public class NewUserDao {
 
     static
     {
-        NewUsersList.add(new NewUser("Pinki" ,"Bhati",21,new Address("New Delhi","Delhi")));
-        NewUsersList.add(new NewUser("Parineeta","Jain",22,new Address ("Gurgaon","Haryana")));
-        NewUsersList.add(new NewUser("Himanshu" , "Bhansali",23,new Address ("Chandigarh","Punjab")));
-        NewUsersList.add(new NewUser("Azeem"," Faisal",24,new Address( "Chapra","Bihar")));
-        NewUsersList.add(new NewUser("Shivam " ,"Sharma",25,new Address( "Gk","Delhi")));
+        NewUsersList.add(new NewUser("Pinki" ,"Bhati",21,new Address("New Delhi","Delhi"),"pinki123"));
+        NewUsersList.add(new NewUser("Parineeta","Jain",22,new Address ("Gurgaon","Haryana"),"parineeta123"));
+        NewUsersList.add(new NewUser("Himanshu" , "Bhansali",23,new Address ("Chandigarh","Punjab"),"himanshu123"));
+        NewUsersList.add(new NewUser("Azeem"," Faisal",24,new Address( "Chapra","Bihar"),"azeem123"));
+        NewUsersList.add(new NewUser("Shivam " ,"Sharma",25,new Address( "Gk","Delhi"),"shivam123"));
 
     }
 
