@@ -11,6 +11,7 @@ public class NewUser {
     private String firstname;
     private String lastname;
     private int age;
+    private String password;
     private Address address;
 
 
@@ -18,11 +19,12 @@ public class NewUser {
     public NewUser() {
     }
 
-    public NewUser(String firstname, String lastname, int age,Address address ) {
+    public NewUser(String firstname, String lastname, int age,Address address,String password ) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
         this.address = address;
+         this.password=password;
     }
 
     public String getFirstname() {
@@ -55,5 +57,13 @@ public class NewUser {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+    
+     public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
