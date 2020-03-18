@@ -1,0 +1,125 @@
+1.Create a class Address for Author with instance variables streetNumber, location, State.
+
+Ans)
+Classes Involved with path:
+            Associations.CommonToAll.Address
+2.Create instance variable of Address class inside Author class and save it as embedded object.
+Ans) Made the address reference as embedded in Author class
+
+              @Embedded
+                private Address address;
+
+3.Introduce a List of subjects for author.
+
+Ans)  Subject class is in : com/jpa/Author/Associations/CommonToAll/Subject.java
+
+
+        @OneToMany(cascade = CascadeType.ALL)
+         public  List<Subject> subjects;
+
+4.Persist 3 subjects for each author.
+
+Ans)
+
+    Subject subject= new Subject("Maths");
+             Subject subject1= new Subject("English");
+             Subject subject2= new Subject("hindi");
+
+              author.addSubjects(subject);
+              author.addSubjects(subject1);
+              author.addSubjects(subject2);
+
+5.Create an Entity book with an instance variable bookName.
+
+Ans) @Entity
+     public class Book {
+         @Id
+         @GeneratedValue(strategy = GenerationType.AUTO)
+         private int id;
+         private  String bookName;
+
+         }
+
+6.Implement One to One mapping between Author and Book.
+
+Ans) Everything related to OneToOne is in below package:
+
+        com.jpa.Author.Associations.OneToOne
+
+        com/jpa/Author/Associations/OneToOne/Entities/Author.java
+        com/jpa/Author/Associations/OneToOne/Entities/Book.java
+        com/jpa/Author/Associations/OneToOne/Repos/AuthorRepository.java
+        com/jpa/Author/Associations/OneToOne/Dao/AuthorDao.java
+        com/jpa/Author/Associations/OneToOne/Controller/AuthorController.java
+
+7.Implement One to Many Mapping between Author and Book(Unidirectional, BiDirectional and without additional table ) and implement cascade save.
+Ans)
+
+Everything related to OneToMany is in below package:
+
+        com.jpa.Author.Associations.OneToMany
+
+        Unidirectional:
+             com/jpa/Author/Associations/OneToMany/Entities/Author3.java
+             com/jpa/Author/Associations/OneToMany/Entities/Book3.java
+             com/jpa/Author/Associations/OneToMany/Repos/Author3Repository.java
+             com/jpa/Author/Associations/OneToMany/Dao/Author3Dao.java
+             com/jpa/Author/Associations/OneToMany/Controller/Author3Controller.java
+
+         Bidirectional With Extra Table:
+                com/jpa/Author/Associations/OneToMany/Entities/Author2.java
+                com/jpa/Author/Associations/OneToMany/Entities/Book2.java
+                com/jpa/Author/Associations/OneToMany/Repos/Author2Repository.java
+                com/jpa/Author/Associations/OneToMany/Dao/Author2Dao.java
+                com/jpa/Author/Associations/OneToMany/Controller/author2Controller.java
+
+          Bidirectional Without Extra Table:
+                  com/jpa/Author/Associations/OneToMany/Entities/Author1.java
+                  com/jpa/Author/Associations/OneToMany/Entities/Book1.java
+                  com/jpa/Author/Associations/OneToMany/Repos/Author1Repository.java
+                  com/jpa/Author/Associations/OneToMany/Dao/Author1Dao.java
+                  com/jpa/Author/Associations/OneToMany/Controller/Author1Controller.java
+
+
+
+8.Implement Many to Many Mapping between Author and Book.
+
+Ans)Everything related to ManyToMany is in below package:
+
+            com.jpa.Author.Associations.ManyToMany
+
+              com/jpa/Author/Associations/ManyToMany/Entities/Author4.java
+              com/jpa/Author/Associations/ManyToMany/Entities/Book4.java
+              com/jpa/Author/Associations/ManyToMany/Repos/Author4Repository.java
+              com/jpa/Author/Associations/ManyToMany/Dao/Author4Dao.java
+              com/jpa/Author/Associations/ManyToMany/Controller/Author4Controller.java
+
+9.Which method on the session object can be used to remove an object from the cache?
+
+Ans) Evict method is used to remove the object from cache.
+
+        com/jpa/Author/Associations/Caching/Entity/Caching.java
+        com/jpa/Author/Associations/Caching/Repos/CachingRepository.java
+        com/jpa/Author/Associations/Caching/Controller/CachingController.java
+
+          @GetMapping("/evict")
+            public Caching evictingObject() {
+                Caching caching1 = null;
+                Optional<Caching> caching = cachingRepository.findById(1);
+                if (caching.isPresent())
+                    caching1 = caching.get();
+                cachingRepository.findById(1);
+                cachingRepository.findById(1);
+                Session session = entityManager.unwrap(Session.class);
+                session.evict(caching1);                //This is how we remove the object from cache.
+                cachingRepository.findById(1);
+                return caching1;
+            }
+
+
+10.What does @transactional annotation do?
+
+Ans)   a) @Transactional is used to maintain consistency.
+       b) Generally the @Transactional annotation is written at the service level.
+       c) It is used to combine more than one writes on a database as a single atomic operation.
+       d) When somebody call the method annotated with @Transactional all or none of the writes on the database is executed.
