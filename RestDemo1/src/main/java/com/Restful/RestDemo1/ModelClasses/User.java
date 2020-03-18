@@ -9,17 +9,20 @@ public class User {
     private String name;
 
     private int rollNo;
-    @JsonIgnore
+  
+     @JsonIgnore
+    private String password;
     private int age;
 
     protected User() {
 
     }
 
-    public User(String name, int rollNo, int age) {
+    public User(String name, int rollNo, int age,String password) {
         this.name = name;
         this.rollNo = rollNo;
         this.age = age;
+        this.password= password;
     }
 
     public int getAge() {
@@ -44,5 +47,13 @@ public class User {
 
     public void setRollNo(int rollNo) {
         this.rollNo = rollNo;
+    }
+    
+      public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
