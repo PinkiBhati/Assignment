@@ -1,0 +1,155 @@
+*Internationalization
+
+1.Add support for Internationalization in your application allowing messages to be shown in English, German and Swedish, keeping English as default.
+
+Ans)  
+application.properties:
+
+    spring.messages.basename= messages
+
+Files in resources containing messages in 3 languages:
+
+      resources/messages.properties
+      resources/messages_de.properties
+      resources/messages_swe.properties
+      
+      
+
+2.Create a GET request which takes "username" as param and shows a localized message "Hello Username". (Use parameters in message properties)
+Ans)
+
+      @ApiOperation(value = "Internationalization for printing hello with username..")
+    @GetMapping("/internationalization/{rollNo}")
+    public String Inter(@PathVariable int rollNo)
+    {
+        User user=userDao.findOneUser(rollNo);
+        String[] params= {user.getName()};
+        return messageSource.getMessage("hello.message",params, LocaleContextHolder.getLocale());
+    }
+    
+    
+*Content Negotiation
+
+ 3. Create POST Method to create user details which can accept XML for user creation.
+ 
+ Ans)     
+ To accept data in XML form we have to add   the jackson-data-format dependency.
+ 
+ @ApiOperation(value = "Creating user")
+    @PostMapping("/Users")
+    public ResponseEntity<Object> createUser(@RequestBody User user){
+        User user1= userDao.createUser(user);
+
+        URI location= ServletUriComponentsBuilder
+                      .fromCurrentRequest()
+                      .path("/{rollNo}")
+                      .buildAndExpand(user1.getRollNo())
+                      .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+ 4. Create GET Method to fetch the list of users in XML format.   
+ 
+ Ans)
+     Add jackosn-data-format dependency to get data in xml format.  
+     
+ @GetMapping("/Users")
+    public List<User> getAllUsers()
+    {
+        return userDao.findAllUsers();
+    }
+    
+ 
+ 
+ *Swagger
+
+        5. Configure swagger plugin and create document of following methods:
+
+             Get details of User using GET request.
+
+             Save details of the user using POST request.
+
+             Delete a user using DELETE request.
+
+ 
+ 
+ 
+Ans)  Class is present on this path:  com/Restful/RestDemo1/ModelClasses/SwaggerConfiguration.java
+
+         To see the swagger documentation see this link:   http://localhost:8080/swagger-ui.html#
+     
+     
+7. In swagger documentation, add the description of each class and URI so that in swagger UI the purpose of class                  and URI is clear.
+
+Ans)  annotate every api with @ApiOperation providing a value
+
+     all documentation about api is on this link :    http://localhost:8080/v2/api-docs
+
+
+
+*Static and Dynamic filtering
+
+8. Create API which saves details of User (along with the password) but on successfully saving returns only non-critical data. (Use static filtering)
+Ans)
+
+  Used @JsonIgnore
+    java/com/Restful/RestDemo1/ModelClasses/User.java
+    
+    com/Restful/RestDemo1/Controller/FilterController.java
+    
+    
+     @ApiOperation(value = "This api applies Static Filtering to New User class..")
+    @GetMapping("/filterStatic")
+    public List<User> retrieveUserApplyingStaticFilter()
+    {
+        return userDao.findAllUsers();
+    }
+
+ 9. Create another API that does the same by using Dynamic Filtering.
+ 
+ Ans)   
+    com/Restful/RestDemo1/ModelClasses/NewUser.java
+    
+    com/Restful/RestDemo1/Controller/FilterController.java
+    
+ 
+ @ApiOperation(value = "This api applies Dynamic Filtering to User Class..")
+    @GetMapping("/filtering")
+    public MappingJacksonValue retrieveUsers(){
+
+        SimpleBeanPropertyFilter filter=SimpleBeanPropertyFilter.filterOutAllExcept("firstname");
+        FilterProvider filterProvider=new SimpleFilterProvider().addFilter("UserFilter",filter);
+        MappingJacksonValue mapping= new MappingJacksonValue(newUserDao.findAllUsers());
+        mapping.setFilters(filterProvider);
+        return mapping;
+
+    }
+
+*Versioning Restful APIs
+
+    10. Create 2 API for showing user details. The first api should return only basic details of the user and the other API should return more/enhanced details of the user,
+
+Now apply versioning using the following methods:
+
+MimeType Versioning
+
+Request Parameter versioning
+
+URI versioning
+
+Custom Header Versioning
+
+
+Ans)    Every type of versioning is in this class:
+
+         com/Restful/RestDemo1/Controller/UserVersoningController.java
+         
+         
+         
+         
+         
+11. Configure hateoas with your springboot application. Create an api which returns User Details along with url to show all topics         
+ 
+ Ans)
+        http://localhost:8080/v2/api-docs
