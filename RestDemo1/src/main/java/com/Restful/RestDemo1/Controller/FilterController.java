@@ -26,7 +26,7 @@ public class FilterController {
     @GetMapping("/filtering")
     public MappingJacksonValue retrieveUsers(){
 
-        SimpleBeanPropertyFilter filter=SimpleBeanPropertyFilter.filterOutAllExcept("firstname");
+        SimpleBeanPropertyFilter filter=SimpleBeanPropertyFilter.filterOutAllExcept("firstname","lastname","age","address");
         FilterProvider filterProvider=new SimpleFilterProvider().addFilter("UserFilter",filter);
         MappingJacksonValue mapping= new MappingJacksonValue(newUserDao.findAllUsers());
         mapping.setFilters(filterProvider);
