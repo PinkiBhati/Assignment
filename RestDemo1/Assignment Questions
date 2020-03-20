@@ -151,5 +151,17 @@ Ans)    Every type of versioning is in this class:
          
 11. Configure hateoas with your springboot application. Create an api which returns User Details along with url to show all topics         
  
- Ans)
-        http://localhost:8080/v2/api-docs
+ Ans)  @ApiOperation(value = "Fetching particular user")
+    @GetMapping("/Users/{rollNo}")
+    public EntityModel<User> getparticularUser(@PathVariable int rollNo){
+        User user= userDao.findOneUser(rollNo);
+
+        EntityModel<User> resource = new EntityModel<User>(user);
+
+        WebMvcLinkBuilder linkTo =
+                WebMvcLinkBuilder.linkTo(methodOn(this.getClass()).getAllUsers());
+
+        resource.add(linkTo.withRel("all-users"));
+
+        return resource;
+    }
