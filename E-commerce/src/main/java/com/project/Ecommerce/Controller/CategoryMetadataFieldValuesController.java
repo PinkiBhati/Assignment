@@ -6,6 +6,7 @@ import com.project.Ecommerce.Entities.CategoryMetadataFieldValues;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
 import com.project.Ecommerce.Repos.CategoryRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Api
 @RestController
 public class CategoryMetadataFieldValuesController {
 
