@@ -26,6 +26,7 @@ public class ViewCategoriesDTO
 
     public void setFieldName(List<String> fieldName) {
         this.fieldName = fieldName;
+
     }
 
     public List<String> getValues() {
