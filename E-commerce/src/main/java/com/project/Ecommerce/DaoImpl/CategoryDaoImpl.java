@@ -1,12 +1,10 @@
 package com.project.Ecommerce.DaoImpl;
 
 
+import com.project.Ecommerce.DTO.FilterDTO;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
-import com.project.Ecommerce.Entities.Category;
-import com.project.Ecommerce.Entities.CategoryMetadataField;
-import com.project.Ecommerce.Entities.CategoryMetadataFieldValues;
-import com.project.Ecommerce.Entities.User;
+import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
@@ -16,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CategoryDaoImpl implements CategoryDao {
@@ -99,20 +94,51 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
-    public List<Object[]> getFilteringDetails(Long categoryId) {
-        List<Long> listOfMetadataIdsForParticularCategory = categoryMetadataFieldValuesRepository.getMetadataId(categoryId);
+    public FilterDTO getFilteringDetails(Long categoryId) {
+        Optional<Category> categoryOptional= categoryRepository.findById(categoryId);
 
-        List<Object[]> newListForCombiningMetadataFieldsWithValues = new ArrayList<Object[]>();
-        for (Long idOfMetadata : listOfMetadataIdsForParticularCategory) {
-            List<Object[]> listOfMetadataFields = categoryMetadataFieldRepository.getMetadataField(idOfMetadata);
-            newListForCombiningMetadataFieldsWithValues.addAll(listOfMetadataFields);
+        if(categoryOptional.isPresent()&& categoryRepository.checkIfLeaf(categoryId)==0)
+        {
+            Category category= categoryOptional.get();
+            List<Long> listOfMetadataIdsForParticularCategory = categoryMetadataFieldValuesRepository.getMetadataId(categoryId);
+            FilterDTO filterDTO= new FilterDTO();
+            filterDTO.setCategoryName(category.getName());
+            List<String> stringListForField= new ArrayList<>();
+            List<String> stringListForValues= new ArrayList<>();
+            List<String> brands= new ArrayList<>();
+            Double minPrice=0D;
+            Double maxPrice=0D;
+            Set<Double> doubleSet= new TreeSet<>();
+
+            for (Long idOfMetadata : listOfMetadataIdsForParticularCategory) {
+
+                CategoryMetadataField categoryMetadataField= categoryMetadataFieldRepository.findById(idOfMetadata).get();
+                stringListForField.add(categoryMetadataField.getName());
+                stringListForValues.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(categoryId,idOfMetadata));
+                Set<Product> productSet= category.getProducts();
+                for (Product product: productSet)
+                {
+                    brands.add(product.getBrand());
+                    Set<ProductVariation> productVariationSet= product.getProductVariations();
+                    for (ProductVariation productVariation: productVariationSet)
+                    {
+                        doubleSet.add(productVariation.getPrice());
+                    }
+
+                }
+                Double[] doubles= doubleSet.toArray(new Double[doubleSet.size()]);
+                filterDTO.setBrands(brands);
+                filterDTO.setFields(stringListForField);
+                filterDTO.setValues(stringListForValues);
+                filterDTO.setMinPrice(doubles[0]);
+                filterDTO.setMaxPrice(doubles[doubleSet.size()-1]);
+
+            }
+            return filterDTO;
         }
-        List<Object[]> listOfMetadataValues = categoryMetadataFieldValuesRepository.getValues(categoryId);
-        newListForCombiningMetadataFieldsWithValues.addAll(listOfMetadataValues);
-
-        Category category = categoryRepository.findById(categoryId).get();
-        categoryRepository.getSubCategory(category.getName());
-        return newListForCombiningMetadataFieldsWithValues;
+        else {
+            throw new NotFoundException("The categoryId is wrong and this is not a leaf node ");
+        }
 
 
     }

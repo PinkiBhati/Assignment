@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Controller;
 
 
+import com.project.Ecommerce.DTO.FilterDTO;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Entities.Category;
@@ -62,12 +63,6 @@ public class CategoryController {
         return categoryDao.getSubCategory(categoryId);
     }
 
-    //check bcz still not up to the mark
-    @ApiOperation("This URI is for Filtering the data for a categoryId")
-    @GetMapping("/filtering/{categoryId}")
-    public List<Object[]> filtering(@PathVariable(value = "categoryId") Long categoryId) {
-        return categoryDao.getFilteringDetails(categoryId);
-    }
 
     //correct
     @ApiOperation("This URI is for updating a Category Name")
@@ -116,4 +111,10 @@ public class CategoryController {
         return categoryDao.viewAllCategoriesForSeller();
     }
 
+    //looking nice :-)
+    @ApiOperation("This URI is for Filtering the data for a categoryId")
+    @GetMapping("/filtering/{categoryId}")
+    public FilterDTO filtering(@PathVariable(value = "categoryId") Long categoryId) {
+        return categoryDao.getFilteringDetails(categoryId);
+    }
 }
