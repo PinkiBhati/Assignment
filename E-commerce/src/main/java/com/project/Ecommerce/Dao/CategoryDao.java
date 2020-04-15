@@ -19,6 +19,7 @@ public interface CategoryDao {
     public List<Object[]> viewSingleCategory( Long categoryId);
     public List<Object[]> viewAllCategories();
     public List<ViewCategoriesDTO> viewAllCategoriesForSeller();
+    public List<Object[]> getSubCategory(Long categoryId);
 
     List<Object[]> getAllSubCategory(String mainCategory);
 

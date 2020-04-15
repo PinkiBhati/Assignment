@@ -4,6 +4,7 @@ package com.project.Ecommerce.Controller;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Entities.Category;
+import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
 import com.project.Ecommerce.Repos.CategoryRepository;
@@ -53,6 +54,14 @@ public class CategoryController {
         return categoryDao.getAllMainCategory();
     }
 
+    //leaf node k products ni dikhenge
+    @ApiOperation("This URI is for Customer to traverse the categories ")
+    @GetMapping("/getCategory/{categoryId}")
+    public List<Object[]> getSubCategory(@PathVariable(name = "categoryId")Long categoryId) {
+
+        return categoryDao.getSubCategory(categoryId);
+    }
+
     //check bcz still not up to the mark
     @ApiOperation("This URI is for Filtering the data for a categoryId")
     @GetMapping("/filtering/{categoryId}")
@@ -60,23 +69,7 @@ public class CategoryController {
         return categoryDao.getFilteringDetails(categoryId);
     }
 
-
-    //check it properly , findByName () is not working fine
-    @ApiOperation("This URI is for traversing the whole category to the products")
-    @GetMapping("/getCategory/{categoryName}")
-    public List<Object[]> getSubCategory(@PathVariable(name = "categoryName") String categoryName) {
-        List<Object[]> list = categoryDao.getAllSubCategory(categoryName);
-        if (list.isEmpty()) {
-            list = productRepository.getProductss(categoryName);
-            if (list.isEmpty()) {
-                list = productRepository.findByName(categoryName);
-
-            }
-        }
-        return list;
-    }
-
-
+    //correct
     @ApiOperation("This URI is for updating a Category Name")
     @PutMapping("/updateCategory/{categoryId}")
     public String updateCategory(@Valid @RequestBody Category category, @PathVariable(name = "categoryId") Long categoryId) {
@@ -85,7 +78,7 @@ public class CategoryController {
     }
 
 
-    @ApiOperation("This URI is for ")
+    @ApiOperation("This URI is for Admin to add a category at root level ")
     @PostMapping("/addNewCategory")
     public ResponseEntity addMainCategory(@Valid @RequestBody Category category)
     {
@@ -106,7 +99,6 @@ public class CategoryController {
         return categoryDao.viewSingleCategory(categoryId);
 
     }
-
 
     @ApiOperation("This URI is for Admin to get all the categories")
     @GetMapping("/viewAllCategories")

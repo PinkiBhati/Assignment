@@ -220,4 +220,28 @@ public class CategoryDaoImpl implements CategoryDao {
         }
         return list1;
     }
+
+    @Override
+    public List<Object[]> getSubCategory(Long categoryId)
+    {
+
+        List<Object[]> list= new ArrayList<>();
+        if(categoryRepository.findById(categoryId).isPresent())
+        {
+            if(categoryRepository.checkIfLeaf(categoryId)==1)
+            {
+                list = categoryRepository.getSubCategoryWithId(categoryId);
+                return list;
+            }
+            else {
+                throw new NotFoundException("This is a leaf node and doesn't have any sub-category");
+            }
+
+        }
+
+        else {
+            throw new NotFoundException("This category Id is wrong");
+
+        }
+    }
 }
