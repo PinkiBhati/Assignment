@@ -1,5 +1,6 @@
 package com.project.Ecommerce.Dao;
 
+import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Entities.Category;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,9 @@ public interface CategoryDao {
 
     List<Object[]> getAllMainCategory();
     public ResponseEntity addMainCategory(Category category);
+    public List<Object[]> viewSingleCategory( Long categoryId);
+    public List<Object[]> viewAllCategories();
+    public List<ViewCategoriesDTO> viewAllCategoriesForSeller();
 
     List<Object[]> getAllSubCategory(String mainCategory);
 

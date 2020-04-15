@@ -1,19 +1,25 @@
 package com.project.Ecommerce.Controller;
 
 
+import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
-import com.project.Ecommerce.Dao.SellerDao;
 import com.project.Ecommerce.Entities.Category;
+import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
+import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
 import com.project.Ecommerce.Repos.CategoryRepository;
 import com.project.Ecommerce.Repos.ProductRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Api
 @RestController
 public class CategoryController {
 
@@ -25,6 +31,12 @@ public class CategoryController {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryMetadataFieldRepository categoryMetadataFieldRepository;
+
+    @Autowired
+    CategoryMetadataFieldValuesRepository categoryMetadataFieldValuesRepository;
 
 
     @ApiOperation("This URI is for getting all the leaf categories")
@@ -64,9 +76,6 @@ public class CategoryController {
         return list;
     }
 
-    //check
-
-
 
     @ApiOperation("This URI is for updating a Category Name")
     @PutMapping("/updateCategory/{categoryId}")
@@ -76,6 +85,7 @@ public class CategoryController {
     }
 
 
+    @ApiOperation("This URI is for ")
     @PostMapping("/addNewCategory")
     public ResponseEntity addMainCategory(@Valid @RequestBody Category category)
     {
@@ -88,4 +98,30 @@ public class CategoryController {
         categoryDao.addNewSubCategory(parentCategoryId, category);
         return "subcategory added successfully";
     }
+
+    @ApiOperation("This URI is for Admin to viewing a category ")
+    @GetMapping("/viewSingleCategory/{categoryId}")
+    public List<Object[]> viewSingleCategory(@PathVariable("categoryId") Long categoryId)
+    {
+        return categoryDao.viewSingleCategory(categoryId);
+
+    }
+
+
+    @ApiOperation("This URI is for Admin to get all the categories")
+    @GetMapping("/viewAllCategories")
+    public List<Object[]> viewAllCategories()
+    {
+        return categoryDao.viewAllCategories();
+
+    }
+
+    //looking nice :-)
+    @ApiOperation("This URI is for Seller to view all the categories")
+    @GetMapping("/viewAllCategory")
+    public List<ViewCategoriesDTO> viewAllCategory()
+    {
+        return categoryDao.viewAllCategoriesForSeller();
+    }
+
 }
