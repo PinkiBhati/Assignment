@@ -7,6 +7,7 @@ import com.project.Ecommerce.Entities.Customer;
 import com.project.Ecommerce.Entities.Seller;
 import com.project.Ecommerce.Repos.CustomerRepository;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
+@Api
 @RestController
 public class CustomerController {
 
@@ -33,12 +35,14 @@ public class CustomerController {
     @Autowired
     CustomerRepository customerRepository;
 
+    @ApiOperation("This URI is for Customer to view his profile ")
     @GetMapping("/viewProfile")
-    public List<Object[]> viewProfile(HttpServletRequest request) throws IOException
+    public ProfileDTO viewProfile()
     {
         return customerDao.viewProfile();
     }
 
+    //map nhi kara
     @ApiOperation("This URI is for Customer to update his profile ")
     @PutMapping("/updateProfile")
     public String updateProfile(@RequestBody ProfileDTO customer)
@@ -47,7 +51,6 @@ public class CustomerController {
     }
 
     @ApiOperation("This URI is for Customer to Update his Contact")
-
     @PutMapping("/editContact")
     public String editContact(@RequestBody Customer customer) {
         return customerDao.editContact(customer);
@@ -104,8 +107,5 @@ public class CustomerController {
     public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException {
         return customerDao.viewProfileImage(request);
     }
-
-
-
 
 }

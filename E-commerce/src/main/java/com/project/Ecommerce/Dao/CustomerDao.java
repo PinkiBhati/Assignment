@@ -20,7 +20,7 @@ public interface CustomerDao {
     public String editContact(Customer customer);
     public List<Object[]> getAddresses();
     public Customer getCustomer();
-    public List<Object[]> viewProfile();
+    public ProfileDTO viewProfile();
     public String updateProfile(ProfileDTO customer);
     public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException;
     public String getAnSellerAccount(Seller seller);

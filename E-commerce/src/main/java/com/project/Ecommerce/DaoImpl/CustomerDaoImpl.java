@@ -177,11 +177,16 @@ public class CustomerDaoImpl implements CustomerDao {
 
 
     @Override
-    public List<Object[]> viewProfile()
+    public ProfileDTO viewProfile()
     {
         String username = getCurrentDetails.getUser();
         Customer customer = customerRepository.findByUsername(username);
-        return customerRepository.viewProfile(customer.getId());
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setFirstName(customer.getFirstName());
+        profileDTO.setLastName(customer.getLastName());
+        profileDTO.setContactNo(customer.getContact());
+        profileDTO.setMiddleName(customer.getMiddleName());
+        return profileDTO;
     }
 
     @Override
