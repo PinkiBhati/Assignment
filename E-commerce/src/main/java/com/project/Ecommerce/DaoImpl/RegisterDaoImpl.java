@@ -5,6 +5,9 @@ import com.project.Ecommerce.DTO.SellerDTO;
 import com.project.Ecommerce.Dao.RegisterDao;
 import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
+import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
+import com.project.Ecommerce.Repos.AddressRepository;
+import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +21,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class RegisterDaoImpl implements RegisterDao {
@@ -28,8 +33,18 @@ public class RegisterDaoImpl implements RegisterDao {
     private PasswordEncoder passwordEncoder;
     @Autowired
     ModelMapper modelMapper;
+
     private JavaMailSender javaMailSender;
 
+    @Autowired
+    RegisterDaoImpl(JavaMailSender javaMailSender)
+    {
+        this.javaMailSender=javaMailSender;
+
+    }
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     @Autowired
     private TokenStore tokenStore;
@@ -38,6 +53,8 @@ public class RegisterDaoImpl implements RegisterDao {
     NotificationService notificationService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @Override
     public String registerCustomer(CustomerDTO customer) {
@@ -47,11 +64,12 @@ public class RegisterDaoImpl implements RegisterDao {
             customer1.setPassword(passwordEncoder.encode(password));
             customer1.addRoles(new Role("ROLE_CUSTOMER"));
             customer1.setCreatedBy(customer1.getUsername());
+            customer1.setActive(false);
             userRepository.save(customer1);
             if (userRepository.existsById(customer1.getId())) {
                 notificationService.sendNotification(customer1);
             }
-            return "success";
+            return "successfully registered";
         } else {
             throw new PasswordAndConfirmPasswordMismatchException("Password is not same as confirm password");
         }
@@ -63,19 +81,32 @@ public class RegisterDaoImpl implements RegisterDao {
     public String registerSeller(SellerDTO seller) {
         if (seller.getPassword().equals(seller.getConfirmPassword())) {
             Seller seller1 = modelMapper.map(seller, Seller.class);
+            Address address= new Address();
+            address.setAddressLine(seller.getAddressLine());
+            address.setZipCode(seller.getZipCode());
+            address.setCity(seller.getCity());
+            address.setState(seller.getState());
+            address.setCountry(seller.getCountry());
+            address.setLabel("OFFICE");
+            address.setUser(seller1);
+            Set<Address> addressSet= new HashSet<>();
+            addressSet.add(address);
+            seller1.setAddresses(addressSet);
             String password = seller.getPassword();
             seller1.setPassword(passwordEncoder.encode(password));
             seller1.addRoles(new Role("ROLE_SELLER"));
             seller1.setCreatedBy(seller.getUsername());
+            seller1.setActive(false);
             userRepository.save(seller1);
 
             if (userRepository.existsById(seller1.getId())) {
                 SimpleMailMessage mail = new SimpleMailMessage();
-                mail.setTo(seller.getUsername());
+                mail.setTo(seller1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account activation");
                 mail.setText("you account has been created you can access it once admin verifies it");
                 javaMailSender.send(mail);
+
             }
             return "success";
         } else {
@@ -104,5 +135,29 @@ public class RegisterDaoImpl implements RegisterDao {
             tokenStore.removeAccessToken(accessToken);
         }
         return "Logged out successfully";
+    }
+
+    @Override
+    public String reSendActivationLink(String emailId)
+    {
+        User user= userRepository.findByUsername(emailId);
+        if(user==null)
+        {
+            throw new UserNotFoundException("This User is not present");
+        }
+
+        else {
+            for (Token token: tokenRepository.findAll())
+            {
+                if(user.getUsername().equals(token.getName())&& user.getActive()==false)
+                {
+                    tokenRepository.deleteById(token.getId());
+
+                }
+            }
+
+            notificationService.sendNotification(user);
+        }
+        return "successfully sent";
     }
 }
