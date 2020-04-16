@@ -1,6 +1,7 @@
 package com.project.Ecommerce.DaoImpl;
 
 import com.project.Ecommerce.DTO.ProductDTO;
+import com.project.Ecommerce.DTO.ViewProductDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Dao.ProductDao;
 import com.project.Ecommerce.Entities.*;
@@ -10,10 +11,6 @@ import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +34,10 @@ public class ProductDaoImpl implements ProductDao {
     UserRepository userRepository;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    CategoryMetadataFieldValuesRepository categoryMetadataFieldValuesRepository;
+    @Autowired
+    CategoryMetadataFieldRepository categoryMetadataFieldRepository;
 
     @Autowired
     public ProductDaoImpl(JavaMailSender javaMailSender) {
@@ -115,7 +116,6 @@ public class ProductDaoImpl implements ProductDao {
 
         if (productOptional.isPresent()) {
             Product product1 = productOptional.get();
-            Product product2 = modelMapper.map(product, Product.class);
             if ((product1.getSellers().getUsername()).equals(seller1.getUsername())) {
                 if (product.getName().equals(product1.getBrand()) || product.getName().equals(product1.
                         getCategoriesInProduct().getName()) || product.getName().equals(product1.getSellers()
@@ -235,15 +235,41 @@ public class ProductDaoImpl implements ProductDao {
 
 
     @Override
-    public List<Object[]> viewSingleProduct(Long productId) {
+    public List<ViewProductDTO> viewSingleProduct(Long productId) {
         String sellerName = getCurrentDetails.getUser();
         Seller seller = sellerRepository.findByUsername(sellerName);
+        List<ViewProductDTO> viewProductDTOS= new ArrayList<>();
+        List<String> fields= new ArrayList<>();
+        List<String> values=new ArrayList<>();
+        ViewProductDTO viewProductDTO= new ViewProductDTO();
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
             if (product.getIsActive() == true) {
                 if ((product.getSellers().getUsername()).equals(seller.getUsername())) {
-                    return productRepository.getSingleProduct(productId);
+
+                    viewProductDTO.setProductName(product.getName());
+                    viewProductDTO.setBrand(product.getBrand());
+                    viewProductDTO.setCancellable(product.getIsCancellable());
+                    viewProductDTO.setActive(product.getIsActive());
+                    viewProductDTO.setDescription(product.getDescription());
+                    viewProductDTO.setReturnable(product.getIsReturnable());
+                    Long categoryId= productRepository.getCategoryId(product.getId());
+                    Category category= categoryRepository.findById(categoryId).get();
+                    viewProductDTO.setCategoryName(category.getName());
+                    List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+                    for (Long l : longList) {
+                        CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                        fields.add(categoryMetadataField.getName());
+                        values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                        viewProductDTO.setValues(values);
+                        viewProductDTO.setFieldName(fields);
+
+                    }
+
+                    viewProductDTOS.add(viewProductDTO);
+                    return viewProductDTOS;
+
                 } else {
                     throw new NotFoundException("You cannot view this product");
                 }
@@ -259,12 +285,41 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Object[]> viewSingleProductForAdmin(Long productId) {
+    public List<ViewProductDTO> viewSingleProductForAdmin(Long productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
+        List<ViewProductDTO> viewProductDTOS= new ArrayList<>();
+        List<String> fields= new ArrayList<>();
+        List<String> values=new ArrayList<>();
+
         if (productOptional.isPresent())
         {
-            return productRepository.getSingleProduct(productId);
-        } else {
+            ViewProductDTO viewProductDTO= new ViewProductDTO();
+            Product product= productOptional.get();
+            viewProductDTO.setProductName(product.getName());
+            viewProductDTO.setBrand(product.getBrand());
+            viewProductDTO.setCancellable(product.getIsCancellable());
+            viewProductDTO.setActive(product.getIsActive());
+            viewProductDTO.setDescription(product.getDescription());
+            viewProductDTO.setReturnable(product.getIsReturnable());
+            Long categoryId= productRepository.getCategoryId(product.getId());
+            Category category= categoryRepository.findById(categoryId).get();
+            viewProductDTO.setCategoryName(category.getName());
+            List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+            for (Long l : longList) {
+                CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                fields.add(categoryMetadataField.getName());
+                values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                viewProductDTO.setValues(values);
+                viewProductDTO.setFieldName(fields);
+
+            }
+
+            viewProductDTOS.add(viewProductDTO);
+            return viewProductDTOS;
+
+        }
+
+        else {
             throw new NotFoundException("This product ID is wrong");
         }
     }

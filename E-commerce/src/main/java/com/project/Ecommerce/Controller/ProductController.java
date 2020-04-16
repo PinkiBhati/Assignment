@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.DTO.ProductDTO;
+import com.project.Ecommerce.DTO.ViewProductDTO;
 import com.project.Ecommerce.Dao.CustomerDao;
 import com.project.Ecommerce.Dao.ProductDao;
 import com.project.Ecommerce.Entities.Category;
@@ -8,11 +9,13 @@ import com.project.Ecommerce.Entities.Product;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.CategoryRepository;
 import com.project.Ecommerce.Repos.ProductRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Api
 @RestController
 public class ProductController {
 
@@ -34,10 +38,11 @@ public class ProductController {
     ProductRepository productRepository;
 
    //finally done
+
     @ApiOperation("This URI is for Seller to add a new product to a category")
-    @PostMapping("/addProduct/{category}")
-    public void addNewProduct(@Valid @RequestBody ProductDTO product, @PathVariable(name = "category") Long categoryID) {
-      productDao.addNewProduct(product,categoryID);
+    @PostMapping("/addProduct/{categoryId}")
+    public void addNewProduct(@Valid @RequestBody ProductDTO product, @PathVariable(name = "categoryId") Long categoryId) {
+      productDao.addNewProduct(product,categoryId);
 
     }
 
@@ -60,18 +65,17 @@ public class ProductController {
     }
 
 
-
-    //correctly done
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to view a single product he owns ")
     @GetMapping("/viewSingleProduct/{productId}")
-    public List<Object[]> viewSingleProduct(@PathVariable Long productId)
+    public List<ViewProductDTO> viewSingleProduct(@PathVariable Long productId)
     {
         return productDao.viewSingleProduct(productId);
     }
 
     @ApiOperation("This URI is for Admin to view a single product")
     @GetMapping("/viewSingleProductForAdmin/{productId}")
-    public List<Object[]> viewSingleProductForAdmin(@PathVariable Long productId)
+    public List<ViewProductDTO> viewSingleProductForAdmin(@PathVariable Long productId)
     {
         return productDao.viewSingleProductForAdmin(productId);
     }
