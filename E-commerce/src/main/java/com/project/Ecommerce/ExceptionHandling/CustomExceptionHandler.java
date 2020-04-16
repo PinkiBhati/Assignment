@@ -49,7 +49,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handlePasswordAndConfirmPasswordMismatchExceptions(PasswordAndConfirmPasswordMismatchException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity(exceptionResponse, HttpStatus.EXPECTATION_FAILED);
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(ProductNotFoundException.class)

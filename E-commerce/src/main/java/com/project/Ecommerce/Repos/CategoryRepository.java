@@ -13,7 +13,6 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
     @Query(value = "select name from category where parent_id is null",nativeQuery = true)
     List<Object[]> getMainCategory();
 
-
     @Query(value = "select exists(select * from category where parent_id=:parent_id)",nativeQuery = true)
     int checkIfLeaf(@Param("parent_id") Long parent_id);
 
@@ -34,5 +33,8 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
 
     @Query(value = "select name from category where id=:id",nativeQuery = true)
     public Object[] getCategoryName(@Param("id") Long id);
+
+    @Query(value = "select * from category",nativeQuery = true)
+    public List<Object[]> getAllCategories();
 
 }

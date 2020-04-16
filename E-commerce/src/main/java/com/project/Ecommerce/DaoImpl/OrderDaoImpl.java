@@ -72,7 +72,7 @@ public class OrderDaoImpl implements OrderDao {
         orderProduct.setPrice((productVariationRepository.getPrice(productVariationId)) * quantity);
         orderProduct.setQuantity(quantity);
         orderProduct.setOrders(orders);
-        orderProduct.setProductVariationMetaData(productVariation.getInfoJson());
+        orderProduct.setProductVariationMetaData(productVariation.getMetadata());
         orderProduct.setProductVariation(productVariation);
 
         OrderStatus orderStatus = new OrderStatus();

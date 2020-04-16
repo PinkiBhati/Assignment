@@ -4,6 +4,7 @@ package com.project.Ecommerce.Controller;
 import com.project.Ecommerce.Dao.CategoryMetadataFieldDao;
 import com.project.Ecommerce.Entities.CategoryMetadataField;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@Api
 @RestController
 public class CategoryMetadataFieldController {
     @Autowired

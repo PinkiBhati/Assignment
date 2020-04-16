@@ -1,9 +1,12 @@
 package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.DTO.SellerDTO;
+import com.project.Ecommerce.DTO.SellerProfileDTO;
 import com.project.Ecommerce.Dao.SellerDao;
 import com.project.Ecommerce.Entities.Customer;
 import com.project.Ecommerce.Entities.Seller;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +15,30 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@Api
 @RestController
 public class SellerController {
 
     @Autowired
     private SellerDao sellerDao;
+
+    @ApiOperation("This URI is for Seller to view his profile")
+    @GetMapping("/viewProfileForSeller")
+    public SellerProfileDTO viewProfileForSeller()
+    {
+        return sellerDao.viewProfileOfSeller();
+    }
+
+    @ApiOperation("This URI is for Seller to update his profile")
+    @PutMapping("/updateProfileForSeller")
+    public String  updateProfileForSeller(@RequestBody SellerProfileDTO sellerProfileDTO)
+    {
+        sellerDao.updateProfileForSeller(sellerProfileDTO);
+        return "Your profile is successfully updated";
+    }
+
+
+    //update password
 
 
     @Lazy
@@ -44,6 +66,7 @@ public class SellerController {
         }*/
         return objects;
     }
+
 
 
     /* @PostMapping("/refundOrder/{orderStatusId}")

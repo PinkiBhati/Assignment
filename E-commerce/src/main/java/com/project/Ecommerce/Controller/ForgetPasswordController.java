@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.Entities.ForgetPassword;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Api
 @RestController
 public class ForgetPasswordController {
 

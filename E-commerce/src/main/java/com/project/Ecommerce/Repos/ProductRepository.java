@@ -70,8 +70,8 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, L
     @Query(value = "select brand,description,name from product where category_id in (select id from category where name=:name)",nativeQuery = true)
     List<Object[]> getProductss(@Param("name") String name );
 
-
-   /* @Query(value = "select brand,name,description")*/
+/*
+    @Query(value = "select brand,name,description from product where name=:name",nativeQuery = true)*/
     List<Object[]> findByName(String categoryName);
 
 

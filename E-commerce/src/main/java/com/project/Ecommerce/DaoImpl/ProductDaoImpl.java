@@ -245,7 +245,7 @@ public class ProductDaoImpl implements ProductDao {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-            if (product.getIsActive() == true) {
+
                 if ((product.getSellers().getUsername()).equals(seller.getUsername())) {
 
                     viewProductDTO.setProductName(product.getName());
@@ -274,9 +274,6 @@ public class ProductDaoImpl implements ProductDao {
                     throw new NotFoundException("You cannot view this product");
                 }
 
-            } else {
-                throw new NullException("This product is not active");
-            }
 
         } else {
             throw new NotFoundException("This product is not present");

@@ -1,5 +1,6 @@
 package com.project.Ecommerce.Controller;
 
+import com.project.Ecommerce.DTO.AddressDTO;
 import com.project.Ecommerce.DTO.ProfileDTO;
 import com.project.Ecommerce.Dao.CustomerDao;
 import com.project.Ecommerce.Dao.UploadDao;
@@ -11,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +37,7 @@ public class CustomerController {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to view his profile ")
     @GetMapping("/viewProfile")
     public ProfileDTO viewProfile()
@@ -42,13 +45,22 @@ public class CustomerController {
         return customerDao.viewProfile();
     }
 
-    //map nhi kara
+    @Secured("ROLE_CUSTOMER")
+    @ApiOperation("This URI is for Customer to View his all Addresses that he has provided")
+    @GetMapping("/getAddresses")
+    public List<AddressDTO> getAddresses() {
+        return customerDao.getAddresses();
+    }
+
+
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to update his profile ")
     @PutMapping("/updateProfile")
     public String updateProfile(@RequestBody ProfileDTO customer)
     {
         return customerDao.updateProfile(customer);
     }
+
 
     @ApiOperation("This URI is for Customer to Update his Contact")
     @PutMapping("/editContact")
@@ -57,11 +69,6 @@ public class CustomerController {
 
     }
 
-    @ApiOperation("This URI is for Customer to View his all Addresses that he has provided")
-    @GetMapping("/getAddresses")
-    public List<Object[]> getAddresses() {
-        return customerDao.getAddresses();
-    }
 
 
     @ApiOperation("This URI is for Customer so that he can get A account as a seller also")

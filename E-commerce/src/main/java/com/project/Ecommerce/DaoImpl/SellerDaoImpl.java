@@ -1,24 +1,17 @@
 package com.project.Ecommerce.DaoImpl;
 
-import com.project.Ecommerce.DTO.SellerDTO;
+import com.project.Ecommerce.DTO.SellerProfileDTO;
 import com.project.Ecommerce.Dao.SellerDao;
-import com.project.Ecommerce.Entities.Customer;
-import com.project.Ecommerce.Entities.Role;
-import com.project.Ecommerce.Entities.Seller;
-import com.project.Ecommerce.Entities.User;
+import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NullException;
-import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
 import com.project.Ecommerce.ExceptionHandling.PatternMismatchException;
 import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
@@ -110,5 +103,72 @@ public class SellerDaoImpl implements SellerDao {
         return "success";
     }
 
+    @Override
+    public SellerProfileDTO viewProfileOfSeller()
+    {
+        String userName = getCurrentDetails.getUser();
+        Seller seller= sellerRepository.findByUsername(userName);
+        SellerProfileDTO sellerProfileDTO= new SellerProfileDTO(seller.getId(),seller.getFirstName()
+                ,seller.getMiddleName(),seller.getLastName(),seller.isActive(),
+                seller.getCompanyContact(),seller.getCompanyName(),seller.getGst());
+        Set<Address> addressSet= seller.getAddresses();
+        for (Address address: addressSet)
+        {
+            sellerProfileDTO.setCity(address.getCity());
+            sellerProfileDTO.setCountry(address.getCountry());
+            sellerProfileDTO.setAddressLine(address.getAddressLine());
+            sellerProfileDTO.setState(address.getState());
+            sellerProfileDTO.setZipCode(address.getZipCode());
+        }
+        return sellerProfileDTO;
+    }
+
+    @Override
+    public void updateProfileForSeller( SellerProfileDTO sellerProfileDTO)
+    {
+        String userName= getCurrentDetails.getUser();
+        Seller seller= sellerRepository.findByUsername(userName);
+
+        if(sellerProfileDTO.getFirstName()!=null)
+        {
+            seller.setFirstName(sellerProfileDTO.getFirstName());
+        }
+        if(sellerProfileDTO.getMiddleName()!=null)
+        {
+            seller.setMiddleName(sellerProfileDTO.getMiddleName());
+        }
+        if(sellerProfileDTO.getLastName()!=null)
+        {
+            seller.setLastName(sellerProfileDTO.getLastName());
+        }
+        if(sellerProfileDTO.getActive()!=null)
+        {
+            seller.setActive(sellerProfileDTO.getActive());
+        }
+        if(sellerProfileDTO.getCompanyContact()!=null)
+        {
+            if(sellerProfileDTO.getCompanyContact().matches("(\\+91|0)[0-9]{10}"))
+            {
+                seller.setCompanyContact(sellerProfileDTO.getCompanyContact());
+            }
+            else {
+                throw new NullException("Company contact should start with 0 or +91 and must have a length of 10");
+            }
+
+        }
+        if(sellerProfileDTO.getCompanyName()!=null)
+        {
+            seller.setCompanyName(sellerProfileDTO.getCompanyName());
+        }
+        if (sellerProfileDTO.getGst()!=null)
+        {
+            if(sellerProfileDTO.getGst().matches("\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}"))
+            {
+                seller.setGst(sellerProfileDTO.getGst());
+            }
+        }
+
+       sellerRepository.save(seller);
+    }
 
 }

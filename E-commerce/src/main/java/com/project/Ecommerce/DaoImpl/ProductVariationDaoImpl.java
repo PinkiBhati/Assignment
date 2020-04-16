@@ -116,7 +116,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
 
                     if (count == map.size()) {
                         String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
-                        productVariation.setInfoJson(info);
+                        productVariation.setMetadata(info);
                         productVariation.setActive(true);
                         productVariationRepository.save(productVariation);
                     } else {
@@ -197,7 +197,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                         productVariation2.setQuantityAvailable(productVariation.getQuantityAvailable());
                         productVariation2.setPrice(productVariation.getPrice());
                         String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
-                        productVariation2.setInfoJson(info);
+                        productVariation2.setMetadata(info);
                         productVariationRepository.save(productVariation2);
                     } else {
                         throw new NotFoundException("Field values are not provided correctly");

@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Entity
 public class CategoryMetadataFieldValues implements Serializable {
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     String fieldValues;
 
     @EmbeddedId

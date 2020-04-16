@@ -48,7 +48,7 @@ public class User {
     private String password;
 
 
-    private Boolean isActive;
+    private boolean isActive;
     private Boolean isDeleted;
     private Boolean isEnabled;
     private boolean isAccountNonLocked;
@@ -152,68 +152,6 @@ public class User {
         this.modifiedBy = modifiedBy;
     }
 
-    /*public String getOperation() {
-            return operation;
-        }
-
-        public void setOperation(String operation) {
-            this.operation = operation;
-        }
-
-        public LocalDateTime getCreatedOn() {
-            return createdOn;
-        }
-
-        public void setCreatedOn(LocalDateTime createdOn) {
-            this.createdOn = createdOn;
-        }
-
-        public LocalDateTime getModifiedOn() {
-            return modifiedOn;
-        }
-
-        public void setModifiedOn(LocalDateTime modifiedOn) {
-            this.modifiedOn = modifiedOn;
-        }
-
-        public String getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getModifiedBy() {
-            return modifiedBy;
-        }
-
-        public void setModifiedBy(String modifiedBy) {
-            this.modifiedBy = modifiedBy;
-        }
-
-        @PrePersist
-        public void onPrePersist() {
-            audit("INSERT");
-        }
-
-        @PreUpdate
-        public void onPreUpdate() {
-            audit("UPDATE");
-        }
-
-        @PreRemove
-        public void onPreRemove() {
-            audit("DELETE");
-        }
-
-
-        private void audit(String operation) {
-                setOperation(operation);
-                setModifiedOn(LocalDateTime.now());
-
-
-        }*/
     public String getUsername() {
         return username;
     }
@@ -262,11 +200,11 @@ public class User {
         isAccountNonLocked = accountNonLocked;
     }
 
-    public Boolean isActive() {
+    public boolean isActive() {
         return isActive;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         isActive = active;
     }
 

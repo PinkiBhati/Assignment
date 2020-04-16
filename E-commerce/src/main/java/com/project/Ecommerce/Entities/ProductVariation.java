@@ -1,16 +1,10 @@
 package com.project.Ecommerce.Entities;
 
 import com.project.Ecommerce.Utilities.HashMapConverter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +23,7 @@ public class ProductVariation {
     @Column(nullable = false)
     @Positive
     private double price;
-    private String infoJson;
+    private String metadata;
 
 
     @Convert(converter = HashMapConverter.class)
@@ -105,12 +99,12 @@ public class ProductVariation {
         this.carts = carts;
     }
 
-    public String getInfoJson() {
-        return infoJson;
+    public String getMetadata() {
+        return metadata;
     }
 
-    public void setInfoJson(String infoJson) {
-        this.infoJson = infoJson;
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     public Map<String, Object> getInfoAttributes() {

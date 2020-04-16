@@ -2,6 +2,7 @@ package com.project.Ecommerce.Controller;
 
 
 import com.project.Ecommerce.Dao.UploadDao;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Api
 @RestController
 public class UploadController
 {

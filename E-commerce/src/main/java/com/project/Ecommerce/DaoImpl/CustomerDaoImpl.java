@@ -1,5 +1,6 @@
 package com.project.Ecommerce.DaoImpl;
 
+import com.project.Ecommerce.DTO.AddressDTO;
 import com.project.Ecommerce.DTO.CustomerDTO;
 import com.project.Ecommerce.DTO.ProfileDTO;
 import com.project.Ecommerce.Dao.CustomerDao;
@@ -8,10 +9,7 @@ import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.Enums.FromStatus;
 import com.project.Ecommerce.Enums.ToStatus;
-import com.project.Ecommerce.ExceptionHandling.NullException;
-import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
-import com.project.Ecommerce.ExceptionHandling.PatternMismatchException;
-import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
+import com.project.Ecommerce.ExceptionHandling.*;
 import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
@@ -27,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CustomerDaoImpl implements CustomerDao {
@@ -49,6 +44,8 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Autowired
     UploadDao uploadDao;
+    @Autowired
+    ModelMapper modelMapper;
 
 
     @Autowired
@@ -80,14 +77,21 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public List<Object[]> getAddresses() {
+    public List<AddressDTO> getAddresses() {
         String username = getCurrentDetails.getUser();
         Customer customer = customerRepository.findByUsername(username);
-        List<Object[]> list = addressRepository.findAllByUser(customer.getId());
-        if (list.isEmpty()) {
-            throw new UserNotFoundException("No address found for this user");
+        Set<Address> addressSet= customer.getAddresses();
+        List<AddressDTO> addressDTOList= new ArrayList<>();
+        if (addressSet.isEmpty()) {
+            throw new NotFoundException("No address found for this user");
         }
-        return list;
+        for (Address address: addressSet)
+        {
+            AddressDTO addressDTO= modelMapper.map(address,AddressDTO.class);
+            addressDTOList.add(addressDTO);
+        }
+
+        return addressDTOList;
 
     }
 

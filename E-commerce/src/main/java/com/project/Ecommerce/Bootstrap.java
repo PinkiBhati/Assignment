@@ -70,7 +70,7 @@ public class Bootstrap implements ApplicationRunner {
             user.setCreatedBy("pinki");
             user.setContact("+917564389210");
             user.setPassword(passwordEncoder.encode("admin"));
-            user.setUsername("bhatipinki056@gmail.com");
+            user.setUsername("bhatipinki0@gmail.com");
             Role role = new Role();
             role.setRoleName("ROLE_ADMIN");
             users.add(user);
@@ -377,7 +377,7 @@ public class Bootstrap implements ApplicationRunner {
             attributes.put("color","black");
             productVariation.setInfoAttributes(attributes);
             String  info = objectMapper.writeValueAsString(attributes);
-            productVariation.setInfoJson(info);
+            productVariation.setMetadata(info);
             System.out.println(objectMapper.readValue(info,HashMap.class));
             productVariationSet.add(productVariation);
             product.setProductVariations(productVariationSet);

@@ -2,12 +2,14 @@ package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.Dao.CartDao;
 import com.project.Ecommerce.Dao.OrderDao;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api
 @RestController
 public class CartController {
     @Autowired

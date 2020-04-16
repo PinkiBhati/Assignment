@@ -50,6 +50,7 @@ public class TokenDaoImpl implements TokenDao {
                 System.out.println("saving");
                 User user2 = userRepository.findByUsername(token1.getName());
                 user2.setEnabled(true);
+                user2.setActive(true);
                 System.out.println(user2.getUsername() + " " + user2.isEnabled());
                 userRepository.save(user2);
                 tokenRepository.delete(token1);
@@ -68,9 +69,10 @@ public class TokenDaoImpl implements TokenDao {
         return uu;
     }
 
+//agar verify krega tbhi token delete hoga vrna bs isExpired true hojaega db m rhega
 
     @Lazy
-    @Scheduled(cron = "0 0/3 * * * *")
+    @Scheduled(cron = "0 0/2 * * * *")
     public void purgeExpired() {
         for (Token token : tokenRepository.findAll()) {
             Long result = System.currentTimeMillis() - token.getTimeInMilli();

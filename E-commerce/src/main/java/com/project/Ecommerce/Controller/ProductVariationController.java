@@ -5,6 +5,7 @@ import com.project.Ecommerce.Dao.ProductVariationDao;
 import com.project.Ecommerce.Entities.ProductVariation;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.ProductVariationRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+@Api
 @RestController
 public class ProductVariationController {
 

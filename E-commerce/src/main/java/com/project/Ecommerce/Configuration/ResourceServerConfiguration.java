@@ -8,23 +8,29 @@ import com.project.Ecommerce.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 
 @Configuration
 @EnableResourceServer
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
+@Import(SwaggerConfig.class)
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     @Autowired
@@ -33,6 +39,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public ResourceServerConfiguration() {
         super();
     }
+
 
     @Bean
     public static BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -54,24 +61,39 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         authenticationManagerBuilder.authenticationProvider(authenticationProvider());
     }
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**"
+    };
+
+
     @Override
     public void configure(final HttpSecurity http) throws Exception {
+
         http
                 .authorizeRequests()
                 .antMatchers("/").anonymous()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers("/sellerRegistration").anonymous()
                 .antMatchers("/customerRegistration").anonymous()
                 .antMatchers("/forgotPassword/{email}").anonymous()
                 .antMatchers("/setPassword/{token}/{password}").anonymous()
                 .antMatchers("/activateUser/{token}").anonymous()
+                .antMatchers("/reSendActivationLink/{emailId}").anonymous()
 
                 //Admin accessible URI's
                 .antMatchers("/admin/home").hasAnyRole("ADMIN")
+                .antMatchers("/viewSingleCategory/{categoryId}").hasAnyRole("ADMIN")
+                .antMatchers("/viewAllCategories").hasAnyRole("ADMIN")
                 .antMatchers("/deactivateProduct/{productId}").hasAnyRole("ADMIN")
                 .antMatchers("/viewSingleProductForAdmin/{productId}").hasAnyRole("ADMIN")
                 .antMatchers("/activateProduct/{productId}").hasAnyRole("ADMIN")
                 .antMatchers("/updateCategory/{categoryId}").hasAnyRole("ADMIN")
-                .antMatchers("/filtering/{categoryId}").hasAnyRole("ADMIN")
                 .antMatchers("/addCategoryMetadataField").hasAnyRole("ADMIN")
                 .antMatchers("/updateMetadataValues/{categoryId}/{metadataId}").hasAnyRole("ADMIN")
                 .antMatchers("/viewAllMetadataValues").hasAnyRole("ADMIN")
@@ -92,7 +114,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 //Customer accessible URI's
                 .antMatchers("/OrderOneProductFromCart/{cartId}/{paymentMethod}/{AddressId}").hasAnyRole("CUSTOMER")
                 .antMatchers("/OrderWholeCart/{AddressId}").hasAnyRole("CUSTOMER")
-                .antMatchers("/viewProfile").hasAnyRole("CUSTOMER")
+                .antMatchers("/filtering/{categoryId}").hasAnyRole("CUSTOMER")
                 .antMatchers("/updateProfile").hasAnyRole("CUSTOMER")
                 .antMatchers("/viewProfileImage").hasAnyRole("CUSTOMER")
                 .antMatchers("/uploadProfilePic").hasAnyRole("CUSTOMER")
@@ -124,15 +146,17 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 //Seller accessible URI's
                 .antMatchers("/seller/home").hasAnyRole("SELLER")
                 .antMatchers("/getAllProductVariations/{productId}").hasAnyRole("SELLER")
+                .antMatchers("/viewAllCategory").hasAnyRole("SELLER")
                 .antMatchers("/uploadVariationPic/{id}").hasAnyRole("SELLER")
+                .antMatchers("/viewProfileForSeller").hasAnyRole("SELLER")
+                .antMatchers("/updateProfileForSeller").hasAnyRole("SELLER")
                 .antMatchers("/viewSingleProduct/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/viewSingleProductVariation/{productVariationId}").hasAnyRole("SELLER")
                 .antMatchers("/getCustomerAccount").hasAnyRole("SELLER")
                 .antMatchers("/getProducts").hasAnyRole("SELLER")
-                .antMatchers("/addProduct/{category}").hasAnyRole("SELLER")
+                .antMatchers("/addProduct/{categoryId}").hasAnyRole("SELLER")
                 .antMatchers("/editProduct/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/deleteProduct/{productId}").hasAnyRole("SELLER")
-
                 .antMatchers("/addProductVariations/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/editProductVariations/{productVariationId}").hasAnyRole("SELLER")
                 .antMatchers("/deleteProductVariation/{productVariationId}").hasAnyRole("SELLER")
@@ -148,22 +172,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/uploadSm").hasAnyRole("ADMIN", "SELLER")
 
 
-                //URI's accessible by all type of users
-                .antMatchers("/addNewAddress").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/deleteAddress/{AddressId}").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
+
                 .antMatchers("/doLogout").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/deleteUser").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/editUsername").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/editEmail").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/editPassword").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-                .antMatchers("/updateAddress/{addressId}").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
+
 
                 .antMatchers("/getReviews/{product_id}").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
                 .antMatchers("/download/{fileName:.+}").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
-
-
-                .antMatchers("/v2/api-docs").anonymous()
-                .antMatchers("/swagger-ui.html").permitAll()
 
                 .anyRequest().authenticated()
                 .and()
