@@ -1,5 +1,6 @@
 package com.project.Ecommerce.DaoImpl;
 
+import com.project.Ecommerce.DTO.AddressDTO;
 import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.TokenDao;
 import com.project.Ecommerce.Dao.UserDao;
@@ -79,21 +80,44 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public String update(Address address, long addressId) {
+    public String update(AddressDTO address, Long addressId) {
         String username = getCurrentDetails.getUser();
         User user = userRepository.findByUsername(username);
-        Optional<Address> addressOptional = addressRepository.findById(addressId);
-        Address address1 = addressOptional.get();
-        address1.setCity(address.getCity());
-        address1.setCountry(address.getCountry());
-        address1.setZipCode(address.getZipCode());
-        address1.setLabel(address.getLabel());
-        address1.setAddressLine(address.getAddressLine());
-        address1.setState(address.getState());
-        address1.setUser(user);
-        user.setModifiedBy(username);
-        addressRepository.save(address1);
-        userRepository.save(user);
+        Set<Address> addressSet= user.getAddresses();
+        {
+            for (Address address1: addressSet)
+            {
+                if(addressId.equals(address1.getId()))
+                {
+                    address1= modelMapper.map(address,Address.class);
+                    if(address.getAddressLine()!=null)
+                    {
+                        address1.setAddressLine(address.getAddressLine());
+                    }
+                    if(address.getCity()!=null)
+                    {
+                        address1.setCity(address.getCity());
+                    }
+                    if(address.getState()!=null)
+                    {
+                        address1.setState(address.getState());
+                    }
+
+                    if(address.getZipCode()!=null)
+                    {
+                        address1.setZipCode(address.getZipCode());
+                    }
+                    if(address.getCountry()!=null)
+                    {
+                        address1.setCountry(address.getCountry());
+                    }
+                    user.setModifiedBy(username);
+                    address1.setId(addressId);
+                    address1.setUser(user);
+                    addressRepository.save(address1);
+                }
+            }
+        }
         return "Success";
 
     }
@@ -114,33 +138,11 @@ public class UserDaoImpl implements UserDao {
     public String addNewAddress(Address address) {
         String username = getCurrentDetails.getUser();
         User user = userRepository.findByUsername(username);
-        System.out.println(user.getRoles());
-        Iterator<Role> roleIterator = user.getRoles().iterator();
-
-        while (roleIterator.hasNext()) {
-            Role role = roleIterator.next();
-
-            if (role.getRoleName().equals("ROLE_SELLER")) {
-                if (!user.getAddresses().isEmpty()) {
-                    throw new NullException("You can't add new address. Only one address" +
-                            " needs to be added and that is already added");
-                } else {
-
-                    address.setUser(user);
-                    user.addAddress(address);
-                    user.setModifiedBy(username);
-                    userRepository.save(user);
-                    return "success";
-                }
-            } else {
-                address.setUser(user);
-                user.addAddress(address);
-                user.setModifiedBy(username);
-                userRepository.save(user);
-
-            }
-        }
-
+        address.setLabel("HOME");
+        address.setUser(user);
+        user.addAddress(address);
+        user.setModifiedBy(username);
+        userRepository.save(user);
         return "success";
     }
 
@@ -206,6 +208,7 @@ public class UserDaoImpl implements UserDao {
     }
 
 
+    @Override
     public String editPassword(UserDTO user) {
         String username = getCurrentDetails.getUser();
         User user1 = userRepository.findByUsername(username);
