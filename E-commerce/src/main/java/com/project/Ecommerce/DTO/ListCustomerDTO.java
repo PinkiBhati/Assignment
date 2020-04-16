@@ -1,17 +1,24 @@
 package com.project.Ecommerce.DTO;
 
-
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProfileDTO
-{
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String contactNo;
-    private boolean isActive;
-    private String link ="http://localhost:8080/viewProfileImage";
+public class ListCustomerDTO {
+
+    Long id;
+    String firstName;
+    String middleName;
+    String lastName;
+    String email;
+    Boolean isActive;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -37,29 +44,19 @@ public class ProfileDTO
         this.lastName = lastName;
     }
 
-    public String getContactNo() {
-        return contactNo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setContactNo(String contactNo) {
-        this.contactNo = contactNo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public boolean getIsActive()
-    {
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
-    }
-
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
 }
