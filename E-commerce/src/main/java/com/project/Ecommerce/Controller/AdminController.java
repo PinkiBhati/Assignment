@@ -1,20 +1,26 @@
 package com.project.Ecommerce.Controller;
 
 
+import com.project.Ecommerce.DTO.ListCustomerDTO;
+import com.project.Ecommerce.DTO.ListSellerDTO;
 import com.project.Ecommerce.Dao.AdminDao;
+import com.project.Ecommerce.Entities.CategoryMetadataField;
+import com.project.Ecommerce.Entities.User;
 import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
 import com.project.Ecommerce.Repos.CategoryRepository;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.UserRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api
 @RestController
 public class AdminController {
 
@@ -44,7 +50,7 @@ public class AdminController {
         adminDao.deActivateCustomerAndSeller(userId);
     }
 
-    @ApiOperation(value = "URI in which Admin can view all the registered Customers")
+   /* @ApiOperation(value = "URI in which Admin can view all the registered Customers")
     @GetMapping("/allCustomers")
     public List<Object[]> getAllCustomers() {
 
@@ -53,16 +59,26 @@ public class AdminController {
             throw new UserNotFoundException("There are no active Customers right now.");
         }
         return objects;
+    }*/
+
+    @ApiOperation(value = "URI in which Admin can view all the registered Customers")
+    @GetMapping("/allCustomers")
+    public ResponseEntity<List<ListCustomerDTO>> viewCustomer(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
+                                                   @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
+        List<ListCustomerDTO> list = adminDao.getAllCustomers(pageNo, pageSize, sortBy);
+        return new ResponseEntity<List<ListCustomerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "URI in which Admin can view all the registered Sellers")
     @GetMapping("/allSellers")
-    public List<Object[]> getAllSellers() {
-        List<Object[]> objects = userRepository.findSellers();
-        if (objects.isEmpty()) {
-            throw new UserNotFoundException("There are no active Sellers right now.");
-        }
-        return objects;
+    public ResponseEntity<List<ListSellerDTO>> getAllSellers(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
+                                               @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                               @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+    {
+        List<ListSellerDTO> list = adminDao.getAllSellers(pageNo, pageSize, sortBy);
+        return new ResponseEntity<List<ListSellerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
+
     }
 
 
