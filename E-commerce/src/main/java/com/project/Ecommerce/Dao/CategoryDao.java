@@ -1,5 +1,6 @@
 package com.project.Ecommerce.Dao;
 
+import com.project.Ecommerce.DTO.FilterDTO;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Entities.Category;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,13 @@ import java.util.List;
 public interface CategoryDao {
 
     public List<Object[]> getSubcategory();
-    public List<Object[]> getFilteringDetails(Long category_id);
+    public FilterDTO getFilteringDetails(Long category_id);
 
     List<Object[]> getAllMainCategory();
     public ResponseEntity addMainCategory(Category category);
-    public List<Object[]> viewSingleCategory( Long categoryId);
-    public List<Object[]> viewAllCategories();
+    public List<ViewCategoriesDTO> viewSingleCategory( Long categoryId);
+    /*public List<Object[]> viewAllCategories();*/
+    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin();
     public List<ViewCategoriesDTO> viewAllCategoriesForSeller();
     public List<Object[]> getSubCategory(Long categoryId);
 

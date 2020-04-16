@@ -150,68 +150,93 @@ public class CategoryDaoImpl implements CategoryDao {
         return ResponseEntity.ok().body("category added");
     }
 
-    //change
-    @Override
-    public List<Object[]> viewSingleCategory( Long categoryId)
-    {
-        List<Object[]> list= new ArrayList<>();
-        Optional<Category> categoryOptional= categoryRepository.findById(categoryId);
-        if (categoryOptional.isPresent())
-        {
-            list.add(categoryRepository.getCategoryName(categoryId));
-            Long cid = categoryId;
-            while(categoryRepository.getCategoryParent(cid)!=null)
-            {
-                list.add(categoryRepository.getCategoryName(categoryRepository.getCategoryParent(cid)));
-                cid= categoryRepository.getCategoryParent(cid);
+    /*Long cid = categoryId;
 
-            }
-            if(categoryRepository.checkIfLeaf(categoryId)==0)
-            {
-                List<Long> longList= categoryMetadataFieldValuesRepository.getMetadataId(categoryId); //metadata id of that category
-                for(Long l: longList)
-                {
-                    list.addAll(categoryMetadataFieldRepository.getMetadataField(l)); //Size is added into the list
-                }
-                list.addAll(categoryMetadataFieldValuesRepository.getValues(categoryId)); //LMS is added
-            }
-
-            else {
-                list.addAll(categoryRepository.getSubCategoryWithId(categoryId)); //Shirts jeans winter wear is added
-            }
-
-            return list;
-        }
-
-        else {
-            throw new NotFoundException("This category ID is wrong");
-        }
-
-    }
+    while (categoryRepository.getCategoryParent(cid) != null) {
+                Category category1 = categoryRepository.findById(categoryRepository.getCategoryParent(categoryId)).get();
+                ViewCategoriesDTO categoriesDTO1 = new ViewCategoriesDTO();
+                categoriesDTO1.setName(category1.getName());
+                cid = category1.getId();
+                viewCategoriesDTOList.add(categoriesDTO1);
+            }*/
 
     //change
     @Override
-    public List<Object[]> viewAllCategories()
-    {
-        List<Object[]> list= new ArrayList<>();
-        for (Category category: categoryRepository.findAll())
-        {
-            if (categoryRepository.checkIfLeaf(category.getId())==0)
-            {
-                list.add(categoryRepository.getCategoryName(category.getId()));
-                List<Long> longList= categoryMetadataFieldValuesRepository.getMetadataId(category.getId()); //metadata id of that category
-                for(Long l: longList)
-                {
-                    list.addAll(categoryMetadataFieldRepository.getMetadataField(l)); //Size is added into the list
+    public List<ViewCategoriesDTO> viewSingleCategory( Long categoryId) {
+        List<ViewCategoriesDTO> viewCategoriesDTOList = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            ViewCategoriesDTO categoriesDTO = new ViewCategoriesDTO();
+            categoriesDTO.setName(category.getName());
+            viewCategoriesDTOList.add(categoriesDTO);
+
+            if (categoryRepository.checkIfLeaf(category.getId()) == 0) {
+                List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(categoryId);
+                for (Long l : longList) {
+                    CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                    fields.add(categoryMetadataField.getName());
+                    values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(categoryId, l));
+
                 }
-                list.addAll(categoryMetadataFieldValuesRepository.getValues(category.getId())); //LMS is added
+
+                categoriesDTO.setValues(values);
+                categoriesDTO.setFieldName(fields);
+
+            } else {
+                ViewCategoriesDTO viewCategoriesDTO2= new ViewCategoriesDTO();
+                viewCategoriesDTO2.setName(category.getName());
+
+                List<Object[]> list = categoryRepository.getSubCategory(category.getName());
+                for (Object[] objects : list) {
+
+                    ViewCategoriesDTO viewCategoriesDTO= new ViewCategoriesDTO();
+                    viewCategoriesDTO.setName(objects[0].toString());
+                    viewCategoriesDTOList.add(viewCategoriesDTO);
+                }
+
             }
 
-            else {
-                list.add(categoryRepository.getCategoryName(category.getId()));
-            }
         }
-        return list;
+            return viewCategoriesDTOList;
+        }
+
+
+    //change
+
+   @Override
+    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin()
+    {
+        List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
+        List<String> fields= new ArrayList<>();
+        List<String> values=new ArrayList<>();
+        List<Object[]> list= categoryRepository.getAllCategories();
+        for (Object[] objects: list)
+        {
+            ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
+            viewCategoriesDTO.setName(objects[1].toString());
+            Category category= categoryRepository.findById(categoryRepository.getIdOfParentCategory(viewCategoriesDTO.getName())).get();
+            if(categoryRepository.checkIfLeaf(category.getId())==0)
+            {
+                List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+                for (Long l : longList) {
+                    CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                    fields.add(categoryMetadataField.getName());
+                    values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                    viewCategoriesDTO.setValues(values);
+                    viewCategoriesDTO.setFieldName(fields);
+
+                }
+
+            }
+
+            viewCategoriesDTOS.add(viewCategoriesDTO);
+        }
+        return viewCategoriesDTOS;
+
+
     }
 
 

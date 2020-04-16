@@ -89,17 +89,23 @@ public class CategoryController {
 
     @ApiOperation("This URI is for Admin to viewing a category ")
     @GetMapping("/viewSingleCategory/{categoryId}")
-    public List<Object[]> viewSingleCategory(@PathVariable("categoryId") Long categoryId)
+    public List<ViewCategoriesDTO> viewSingleCategory(@PathVariable("categoryId") Long categoryId)
     {
         return categoryDao.viewSingleCategory(categoryId);
 
     }
 
     @ApiOperation("This URI is for Admin to get all the categories")
-    @GetMapping("/viewAllCategories")
+   /* @GetMapping("/viewAllCategories")
     public List<Object[]> viewAllCategories()
     {
         return categoryDao.viewAllCategories();
+
+    }*/
+    @GetMapping("/viewAllCategories")
+    public List<ViewCategoriesDTO> viewAllCategories()
+    {
+        return categoryDao.viewAllCategoriesForAdmin();
 
     }
 
