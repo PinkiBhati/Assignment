@@ -65,6 +65,7 @@ public class ProductVariationController {
     }
 
     @Secured("ROLE_SELLER")
+    @ApiOperation("This URI is for Seller to delete a product Variation of a product which he owns")
     @DeleteMapping("/deleteProductVariation/{productVariationId}")
     public void deleteProductVariation(@PathVariable int productVariationId) {
         productVariationDao.removeProductVariation(productVariationId);
@@ -72,12 +73,14 @@ public class ProductVariationController {
 
 
     @Secured("ROLE_SELLER")
+    @ApiOperation("This URI is for Seller to upload the product variation image")
     @PostMapping("/uploadVariationPic/{id}")
     public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable Long id) throws IOException {
         return productVariationDao.uploadFile(file,id);
     }
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN","ROLE_SELLER"})
+    @ApiOperation("This URI is for everyone to download the product Variation image")
     @GetMapping("/downloadProductVariationImage/{imageName}")
     public ResponseEntity<Object> downloadProductVariationImage(@PathVariable("imageName") String imageName, HttpServletRequest request) throws IOException {
         return productVariationDao.downloadProductVariationImage(imageName,request);
