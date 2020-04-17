@@ -2,8 +2,10 @@ package com.project.Ecommerce.DaoImpl;
 
 import com.project.Ecommerce.DTO.ProductDTO;
 import com.project.Ecommerce.DTO.ViewProductDTO;
+import com.project.Ecommerce.DTO.ViewProductForCustomerDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Dao.ProductDao;
+import com.project.Ecommerce.Dao.UploadDao;
 import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
@@ -11,9 +13,14 @@ import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -55,6 +62,9 @@ public class ProductDaoImpl implements ProductDao {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    UploadDao uploadDao;
+
     @Override
     public long getId(String productName) {
         long id = productRepository.getProductVariationId(productName);
@@ -80,11 +90,24 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Object[]> getProductDetails() {
+    public List<ViewProductDTO> getProductDetails(Integer pageNo, Integer pageSize, String sortBy) {
+
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
         String username = getCurrentDetails.getUser();
         Seller seller = sellerRepository.findByUsername(username);
-        List<Object[]> objects = productRepository.getProducts(seller.getId());
-        return objects;
+        List<ViewProductDTO> list= new ArrayList<>();
+
+        for (Long l : productRepository.getAllProductsOfSeller(seller.getId(),paging))
+        {
+            Optional<Product> productOptional = productRepository.findById(l);
+            Product product1 = productOptional.get();
+            if ((product1.getSellers().getUsername()).equals(seller.getUsername())) {
+
+                 list.add(viewSingleProduct(product1.getId()));
+            }
+
+        }
+       return list;
     }
 
     @Override
@@ -235,10 +258,9 @@ public class ProductDaoImpl implements ProductDao {
 
 
     @Override
-    public List<ViewProductDTO> viewSingleProduct(Long productId) {
+    public ViewProductDTO viewSingleProduct(Long productId) {
         String sellerName = getCurrentDetails.getUser();
         Seller seller = sellerRepository.findByUsername(sellerName);
-        List<ViewProductDTO> viewProductDTOS= new ArrayList<>();
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
         ViewProductDTO viewProductDTO= new ViewProductDTO();
@@ -267,8 +289,7 @@ public class ProductDaoImpl implements ProductDao {
 
                     }
 
-                    viewProductDTOS.add(viewProductDTO);
-                    return viewProductDTOS;
+                    return viewProductDTO;
 
                 } else {
                     throw new NotFoundException("You cannot view this product");
@@ -281,25 +302,30 @@ public class ProductDaoImpl implements ProductDao {
 
     }
 
+
     @Override
-    public List<ViewProductDTO> viewSingleProductForAdmin(Long productId) {
+    public ViewProductForCustomerDTO viewSingleProductForAdmin(Long productId) {
+        String currentPath = System.getProperty("user.dir");
+        String fileBasePath = currentPath +"/src/main/resources/productVariation/";
+        File dir = new File(fileBasePath);
         Optional<Product> productOptional = productRepository.findById(productId);
-        List<ViewProductDTO> viewProductDTOS= new ArrayList<>();
+        Product product= productOptional.get();
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
+        List<String > links=new ArrayList<>();
+        ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
+        Set<ProductVariation> productVariationSet= product.getProductVariations();
 
-        if (productOptional.isPresent())
-        {
-            ViewProductDTO viewProductDTO= new ViewProductDTO();
-            Product product= productOptional.get();
+        if (productOptional.isPresent()) {
+
             viewProductDTO.setProductName(product.getName());
             viewProductDTO.setBrand(product.getBrand());
             viewProductDTO.setCancellable(product.getIsCancellable());
             viewProductDTO.setActive(product.getIsActive());
             viewProductDTO.setDescription(product.getDescription());
             viewProductDTO.setReturnable(product.getIsReturnable());
-            Long categoryId= productRepository.getCategoryId(product.getId());
-            Category category= categoryRepository.findById(categoryId).get();
+            Long categoryId = productRepository.getCategoryId(product.getId());
+            Category category = categoryRepository.findById(categoryId).get();
             viewProductDTO.setCategoryName(category.getName());
             List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
             for (Long l : longList) {
@@ -311,54 +337,113 @@ public class ProductDaoImpl implements ProductDao {
 
             }
 
-            viewProductDTOS.add(viewProductDTO);
-            return viewProductDTOS;
+            for (ProductVariation productVariation : productVariationSet) {
+                if (dir.isDirectory()) {
+                    File arr[] = dir.listFiles();
+                    for (File file : arr) {
+                        if (file.getName().startsWith(productVariation.getId().toString() + "_0")) {
+                            links.add("http://localhost:8080/downloadProductVariationImage/"+file.getName());
+                        }
+                    }
+                }
 
+
+                viewProductDTO.setLinks(links);
+
+
+            }
         }
 
         else {
-            throw new NotFoundException("This product ID is wrong");
+            throw new NotFoundException("This product is not present or it has no product variation ");
         }
+
+        return viewProductDTO;
     }
 
     @Override
-    public List<Object[]> viewProduct(Long id) {
-        List<Object[]> list = new ArrayList<>();
-        Optional<Product> product1 = productRepository.findById(id);
-        if (product1.isPresent()) {
-            if (product1.get().isActive() == true) {
-                if (productVariationRepository.getProductVariation(id).isEmpty()) {
-                    throw new NotFoundException("product variations not available for this product");
-                } else {
-                    list.addAll(productRepository.getSingleProduct(id));
-                    list.addAll(productVariationRepository.getProductVariation(id));
-                    return list;
-                }
-            } else {
-                throw new NotFoundException("product is not present or is currently not active");
+    public ViewProductForCustomerDTO viewProduct(Long id) {
+
+        String currentPath = System.getProperty("user.dir");
+        String fileBasePath = currentPath +"/src/main/resources/productVariation/";
+        File dir = new File(fileBasePath);
+        Optional<Product> productOptional = productRepository.findById(id);
+        Product product= productOptional.get();
+        List<String> fields= new ArrayList<>();
+        List<String> values=new ArrayList<>();
+        List<String > links=new ArrayList<>();
+        ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
+        Set<ProductVariation> productVariationSet= product.getProductVariations();
+
+        if (productOptional.isPresent()&&product.getIsActive()==true&&productVariationSet.isEmpty()==false) {
+
+            viewProductDTO.setProductName(product.getName());
+            viewProductDTO.setBrand(product.getBrand());
+            viewProductDTO.setCancellable(product.getIsCancellable());
+            viewProductDTO.setActive(product.getIsActive());
+            viewProductDTO.setDescription(product.getDescription());
+            viewProductDTO.setReturnable(product.getIsReturnable());
+            Long categoryId = productRepository.getCategoryId(product.getId());
+            Category category = categoryRepository.findById(categoryId).get();
+            viewProductDTO.setCategoryName(category.getName());
+            List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+            for (Long l : longList) {
+                CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                fields.add(categoryMetadataField.getName());
+                values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                viewProductDTO.setValues(values);
+                viewProductDTO.setFieldName(fields);
+
             }
-        } else {
-            throw new NotFoundException("prooduct with this id is not present");
+
+            for (ProductVariation productVariation : productVariationSet) {
+                if (dir.isDirectory()) {
+                    File arr[] = dir.listFiles();
+                    for (File file : arr) {
+                        if (file.getName().startsWith(productVariation.getId().toString() + "_0")) {
+                            links.add("http://localhost:8080/downloadProductVariationImage/"+file.getName());
+                        }
+                    }
+                }
+
+
+                viewProductDTO.setLinks(links);
+
+
+            }
         }
 
+        else {
+            throw new NotFoundException("This product is not present or it has no product variation ");
+        }
+
+        return viewProductDTO;
     }
 
     @Override
-    public List<Object[]> viewProducts(Long categoryId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        List<Object[]> list1 = new ArrayList<>();
-        if (category.isPresent()) {
-            int result = categoryRepository.checkIfLeaf(categoryId);
-            if (result == 1) {
-                List<Product> list = productRepository.getProductsForCategory(categoryId);
-                for (Product product : list) {
-                    if (!productVariationRepository.getProductVariations(product.getId()).isEmpty() && product.isActive() ==true) {
-                        list1.addAll(productRepository.getSingleProduct(product.getId()));
+    public List<ViewProductForCustomerDTO> viewProducts(Long categoryId,Integer pageNo, Integer pageSize,String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        List<ViewProductForCustomerDTO> viewProductDTOList= new ArrayList<>();
+        List<String> fields= new ArrayList<>();
+        List<String> values=new ArrayList<>();
+        List<String> links= new ArrayList<>();
+        String currentPath = System.getProperty("user.dir");
+        String fileBasePath = currentPath +"/src/main/resources/productVariation/";
+        File dir = new File(fileBasePath);
+        ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
+        if (categoryOptional.isPresent()) {
+            if (categoryRepository.checkIfLeaf(categoryId) == 0) {
+                Category category= categoryOptional.get();
 
-                    }
+                for (Long l: productRepository.getAllProductsOfCategory(category.getId(),paging))
+                {
+
+                        viewProductDTOList.add(viewProduct(l));
 
                 }
-                return list1;
+
+                return viewProductDTOList;
             } else {
                 throw new NotFoundException("Category is not a leaf category");
             }
@@ -367,22 +452,25 @@ public class ProductDaoImpl implements ProductDao {
 
         }
     }
-
     @Override
-    public List<Object[]> viewSimilarProducts(Long productId)
+    public List<ViewProductForCustomerDTO> viewSimilarProducts(Long productId,Integer pageNo, Integer pageSize,String sortBy)
     {
-        List<Object[]> list= new ArrayList<Object[]>();
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+        List<ViewProductForCustomerDTO> list= new ArrayList<>();
+        ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
         Long categoryId= productRepository.getCategoryId(productId);
+        Category category= categoryRepository.findById(categoryId).get();
         Optional<Product> productOptional= productRepository.findById(productId);
         List<Product> productList= productRepository.getProductsForCategory(categoryId);
         if (productOptional.isPresent()&&productOptional.get().getIsActive()==true) //product passed in header should be active
         {
             Product product= productOptional.get();
-            for (Product product1:productList)
+            for (Long l: productRepository.getAllProductOfCategoryAndSameBrand(categoryId,product.getBrand(),paging))
             {
-                if(product1.getBrand().equals(product.getBrand())&&product1.getIsActive()==true) //similiar product's isActive should be true
+                if(productRepository.findById(l).get().getIsActive()==true) //similiar product's isActive should be true
                 {
-                    list.addAll(productRepository.getSingleProduct(product1.getId()));
+                    Product product1= productRepository.findById(l).get();
+                    list.add(viewProduct(product1.getId())) ;
                 }
             }
             return list;
@@ -394,7 +482,20 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Object[]> getAllProducts() {
-        return productRepository.getAllProducts();
+    public List<ViewProductForCustomerDTO> getAllProducts(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+        List<ViewProductForCustomerDTO> viewProductForCustomerDTOS = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        List<String> links = new ArrayList<>();
+
+        for (Long l : productRepository.getAllProductsId(paging)) {
+
+            viewProductForCustomerDTOS.add(viewSingleProductForAdmin(l)) ;
+
+        }
+
+        return viewProductForCustomerDTOS;
     }
+
 }
