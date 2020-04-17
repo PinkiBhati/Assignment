@@ -10,9 +10,11 @@ import com.project.Ecommerce.Enums.FromStatus;
 import com.project.Ecommerce.Enums.ToStatus;
 import com.project.Ecommerce.ExceptionHandling.*;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,34 +54,39 @@ public class CustomerDaoImpl implements CustomerDao {
 
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
+
+
     @Override
     public String editContact(Customer customer) {
         if (customer.getContact().matches("(\\+91|0)[0-9]{10}")) {
-            String user = getCurrentDetails.getUser();
+            String user = getCurrentlyLoggedInUser.getCurrentUser();
             Customer user1 = customerRepository.findByUsername(user);
             user1.setContact(customer.getContact());
             user1.setModifiedBy(user);
             customerRepository.save(user1);
             return "Success";
         } else {
-            throw new PatternMismatchException("Contact number should start with +91 or 0 and length should be 10");
+            throw new PatternMismatchException(messageSource.getMessage("message28",params, LocaleContextHolder.getLocale()));
         }
     }
 
     @Override
     public List<AddressDTO> getAddresses() {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         Set<Address> addressSet= customer.getAddresses();
         List<AddressDTO> addressDTOList= new ArrayList<>();
         if (addressSet.isEmpty()) {
-            throw new NotFoundException("No address found for this user");
+            throw new NotFoundException(messageSource.getMessage("message29",params, LocaleContextHolder.getLocale()));
         }
         for (Address address: addressSet)
         {
@@ -93,7 +100,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public List<Object[]> getCustomerDetails() {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         List<Object[]> objects = customerRepository.getDetails(customer.getUsername());
         return objects;
@@ -102,7 +109,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer getCustomer() {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         return customer;
     }
@@ -112,7 +119,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public String getAnSellerAccount(Seller seller) {
 
         if (seller.getCompanyName() != null && seller.getCompanyContact() != null && seller.getGst() != null) {
-            String username = getCurrentDetails.getUser();
+            String username = getCurrentlyLoggedInUser.getCurrentUser();
             User customer = userRepository.findByUsername(username);
             if (seller.getCompanyContact().matches("(\\+91|0)[0-9]{10}")) {
                 if (seller.getGst().matches("\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")) {
@@ -128,14 +135,14 @@ public class CustomerDaoImpl implements CustomerDao {
                     userRepository.save(customer);
                     return "success";
                 } else {
-                    throw new PatternMismatchException("gst number is not correct");
+                    throw new PatternMismatchException(messageSource.getMessage("message30",params, LocaleContextHolder.getLocale()));
                 }
             } else {
-                throw new PatternMismatchException("Contact number should start with +91 or 0 and length should be 10");
+                throw new PatternMismatchException(messageSource.getMessage("message28",params, LocaleContextHolder.getLocale()));
 
             }
         } else {
-            throw new NullException("all the fields are mandatory");
+            throw new NullException("All the fields are mandatory");
         }
 
 
@@ -148,7 +155,7 @@ public class CustomerDaoImpl implements CustomerDao {
         OrderStatus orderStatus = orderStatusOptional.get();
 
         if (orderStatus.getToStatus() == ToStatus.CLOSED) {
-            throw new NullException("You Can't request for return ");
+            throw new NullException(messageSource.getMessage("message31",params, LocaleContextHolder.getLocale()));
 
         } else if (orderStatus.getToStatus() == ToStatus.DELIVERED) {
             orderStatus.setFromStatus(FromStatus.RETURN_REQUESTED);
@@ -167,7 +174,7 @@ public class CustomerDaoImpl implements CustomerDao {
         OrderStatus orderStatus = orderStatusOptional.get();
 
         if (orderStatus.getToStatus() == ToStatus.DELIVERED) {
-            throw new NullException("You can't cancel the order.");
+            throw new NullException(messageSource.getMessage("message32",params, LocaleContextHolder.getLocale()));
         } else {
             orderStatus.setFromStatus(FromStatus.CANCELLED);
             orderStatusRepository.save(orderStatus);
@@ -179,7 +186,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public ProfileDTO viewProfile()
     {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setFirstName(customer.getFirstName());
@@ -192,7 +199,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public String updateProfile(ProfileDTO customer)
     {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer1 = customerRepository.findByUsername(username);
         if (customer.getFirstName()!=null)
             customer1.setFirstName(customer.getFirstName());
@@ -208,24 +215,19 @@ public class CustomerDaoImpl implements CustomerDao {
             }
             else
             {
-                throw new PatternMismatchException("Contact number should start with +91 or 0 and length should be 10");
+                throw new PatternMismatchException(messageSource.getMessage("message28",params, LocaleContextHolder.getLocale()));
             }
         }
-       /* if (customer.isActive()==false)
-        {
-            customer1.setActive(false);
-
-        }*/
         customer1.setEnabled(true);
         customerRepository.save(customer1);
         return "success";
     }
 
-    //request
+
     @Override
     public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException
     {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         String filename = customer.getId().toString();
         System.out.println(filename);
@@ -236,7 +238,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public ResponseEntity<Object> uploadFile(MultipartFile file) throws IOException
     {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         return uploadDao.uploadSingleImage(file, customer);
     }

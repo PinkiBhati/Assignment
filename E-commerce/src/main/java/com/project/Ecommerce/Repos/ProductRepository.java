@@ -99,4 +99,7 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, L
     List<Long> getAllProductOfCategoryAndSameBrand(@Param("category_id") Long category_id,@Param("brand") String brand,Pageable pageable);
 
 
+    @Query(value = "select id from product_variation where product_id=:product_id",nativeQuery = true)
+    List<Long> getAllProductVariationIdsForProduct(@Param("product_id") Long product_id,Pageable pageable);
+
 }

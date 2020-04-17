@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ public class CategoryMetadataFieldController {
     @Autowired
     CategoryMetadataFieldDao categoryMetadataFieldDao;
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to add a CategoryMetadata Field Name")
     @PostMapping("/addCategoryMetadataField")
     public String addCategoryMetadataField(@Valid @RequestBody CategoryMetadataField categoryMetadataField) {
@@ -32,6 +34,7 @@ public class CategoryMetadataFieldController {
         return "CategoryMetadataField is successfully created";
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to delete A categoryMetadata Field Name associated to the ID provided")
     @DeleteMapping("/deleteCategoryMetadataField/{id}")
     public String deleteCategoryMetadataField(@PathVariable(value = "id") Long id) {
@@ -39,6 +42,7 @@ public class CategoryMetadataFieldController {
         return "CategoryMetadataField is successfully deleted";
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to View All the metadata Names with paging")
     @GetMapping("/viewCategoryMetadataField")
     public ResponseEntity<List<CategoryMetadataField>> viewCategoryMetadataField(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,

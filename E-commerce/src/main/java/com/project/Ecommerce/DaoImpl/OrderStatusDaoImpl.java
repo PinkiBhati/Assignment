@@ -9,7 +9,7 @@ import com.project.Ecommerce.Repos.OrderStatusRepository;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.ProductVariationRepository;
 import com.project.Ecommerce.Repos.SellerRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
     @Autowired
     SellerRepository sellerRepository;
     @Autowired
@@ -33,7 +33,7 @@ public class OrderStatusDaoImpl implements OrderStatusDao {
 
     @Override
     public void updateStatus(OrderStatus orderStatus, Long productVariationId, Long orderStatusId) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(username);
         Long productId = productVariationRepository.getProductId(productVariationId);
         Optional<Product> productOptional = productRepository.findById(productId);

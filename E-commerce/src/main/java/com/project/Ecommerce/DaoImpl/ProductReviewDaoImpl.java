@@ -9,8 +9,10 @@ import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.CustomerRepository;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.ProductReviewRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,17 +26,20 @@ public class ProductReviewDaoImpl implements ProductReviewDao {
     ProductReviewRepository productReviewRepository;
 
     @Autowired
-    GetCurrentDetails getCurrentUser;
+    GetCurrentlyLoggedInUser getCurrentUser;
 
     @Autowired
     CustomerRepository customerRepository;
 
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
 
     @Override
     public void addReview(ProductReview productReview, Long productId) {
-        String username = getCurrentUser.getUser();
+        String username = getCurrentUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         productReview.setCustomer(customer);
         Optional<Product> product = productRepository.findById(productId);
@@ -47,7 +52,7 @@ public class ProductReviewDaoImpl implements ProductReviewDao {
 
         List<Object[]> list = productReviewRepository.getAllReviews(productId);
         if (list.isEmpty()) {
-            throw new NullException("No reviews found for this product");
+            throw new NullException(messageSource.getMessage("message33",params , LocaleContextHolder.getLocale()));
         }
         return list;
     }

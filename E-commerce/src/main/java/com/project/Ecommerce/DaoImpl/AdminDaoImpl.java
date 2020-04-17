@@ -6,11 +6,14 @@ import com.project.Ecommerce.DTO.ListSellerDTO;
 import com.project.Ecommerce.Dao.AdminDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Entities.User;
+import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +41,10 @@ public class AdminDaoImpl implements AdminDao {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
+
     @Async
     public void activateCustomerAndSeller(Long userId) throws MailException {
         User user1 = null;
@@ -45,7 +52,7 @@ public class AdminDaoImpl implements AdminDao {
         if (user.isPresent()) {
             user1 = user.get();
             if (user1.isEnabled() == true) {
-                throw new NullException("user account is already activated");
+                throw new NullException(messageSource.getMessage("message11",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setEnabled(true);
                 System.out.println("Sending email for account activation");
@@ -53,7 +60,7 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account activation");
-                mail.setText("your account has been activated by admin you can now login");
+                mail.setText("Your account has been activated by admin you can now login");
                 System.out.println("now starting");
                 javaMailSender.send(mail);
                 userRepository.save(user1);
@@ -61,7 +68,7 @@ public class AdminDaoImpl implements AdminDao {
 
             }
         } else {
-            throw new UserNotFoundException("user with this id is not present");
+            throw new UserNotFoundException(messageSource.getMessage("message12",params, LocaleContextHolder.getLocale()));
         }
 
     }
@@ -75,7 +82,7 @@ public class AdminDaoImpl implements AdminDao {
         if (user.isPresent()) {
             user1 = user.get();
             if (user1.isEnabled() == false) {
-                System.out.println("user account is already deactivated");
+                throw new NullException(messageSource.getMessage("message13",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setEnabled(false);
                 userRepository.save(user1);
@@ -89,7 +96,7 @@ public class AdminDaoImpl implements AdminDao {
                 System.out.println("Email Sent!");
             }
         } else {
-            throw new UserNotFoundException("user with this id is not present");
+            throw new UserNotFoundException(messageSource.getMessage("message12",params, LocaleContextHolder.getLocale()));
         }
 
     }
@@ -102,7 +109,7 @@ public class AdminDaoImpl implements AdminDao {
         if (user.isPresent()) {
             user1 = user.get();
             if (user1.isAccountNonLocked() == false) {
-                return "user account is already locked";
+                throw new NullException(messageSource.getMessage("message14",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setAccountNonLocked(false);
                 userRepository.save(user1);
@@ -111,14 +118,14 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account status");
-                mail.setText("your account has been locked by admin you can not login now");
+                mail.setText("Your account has been locked by admin you can not login now");
                 javaMailSender.send(mail);
                 System.out.println("Email Sent!");
                 return "account has been locked";
             }
         } else {
-            System.out.println("user with this id is not present");
-            throw new RuntimeException();
+            throw new UserNotFoundException(messageSource.getMessage("message12",params, LocaleContextHolder.getLocale()));
+
         }
 
     }
@@ -130,7 +137,7 @@ public class AdminDaoImpl implements AdminDao {
         if (user.isPresent()) {
             user1 = user.get();
             if (user1.isAccountNonLocked() == true) {
-                return "user account is already unlocked";
+                throw new NullException(messageSource.getMessage("message15",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setAccountNonLocked(true);
                 userRepository.save(user1);
@@ -145,8 +152,8 @@ public class AdminDaoImpl implements AdminDao {
                 return "account has been locked";
             }
         } else {
-            System.out.println("user with this id is not present");
-            throw new RuntimeException();
+            throw new UserNotFoundException(messageSource.getMessage("message12",params, LocaleContextHolder.getLocale()));
+
         }
 
     }
@@ -189,8 +196,6 @@ public class AdminDaoImpl implements AdminDao {
         List<ListSellerDTO> userList= new ArrayList<>();
         List<Long> longList=  userRepository.findSellerIds(paging);
 
-
-            System.out.println("1");
             for (Long l : longList)
             {
                 User user= userRepository.findById(l).get();

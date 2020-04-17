@@ -7,7 +7,7 @@ import com.project.Ecommerce.Dao.UploadDao;
 import com.project.Ecommerce.Entities.Customer;
 import com.project.Ecommerce.Entities.Seller;
 import com.project.Ecommerce.Repos.CustomerRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class CustomerController {
 
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     CustomerRepository customerRepository;
@@ -62,6 +62,7 @@ public class CustomerController {
     }
 
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to Update his Contact")
     @PutMapping("/editContact")
     public String editContact(@RequestBody Customer customer) {
@@ -71,6 +72,7 @@ public class CustomerController {
 
 
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer so that he can get A account as a seller also")
     @PutMapping("/getSellerAccount")
     public String getAnSellerAccount(@RequestBody Seller seller) {
@@ -79,6 +81,7 @@ public class CustomerController {
 
     }
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to get his details ")
     @GetMapping("/detailsOfCustomer")
     public List<Object[]> getDetails() {
@@ -87,6 +90,7 @@ public class CustomerController {
     }
 
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to request return for a order")
     @PostMapping("/returnRequested/{orderStatusId}")
     public String returnRequested(@PathVariable int orderStatusId) {
@@ -95,6 +99,7 @@ public class CustomerController {
     }
 
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to request for cancelling the order")
     @PostMapping("/cancelOrder/{orderStatusId}")
     public String cancelOrder(@PathVariable int orderStatusId) {
@@ -103,12 +108,14 @@ public class CustomerController {
 
     }
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to upload his profile picture")
     @PostMapping("/uploadProfilePic")
     public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         return customerDao.uploadFile(file);
     }
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to view his profile image")
     @GetMapping("/viewProfileImage")
     public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException {

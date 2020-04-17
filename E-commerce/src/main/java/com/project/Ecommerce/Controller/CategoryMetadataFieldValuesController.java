@@ -9,6 +9,7 @@ import com.project.Ecommerce.Repos.CategoryRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,6 +28,7 @@ public class CategoryMetadataFieldValuesController {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to add a Metadata Field Value for a " +
             "Combination of Category and a Metadata Field")
     @PostMapping("/addMetadataValues/{categoryId}/{metadataId}")
@@ -37,6 +39,7 @@ public class CategoryMetadataFieldValuesController {
 
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to update Metadata Field Value for a " +
             "Combination of Category and a Metadata Field")
     @PutMapping("/updateMetadataValues/{categoryId}/{metadataId}")
@@ -50,6 +53,7 @@ public class CategoryMetadataFieldValuesController {
 
 
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to view A single Metadata Field Values for a " +
             "Combination of Category and a Metadata Field")
     @GetMapping("/viewAMetadataValue/{categoryId}/{metadataId}")
@@ -58,12 +62,14 @@ public class CategoryMetadataFieldValuesController {
         return categoryMetadataFieldValuesDao.viewAMetadataValue(categoryId, metadataId);
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to View All the Metadata Field Values")
     @GetMapping("/viewAllMetadataValues")
     public List<Object[]> viewAllMetadataValues() {
         return categoryMetadataFieldValuesRepository.getAllMetadataValues();
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for admin to Delete a particular entry from Metadata Field Values")
     @DeleteMapping("/deleteAMetadataValue/{categoryId}/{metadataId}")
     public void deleteAMetadataValue(@PathVariable(value = "categoryId") Long categoryId,

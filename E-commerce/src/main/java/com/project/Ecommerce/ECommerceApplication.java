@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.LocaleResolver;
@@ -23,20 +24,24 @@ import java.util.Locale;
 public class ECommerceApplication {
 
 
+
 	@GetMapping("/")
 	public String index(){
 		return "index";
 	}
 
+	@Secured("ROLE_ADMIN")
 	@GetMapping("/admin/home")
 	public String adminHome(){
 		return "Admin home";
 	}
 
+	@Secured("ROLE_CUSTOMER")
 	@GetMapping("/customer/home")
 	public String customerHome(){
 		return "Customer home";
 	}
+	@Secured("ROLE_SELLER")
 	@GetMapping("/seller/home")
 	public String sellerHome()
 	{

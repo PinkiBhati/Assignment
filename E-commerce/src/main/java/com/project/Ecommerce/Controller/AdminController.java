@@ -67,16 +67,12 @@ public class AdminController {
         adminDao.activateCustomerAndSeller(userId);
     }
 
-
     @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can deactivate a particular user with given ID")
     @PatchMapping("/deactivateAccount/{userId}")
     public void deactivateUser(@PathVariable(name = "userId") Long userId) {
         adminDao.deActivateCustomerAndSeller(userId);
     }
-
-
-
 
     @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can lock an user's  account")

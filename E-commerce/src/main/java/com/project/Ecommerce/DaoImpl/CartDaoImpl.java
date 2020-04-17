@@ -9,7 +9,7 @@ import com.project.Ecommerce.Entities.ProductVariation;
 import com.project.Ecommerce.Repos.CartRepository;
 import com.project.Ecommerce.Repos.CustomerRepository;
 import com.project.Ecommerce.Repos.ProductVariationRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class CartDaoImpl implements CartDao {
 
     @Autowired
-    GetCurrentDetails getCurrentUser;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     CartRepository cartRepository;
@@ -36,7 +36,7 @@ public class CartDaoImpl implements CartDao {
 
     @Override
     public void addToCart(Long productVariationId, int quantity) {
-        String username = getCurrentUser.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer user = customerRepository.findByUsername(username);
         Cart cart = new Cart();
         Optional<ProductVariation> productVariation = productVariationRepository.findById(productVariationId);
@@ -55,14 +55,14 @@ public class CartDaoImpl implements CartDao {
 
     @Override
     public void emptyCart() {
-        String username = getCurrentUser.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         cartRepository.emptyUserCart(customer.getId());
     }
 
     @Override
     public List<Object[]> viewCart() {
-        String username = getCurrentUser.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         List<Object[]> list = cartRepository.viewCart(customer.getId());
         if (list.isEmpty()) {

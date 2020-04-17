@@ -6,9 +6,11 @@ import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.PatternMismatchException;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class SellerDaoImpl implements SellerDao {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
     @Autowired
     SellerRepository sellerRepository;
     @Autowired
@@ -34,18 +36,20 @@ public class SellerDaoImpl implements SellerDao {
     @Autowired
     OrderStatusRepository orderStatusRepository;
     @Autowired
-    JavaMailSender javaMailSender;
-    @Autowired
     ModelMapper modelMapper;
     @Autowired
     ProductRepository productRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
+
 
     @Override
     public List<Object[]> getSellerDetails() {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         List<Object[]> objects = sellerRepository.getDetails(username);
         return objects;
     }
@@ -55,7 +59,7 @@ public class SellerDaoImpl implements SellerDao {
     public String getAnCustomerAccount(Customer customer) {
         if (customer.getContact() != null) {
             if (customer.getContact().matches("(\\+91|0)[0-9]{10}")) {
-                String username = getCurrentDetails.getUser();
+                String username = getCurrentlyLoggedInUser.getCurrentUser();
                 User seller = userRepository.findByUsername(username);
                 customerRepository.insertContact(customer.getContact(), seller.getId());
                 Set<Role> roles = seller.getRoles();
@@ -68,17 +72,17 @@ public class SellerDaoImpl implements SellerDao {
                 userRepository.save(seller);
                 return "success";
             } else {
-                throw new PatternMismatchException("Contact number should start with +91 or 0 and length should be 10");
+                throw new PatternMismatchException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NullException("Contact number is mandatory");
+            throw new NullException(messageSource.getMessage("message47",params , LocaleContextHolder.getLocale()));
         }
 
     }
 
     @Override
     public String editSellerDetails(Seller seller) {
-        String user = getCurrentDetails.getUser();
+        String user = getCurrentlyLoggedInUser.getCurrentUser();
         Seller user1 = sellerRepository.findByUsername(user);
         if (seller.getCompanyName() != null) {
             user1.setCompanyName(seller.getCompanyName());
@@ -87,7 +91,7 @@ public class SellerDaoImpl implements SellerDao {
             if (seller.getCompanyContact().matches("(\\+91|0)[0-9]{10}")) {
                 user1.setCompanyContact(seller.getCompanyContact());
             } else {
-                throw new PatternMismatchException("Contact number should start with +91 or 0 and length should be 10");
+                throw new PatternMismatchException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
             }
         }
         if (seller.getGst() != null) {
@@ -95,7 +99,7 @@ public class SellerDaoImpl implements SellerDao {
             if (seller.getGst().matches("\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")) {
                 user1.setGst(seller.getGst());
             } else {
-                throw new PatternMismatchException("gst number is not correct");
+                throw new PatternMismatchException(messageSource.getMessage("message30",params , LocaleContextHolder.getLocale()));
             }
         }
         user1.setModifiedBy(user);
@@ -106,7 +110,7 @@ public class SellerDaoImpl implements SellerDao {
     @Override
     public SellerProfileDTO viewProfileOfSeller()
     {
-        String userName = getCurrentDetails.getUser();
+        String userName = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller= sellerRepository.findByUsername(userName);
         SellerProfileDTO sellerProfileDTO= new SellerProfileDTO(seller.getId(),seller.getFirstName()
                 ,seller.getMiddleName(),seller.getLastName(),seller.isActive(),
@@ -126,7 +130,7 @@ public class SellerDaoImpl implements SellerDao {
     @Override
     public void updateProfileForSeller( SellerProfileDTO sellerProfileDTO)
     {
-        String userName= getCurrentDetails.getUser();
+        String userName= getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller= sellerRepository.findByUsername(userName);
 
         if(sellerProfileDTO.getFirstName()!=null)
@@ -152,7 +156,7 @@ public class SellerDaoImpl implements SellerDao {
                 seller.setCompanyContact(sellerProfileDTO.getCompanyContact());
             }
             else {
-                throw new NullException("Company contact should start with 0 or +91 and must have a length of 10");
+                throw new NullException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
             }
 
         }

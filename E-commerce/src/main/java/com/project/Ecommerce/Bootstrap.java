@@ -319,8 +319,8 @@ public class Bootstrap implements ApplicationRunner {
             seller.setLastName("Bhati");
             seller.addRoles(role1);
             seller.setCreatedBy("Priti");
-            seller.setEnabled(false);
-            seller.setActive(false);
+            seller.setEnabled(true);
+            seller.setActive(true);
             seller.setAddresses(addressSet);
             seller.setCompanyContact("+919843928689");
             seller.setCompanyName("Tommy Hilfiger");

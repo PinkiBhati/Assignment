@@ -5,18 +5,16 @@ import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.TokenDao;
 import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.*;
-import com.project.Ecommerce.ExceptionHandling.AlreadyExists;
-import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
-import com.project.Ecommerce.ExceptionHandling.TokenNotFoundException;
 import com.project.Ecommerce.Repos.AddressRepository;
 import com.project.Ecommerce.Repos.RoleRepository;
 import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,7 +56,11 @@ public class UserDaoImpl implements UserDao {
     TokenDao tokenDao;
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    private MessageSource messageSource;
+    Long[] params={};
+
+    @Autowired
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     public AppUser loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
@@ -81,7 +83,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String update(AddressDTO address, Long addressId) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user = userRepository.findByUsername(username);
         Set<Address> addressSet= user.getAddresses();
         {
@@ -125,7 +127,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String deleteUser() {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user = userRepository.findByUsername(username);
         user.setModifiedBy(username);
         userRepository.deleteUser(user.getId());
@@ -136,7 +138,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String addNewAddress(Address address) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user = userRepository.findByUsername(username);
         address.setLabel("HOME");
         address.setUser(user);
@@ -193,7 +195,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String editPassword(UserDTO user) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user1 = userRepository.findByUsername(username);
         if (user.getPassword() != null && user.getConfirmPassword() != null) {
             if (user.getPassword().equals(user.getConfirmPassword())) {
@@ -209,10 +211,10 @@ public class UserDaoImpl implements UserDao {
                 javaMailSender.send(mail);
 
             } else {
-                throw new PasswordAndConfirmPasswordMismatchException("password and confirm password does not match");
+                throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NullPointerException("password and confirm password both are mandatory");
+            throw new NullPointerException(messageSource.getMessage("message48",params , LocaleContextHolder.getLocale()));
         }
         return "success";
 

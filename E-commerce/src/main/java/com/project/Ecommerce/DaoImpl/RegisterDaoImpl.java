@@ -11,7 +11,9 @@ import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -56,6 +58,12 @@ public class RegisterDaoImpl implements RegisterDao {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
+
+
+
     @Override
     public String registerCustomer(CustomerDTO customer) {
         if (customer.getPassword().equals(customer.getConfirmPassword())) {
@@ -71,7 +79,7 @@ public class RegisterDaoImpl implements RegisterDao {
             }
             return "successfully registered";
         } else {
-            throw new PasswordAndConfirmPasswordMismatchException("Password is not same as confirm password");
+            throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
         }
 
     }
@@ -110,7 +118,7 @@ public class RegisterDaoImpl implements RegisterDao {
             }
             return "success";
         } else {
-            throw new PasswordAndConfirmPasswordMismatchException("Both passwords are not same");
+            throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message34",params , LocaleContextHolder.getLocale()));
         }
 
     }
@@ -143,7 +151,7 @@ public class RegisterDaoImpl implements RegisterDao {
         User user= userRepository.findByUsername(emailId);
         if(user==null)
         {
-            throw new UserNotFoundException("This User is not present");
+            throw new UserNotFoundException(messageSource.getMessage("message46",params , LocaleContextHolder.getLocale()));
         }
 
         else {

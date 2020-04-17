@@ -8,14 +8,14 @@ import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -29,14 +29,10 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Autowired
     CategoryMetadataFieldRepository categoryMetadataFieldRepository;
-    @Autowired
-    GetCurrentDetails getCurrentDetails;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    SellerRepository sellerRepository;
+    private MessageSource messageSource;
+    Long[] params={};
 
 
     @Override
@@ -50,7 +46,7 @@ public class CategoryDaoImpl implements CategoryDao {
 
         List<Object[]> objects = categoryRepository.getMainCategory();
         if (objects.isEmpty()) {
-            throw new NullException("No category Found");
+            throw new NullException(messageSource.getMessage("message16",params, LocaleContextHolder.getLocale()));
         }
         return objects;
     }
@@ -73,12 +69,12 @@ public class CategoryDaoImpl implements CategoryDao {
             }
             else
             {
-                throw new NotFoundException("category with this id is not present");
+                throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
             }
         }
         else
         {
-            throw new NullPointerException("parent category you selected is already a leaf node");
+            throw new NullPointerException(messageSource.getMessage("message17",params, LocaleContextHolder.getLocale()));
         }
     }
 
@@ -91,7 +87,7 @@ public class CategoryDaoImpl implements CategoryDao {
             categoryRepository.save(category1);
 
         } else {
-            throw new NotFoundException("This category ID is wrong as no entry is present for this ID");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
 
         }
     }
@@ -140,7 +136,7 @@ public class CategoryDaoImpl implements CategoryDao {
             return filterDTO;
         }
         else {
-            throw new NotFoundException("The categoryId is wrong and this is not a leaf node ");
+            throw new NotFoundException(messageSource.getMessage("message18",params, LocaleContextHolder.getLocale()));
         }
 
 
@@ -150,7 +146,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public ResponseEntity addMainCategory(Category category)
     {
         categoryRepository.save(category);
-        return ResponseEntity.ok().body("category added");
+        return ResponseEntity.ok().body(messageSource.getMessage("message19",params, LocaleContextHolder.getLocale()));
     }
 
     /*Long cid = categoryId;
@@ -289,13 +285,13 @@ public class CategoryDaoImpl implements CategoryDao {
                 return list;
             }
             else {
-                throw new NotFoundException("This is a leaf node and doesn't have any sub-category");
+                throw new NotFoundException(messageSource.getMessage("message20",params, LocaleContextHolder.getLocale()));
             }
 
         }
 
         else {
-            throw new NotFoundException("This category Id is wrong");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
 
         }
     }

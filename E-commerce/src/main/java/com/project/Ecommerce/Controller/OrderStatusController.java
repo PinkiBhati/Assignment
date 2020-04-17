@@ -6,10 +6,11 @@ import com.project.Ecommerce.Entities.NotificationService;
 import com.project.Ecommerce.Entities.OrderStatus;
 import com.project.Ecommerce.Repos.OrderStatusRepository;
 import com.project.Ecommerce.Repos.UserRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +30,9 @@ public class OrderStatusController {
     @Autowired
     OrderStatusRepository orderStatusRepository;
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to update the status of the product ")
     @PostMapping("/setStatus/{productVariationId}/{orderStatusId}")
     public void setStatus(@RequestBody OrderStatus orderStatus ,

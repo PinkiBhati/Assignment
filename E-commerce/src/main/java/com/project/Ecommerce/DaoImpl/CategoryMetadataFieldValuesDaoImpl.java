@@ -9,6 +9,8 @@ import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
 import com.project.Ecommerce.Repos.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -25,6 +27,9 @@ public class CategoryMetadataFieldValuesDaoImpl implements CategoryMetadataField
     CategoryRepository categoryRepository;
     @Autowired
     CategoryMetadataFieldRepository categoryMetadataFieldRepository;
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
 
     @Override
     public void addMetadataValues(CategoryMetadataFieldValues categoryMetadataFieldValues, Long categoryId, Long metadataId) {
@@ -46,16 +51,15 @@ public class CategoryMetadataFieldValuesDaoImpl implements CategoryMetadataField
 
                 }
                 else {
-                    throw new NullException("Values are not unique");
+                    throw new NullException(messageSource.getMessage("message24",params, LocaleContextHolder.getLocale()));
                 }
                 categoryMetadataFieldValues.setCategoryMetadataField(categoryMetadataFieldRepository.findById(metadataId).get());
                 categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues);
             } else {
-                throw new NotFoundException("This metadata ID is wrong because no " +
-                        "metadata is present for this ID");
+                throw new NotFoundException(messageSource.getMessage("message25",params, LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("Category ID is wrong as no data is present for this ID");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
         }
 
     }
@@ -72,17 +76,16 @@ public class CategoryMetadataFieldValuesDaoImpl implements CategoryMetadataField
                     categoryMetadataFieldValues1.setFieldValues(categoryMetadataFieldValues.getFieldValues());
                     categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues1);
                 } else {
-                    throw new NotFoundException("This combination of category and metadata " +
-                            "is wrong as no entry is present for this combination");
+                    throw new NotFoundException(messageSource.getMessage("message27",params, LocaleContextHolder.getLocale()));
                 }
             }
             else {
-                throw new NotFoundException("This metadata ID is wrong");
+                throw new NotFoundException(messageSource.getMessage("message26",params, LocaleContextHolder.getLocale()));
             }
         }
 
         else {
-            throw new NotFoundException("This Category Id is wrong");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
         }
 
 
@@ -95,11 +98,10 @@ public class CategoryMetadataFieldValuesDaoImpl implements CategoryMetadataField
             if (categoryMetadataFieldRepository.findById(metadataId).isPresent()) {
                 return categoryMetadataFieldValuesRepository.getParticularMetadataValue(categoryId, metadataId);
             } else {
-                throw new NotFoundException("This metadata ID is wrong because no " +
-                        "metadata is present for this ID");
+                throw new NotFoundException(messageSource.getMessage("message26",params, LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("Category ID is wrong as no data is present for this ID");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
         }
 
     }
@@ -111,11 +113,10 @@ public class CategoryMetadataFieldValuesDaoImpl implements CategoryMetadataField
             if (categoryMetadataFieldRepository.findById(metadataId).isPresent()) {
                 categoryMetadataFieldValuesRepository.deleteMetadataFieldValues(categoryId, metadataId);
             } else {
-                throw new NotFoundException("This metadata ID is wrong because no " +
-                        "metadata is present for this ID");
+                throw new NotFoundException(messageSource.getMessage("message26",params, LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("Category ID is wrong as no data is present for this ID");
+            throw new NotFoundException(messageSource.getMessage("message5",params, LocaleContextHolder.getLocale()));
         }
 
     }

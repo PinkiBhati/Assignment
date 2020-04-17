@@ -6,7 +6,7 @@ import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.Enums.FromStatus;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +35,14 @@ public class OrderDaoImpl implements OrderDao {
     @Autowired
     OrderStatusRepository orderStatusRepository;
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     ProductVariationDao productVariationDao;
 
     @Override
     public void placeNewOrder(Long productVariationId, int quantity, String paymentMethod, Long AddressId) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         productVariationDao.updateQuantity(productVariationId, quantity);
         Optional<ProductVariation> productVariationOptional = productVariationRepository.findById(productVariationId);

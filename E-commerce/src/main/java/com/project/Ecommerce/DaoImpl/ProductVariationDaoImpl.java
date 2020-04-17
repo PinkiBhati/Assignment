@@ -11,15 +11,19 @@ import com.project.Ecommerce.Entities.Seller;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -39,7 +43,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
     @Autowired
     UploadDao uploadDao;
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
     @Autowired
     SellerRepository sellerRepository;
 
@@ -52,6 +56,9 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
     @Autowired
     CategoryMetadataFieldRepository categoryMetadataFieldRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
 
     @Override
     public void makeProductVariationNotAvailable(ProductVariation productVariation) {
@@ -82,12 +89,12 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
         Optional<Product> productOptional = productRepository.findById(productId);
 
         if (!productOptional.isPresent()) {
-            throw new NotFoundException("Either the product name is wrong or the product is unavailable");
+            throw new NotFoundException(messageSource.getMessage("message34",params , LocaleContextHolder.getLocale()));
         } else {
             Product product1 = productOptional.get();
             if (product1.getIsActive() == true) {
                 Map<String, String> stringMap = new HashMap<String, String>();
-                String seller = getCurrentDetails.getUser();
+                String seller = getCurrentlyLoggedInUser.getCurrentUser();
                 Seller seller1 = sellerRepository.findByUsername(seller);
                 Map<String, Object> map = productVariation.getInfoAttributes();
 
@@ -125,15 +132,15 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                         productVariation.setActive(true);
                         productVariationRepository.save(productVariation);
                     } else {
-                        throw new NotFoundException("Field values are not provided correctly");
+                        throw new NotFoundException(messageSource.getMessage("message35",params , LocaleContextHolder.getLocale()));
                     }
 
                 } else {
-                    throw new NullException("you can't add any product variation to this product");
+                    throw new NullException(messageSource.getMessage("message36",params , LocaleContextHolder.getLocale()));
                 }
 
             } else {
-                throw new NullException("This product is not active so you cannot add product variation");
+                throw new NullException(messageSource.getMessage("message37",params , LocaleContextHolder.getLocale()));
             }
 
         }
@@ -142,7 +149,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
 
     @Override
     public void removeProductVariation(long productVariationId) {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(username);
         long id = productVariationRepository.getProductId(productVariationId);
         Optional<Product> productOptional = productRepository.findById(id);
@@ -150,13 +157,13 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
         if ((product.getSellers().getUsername()).equals(seller.getUsername())) {
             productVariationRepository.deleteById(productVariationId);
         } else {
-            throw new NullException("You can't delete this product");
+            throw new NullException(messageSource.getMessage("message",params , LocaleContextHolder.getLocale()));
         }
     }
 
     @Override
     public void editProductVariation(ProductVariation productVariation, Long productVariationId) throws JsonProcessingException {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(username);
         Long productId = productVariationRepository.getProductId(productVariationId);
         Optional<Product> productOptional = productRepository.findById(productId);
@@ -205,24 +212,24 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                         productVariation2.setMetadata(info);
                         productVariationRepository.save(productVariation2);
                     } else {
-                        throw new NotFoundException("Field values are not provided correctly");
+                        throw new NotFoundException(messageSource.getMessage("message38",params , LocaleContextHolder.getLocale()));
                     }
 
                 } else {
-                    throw new NullException("You don't have this product to sell");
+                    throw new NullException(messageSource.getMessage("message3",params , LocaleContextHolder.getLocale()));
                 }
             } else {
-                throw new NullException("This product is not active");
+                throw new NullException(messageSource.getMessage("message39",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NullException("This product variation ID is wrong");
+            throw new NullException(messageSource.getMessage("message40",params , LocaleContextHolder.getLocale()));
         }
 
     }
 
     @Override
     public ProductVariationDTO getSingleProductVariation(Long productVariationId) throws IOException {
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(username);
         Long id = productVariationRepository.getProductId(productVariationId);
         ProductVariationDTO productVariationDTO= new ProductVariationDTO();
@@ -261,13 +268,13 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
             }
 
             else {
-                throw new NotFoundException("You cannot view this product variation");
+                throw new NotFoundException(messageSource.getMessage("message41",params , LocaleContextHolder.getLocale()));
             }
 
         }
         else
         {
-            throw new NotFoundException("This product is deleted or product variation is not present");
+            throw new NotFoundException(messageSource.getMessage("message42",params , LocaleContextHolder.getLocale()));
         }
 
         return productVariationDTO;
@@ -276,7 +283,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
 
     @Override
     public ResponseEntity<Object> uploadFile(MultipartFile file, Long id) throws IOException {
-        String seller = getCurrentDetails.getUser();
+        String seller = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
 
         Long idOfProduct = productVariationRepository.getProductId(id);
@@ -290,14 +297,15 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                 throw new RuntimeException();
             }
         } else {
-            throw new NotFoundException("You cannot upload pic of this product variation");
+            throw new NotFoundException(messageSource.getMessage("message43",params , LocaleContextHolder.getLocale()));
         }
 
     }
 
     @Override
     public List<ProductVariationDTO> getAllProductVariations(Long productId) throws IOException {
-        String seller = getCurrentDetails.getUser();
+
+        String seller = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
 
         List<ProductVariationDTO> productVariationDTOList = new ArrayList<>();
@@ -313,10 +321,10 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                     productVariationDTOList.add(getSingleProductVariation(productVariation.getId())) ;
                 }
             } else {
-                throw new NotFoundException("You can't see this product");
+                throw new NotFoundException(messageSource.getMessage("message44",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("This product is not present");
+            throw new NotFoundException(messageSource.getMessage("message1",params , LocaleContextHolder.getLocale()));
         }
         return productVariationDTOList;
     }

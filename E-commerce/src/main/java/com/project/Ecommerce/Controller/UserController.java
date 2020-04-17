@@ -44,7 +44,6 @@ public class UserController {
         return "Address deleted successfully";
     }
 
-    //check for seller label and customer label
     @Secured({"ROLE_CUSTOMER","ROLE_SELLER"})
     @ApiOperation("This URI is for Customer and Seller to update his address")
     @PutMapping("/updateAddress/{addressId}")

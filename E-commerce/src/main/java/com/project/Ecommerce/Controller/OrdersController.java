@@ -4,10 +4,11 @@ import com.project.Ecommerce.Dao.OrderDao;
 import com.project.Ecommerce.Entities.Customer;
 import com.project.Ecommerce.Repos.CustomerRepository;
 import com.project.Ecommerce.Repos.OrdersRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class OrdersController {
     OrderDao orderDao;
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     CustomerRepository customerRepository;
@@ -31,6 +32,7 @@ public class OrdersController {
     @Autowired
     OrdersRepository ordersRepository;
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to place a order")
     @PostMapping("/placeOrder/{productVariationId}/{quantity}/{paymentMethod}/{AddressId}")
     public void placeOrder(@PathVariable Long productVariationId, @PathVariable int quantity,
@@ -41,12 +43,13 @@ public class OrdersController {
     }
 
 
+    @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to view his order history")
     @GetMapping("/showOrderHistory")
     public List<Object[]> getOrderHistory()
     {
 
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer =customerRepository.findByUsername(username);
         List<Object[]> objects= ordersRepository.getAllOrders(customer.getId());
         return objects;

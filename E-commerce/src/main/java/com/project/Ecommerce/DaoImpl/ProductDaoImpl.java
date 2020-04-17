@@ -10,7 +10,7 @@ import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -54,7 +53,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Autowired
-    GetCurrentDetails getCurrentDetails;
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     private MessageSource messageSource;
@@ -81,7 +80,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void addProduct(Product product, Long categoryId) {
-        String sellerName = getCurrentDetails.getUser();
+        String sellerName = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(sellerName);
         Set<Product> productSet = new HashSet<>();
         Product product1 = new Product();
@@ -100,7 +99,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<ViewProductDTO> getProductDetails(Integer pageNo, Integer pageSize, String sortBy) {
 
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
-        String username = getCurrentDetails.getUser();
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(username);
         List<ViewProductDTO> list= new ArrayList<>();
 
@@ -120,7 +119,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public void deleteProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
-        String seller = getCurrentDetails.getUser();
+        String seller = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
 
         if (product.isPresent()) {
@@ -142,7 +141,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void updateProduct(ProductDTO product, Long productId) {
-        String seller = getCurrentDetails.getUser();
+        String seller = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
         Optional<Product> productOptional = productRepository.findById(productId);
 
@@ -266,7 +265,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public ViewProductDTO viewSingleProduct(Long productId) {
-        String sellerName = getCurrentDetails.getUser();
+        String sellerName = getCurrentlyLoggedInUser.getCurrentUser();
         Seller seller = sellerRepository.findByUsername(sellerName);
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();

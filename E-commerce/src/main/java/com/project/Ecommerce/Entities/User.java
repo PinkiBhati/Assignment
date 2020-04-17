@@ -101,15 +101,6 @@ public class User {
     }
 
 
-  /*  public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }*/
-
-
     public int getCount() {
         return count;
     }
@@ -284,7 +275,6 @@ public class User {
                 addresses= new HashSet<>();
 
             }
-         /*   address.setUser(this);*/
             addresses.add(address);
         }
     }
