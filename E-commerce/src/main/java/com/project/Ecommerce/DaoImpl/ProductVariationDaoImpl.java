@@ -2,6 +2,7 @@ package com.project.Ecommerce.DaoImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.Ecommerce.DTO.ProductVariationDTO;
 import com.project.Ecommerce.Dao.ProductVariationDao;
 import com.project.Ecommerce.Dao.UploadDao;
 import com.project.Ecommerce.Entities.Product;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -70,6 +73,8 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
         productVariationRepository.save(productVariation);
 
     }
+
+
 
 
     @Override
@@ -216,30 +221,56 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
     }
 
     @Override
-    public List<Object[]> getSingleProductVariation(Long productVariationId) {
+    public ProductVariationDTO getSingleProductVariation(Long productVariationId) throws IOException {
         String username = getCurrentDetails.getUser();
         Seller seller = sellerRepository.findByUsername(username);
         Long id = productVariationRepository.getProductId(productVariationId);
+        ProductVariationDTO productVariationDTO= new ProductVariationDTO();
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
         Optional<Product> productOptional = productRepository.findById(id);
-        if (id == null) {
-            throw new NotFoundException("This product is not present");
-        } else if (productVariationRepository.findById(productVariationId).isPresent()) {
-            Product product = productOptional.get();
-            if ((product.getSellers().getUsername()).equals(seller.getUsername())) {
-                if (product.getIsActive() == true) {
-                    return productVariationRepository.getSingleProductVariation(productVariationId);
-                } else {
-                    throw new NotFoundException("This product variation is not active");
+        Optional<ProductVariation> productVariationOptional= productVariationRepository.findById(productVariationId);
+
+        if (productOptional.isPresent()&&productVariationOptional.isPresent()) {
+
+
+            Product product= productOptional.get();
+            ProductVariation productVariation= productVariationOptional.get();
+            if ((product.getSellers().getUsername()).equals(seller.getUsername()))
+            {
+                productVariationDTO.setName(product.getName());
+                productVariationDTO.setBrand(product.getBrand());
+                productVariationDTO.setDescription(product.getDescription());
+                productVariationDTO.setCancellable(product.getIsCancellable());
+                productVariationDTO.setActiveOfProduct(product.getIsActive());
+                productVariationDTO.setActiveOfProductVariation(productVariation.getisActive());
+                productVariationDTO.setPrice(productVariation.getPrice());
+                productVariationDTO.setQuantityAvailable(productVariation.getQuantityAvailable());
+                productVariationDTO.setReturnable(product.getIsReturnable());
+                HashMap<String, Object> hashMap = objectMapper.readValue(productVariation.getMetadata(), HashMap.class);
+
+                for (Map.Entry m : hashMap.entrySet()) {
+                    fields.add(m.getKey().toString());
+                    values.add(m.getValue().toString());
                 }
 
-            } else {
+                productVariationDTO.setFields(fields);
+                productVariationDTO.setValues(values);
+
+
+            }
+
+            else {
                 throw new NotFoundException("You cannot view this product variation");
             }
 
-        } else {
-            throw new NullException("This product variation do not exist");
+        }
+        else
+        {
+            throw new NotFoundException("This product is deleted or product variation is not present");
         }
 
+        return productVariationDTO;
 
     }
 
@@ -265,23 +296,35 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
     }
 
     @Override
-    public List<Object[]> getAllProductVariations(Long productId) {
+    public List<ProductVariationDTO> getAllProductVariations(Long productId) throws IOException {
         String seller = getCurrentDetails.getUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
 
+        List<ProductVariationDTO> productVariationDTOList = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
             if ((product.getSellers().getUsername()).equals(seller1.getUsername())) {
-                List<Object[]> productVariations = productVariationRepository.getProductVariations(productId);
-                return productVariations;
+                ProductVariationDTO productVariationDTO = new ProductVariationDTO();
+                for (ProductVariation productVariation : product.getProductVariations()) {
+
+                    productVariationDTOList.add(getSingleProductVariation(productVariation.getId())) ;
+                }
             } else {
-                throw new NotFoundException("You cannot view the product variation of this product ");
+                throw new NotFoundException("You can't see this product");
             }
         } else {
-            throw new NotFoundException("This product ID is wrong");
+            throw new NotFoundException("This product is not present");
         }
-
+        return productVariationDTOList;
     }
 
+
+    @Override
+    public ResponseEntity<Object> downloadProductVariationImage(String imageName, HttpServletRequest request) throws IOException {
+
+       return uploadDao.downloadImageForVariation(imageName,request);
+    }
 }

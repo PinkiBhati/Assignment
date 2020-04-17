@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.project.Ecommerce.DTO.ProductVariationDTO;
 import com.project.Ecommerce.Dao.ProductVariationDao;
 import com.project.Ecommerce.Entities.ProductVariation;
 import com.project.Ecommerce.Repos.ProductRepository;
@@ -9,8 +10,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -29,22 +33,21 @@ public class ProductVariationController {
     @Autowired
     ProductVariationDao productVariationDao;
 
-    //correct
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to get all product variation of a product")
     @GetMapping("/getAllProductVariations/{productId}")
-    public List<Object[]> getAllProductVariations(@PathVariable Long productId) {
+    public List<ProductVariationDTO> getAllProductVariations(@PathVariable Long productId) throws IOException {
        return productVariationDao.getAllProductVariations(productId);
     }
 
-   //correct , perfect
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to get a single product variation associated to a product which he owns")
     @GetMapping("/viewSingleProductVariation/{productVariationId}")
-    public List<Object[]> getSingleProductVariation(@PathVariable Long productVariationId)
-    {
+    public ProductVariationDTO getSingleProductVariation(@PathVariable Long productVariationId) throws IOException {
         return productVariationDao.getSingleProductVariation(productVariationId);
     }
 
-    //correctly done
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to add a new product variation to a product he owns")
     @PostMapping("/addProductVariations/{productId}")
     public void addNewProductVariation(@Valid @RequestBody ProductVariation productVariation, @PathVariable Long productId) throws JsonProcessingException {
@@ -53,7 +56,7 @@ public class ProductVariationController {
 
     }
 
-    //jo jo bhejo vo vo edit ho
+    @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to update a product variation associated to a product he owns")
     @PutMapping("/editProductVariations/{productVariationId}")
     public void updateProductVariation(@RequestBody ProductVariation productVariation, @PathVariable Long productVariationId) throws JsonProcessingException {
@@ -61,15 +64,22 @@ public class ProductVariationController {
         productVariationDao.editProductVariation(productVariation,productVariationId);
     }
 
-    //not required
+    @Secured("ROLE_SELLER")
     @DeleteMapping("/deleteProductVariation/{productVariationId}")
     public void deleteProductVariation(@PathVariable int productVariationId) {
         productVariationDao.removeProductVariation(productVariationId);
     }
 
 
+    @Secured("ROLE_SELLER")
     @PostMapping("/uploadVariationPic/{id}")
     public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable Long id) throws IOException {
         return productVariationDao.uploadFile(file,id);
+    }
+
+    @Secured("ROLE_CUSTOMER")
+    @GetMapping("/downloadProductVariationImage/{imageName}")
+    public ResponseEntity<Object> downloadProductVariationImage(@PathVariable("imageName") String imageName, HttpServletRequest request) throws IOException {
+        return productVariationDao.downloadProductVariationImage(imageName,request);
     }
 }

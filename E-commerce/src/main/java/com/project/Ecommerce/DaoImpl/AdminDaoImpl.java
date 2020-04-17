@@ -6,6 +6,7 @@ import com.project.Ecommerce.DTO.ListSellerDTO;
 import com.project.Ecommerce.Dao.AdminDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Entities.User;
+import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
 import com.project.Ecommerce.Repos.ProductRepository;
 import com.project.Ecommerce.Repos.UserRepository;
@@ -44,7 +45,7 @@ public class AdminDaoImpl implements AdminDao {
         if (user.isPresent()) {
             user1 = user.get();
             if (user1.isEnabled() == true) {
-                System.out.println("user account is already activated");
+                throw new NullException("user account is already activated");
             } else {
                 user1.setEnabled(true);
                 System.out.println("Sending email for account activation");
@@ -215,9 +216,6 @@ public class AdminDaoImpl implements AdminDao {
                     userList.add(listSellerDTO);
                 }
               return userList;
-
-
-
 
     }
 

@@ -58,14 +58,14 @@ public class UploadDaoImpl implements UploadDao
                         }
                     }
                     String productVariationIdInString = productVariation.getId().toString();
-                    productVariationIdInString = productVariationIdInString + count;
+                    productVariationIdInString = productVariationIdInString +"_" +count;
                     Files.move(path, path.resolveSibling(productVariationIdInString + "." + ext.get()));
 
                 }
             } else {
                 throw new RuntimeException();
             }
-            return new ResponseEntity<>("file added", HttpStatus.OK);
+            return new ResponseEntity<>("Product Variation image successfully added", HttpStatus.OK);
         }
 
     @Override
@@ -97,7 +97,7 @@ public class UploadDaoImpl implements UploadDao
             } else {
                 throw new RuntimeException();
             }
-            return new ResponseEntity<>("file added", HttpStatus.OK);
+            return new ResponseEntity<>("User profile image successfully  added", HttpStatus.OK);
         }
 
         @Override
@@ -113,9 +113,39 @@ public class UploadDaoImpl implements UploadDao
             return new ResponseEntity<>("file added", HttpStatus.OK);
         }
 
-        @Override
-        public ResponseEntity downloadImage(String fileName, HttpServletRequest request) throws IOException {
-            String fileBasePath = currentPath +"/src/main/resources/users/";
+    @Override
+    public ResponseEntity downloadImage(String filename, HttpServletRequest request) throws IOException {
+        String fileBasePath = currentPath +"/src/main/resources/users/";
+        File dir = new File(fileBasePath);
+        Resource resource = null;
+        String contentType = null;
+        if (dir.isDirectory()) {
+            File arr[] = dir.listFiles();
+            for (File file : arr) {
+                if (file.getName().startsWith(filename)) {
+                    Path path = Paths.get(fileBasePath + file.getName());
+                    try
+                    {
+                        resource = new UrlResource(path.toUri());
+                    } catch (MalformedURLException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+                    System.out.println(contentType);
+                }
+            }
+        }
+        System.out.println(contentType);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+    @Override
+        public ResponseEntity downloadImageForVariation(String fileName, HttpServletRequest request) throws IOException {
+            String fileBasePath = currentPath +"/src/main/resources/productVariation/";
             File dir = new File(fileBasePath);
             Resource resource = null;
             String contentType = null;

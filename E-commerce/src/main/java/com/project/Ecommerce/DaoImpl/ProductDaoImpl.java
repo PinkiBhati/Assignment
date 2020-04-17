@@ -13,6 +13,8 @@ import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -53,6 +55,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Autowired
     GetCurrentDetails getCurrentDetails;
+
+    @Autowired
+    private MessageSource messageSource;
+
     @Autowired
     ProductVariationRepository productVariationRepository;
 
@@ -64,6 +70,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Autowired
     UploadDao uploadDao;
+    Long[] params={};
 
     @Override
     public long getId(String productName) {
@@ -113,9 +120,9 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public void deleteProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
-
         String seller = getCurrentDetails.getUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
+
         if (product.isPresent()) {
             Product product1 = product.get();
             if ((product1.getSellers().getUsername()).equals(seller1.getUsername())) {
@@ -123,16 +130,18 @@ public class ProductDaoImpl implements ProductDao {
                 productRepository.deleteProduct(productId);
 
             } else {
-                throw new NullException("You cant delete this product");
+                throw new NullException(messageSource.getMessage("message",params ,LocaleContextHolder.getLocale()));
             }
 
         } else {
-            throw new NotFoundException("This product name is wrong");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
     }
 
+
+
     @Override
-    public void editProduct(ProductDTO product, Long productId) {
+    public void updateProduct(ProductDTO product, Long productId) {
         String seller = getCurrentDetails.getUser();
         Seller seller1 = sellerRepository.findByUsername(seller);
         Optional<Product> productOptional = productRepository.findById(productId);
@@ -143,7 +152,7 @@ public class ProductDaoImpl implements ProductDao {
                 if (product.getName().equals(product1.getBrand()) || product.getName().equals(product1.
                         getCategoriesInProduct().getName()) || product.getName().equals(product1.getSellers()
                         .getFirstName()) || product.getName().equals(product.getBrand())) {
-                    throw new NullException("Product name should be unique with respect to seller,brand,category");
+                    throw new NullException(messageSource.getMessage("message2",params,LocaleContextHolder.getLocale()));
                 }
                 if (product.getName() != null) {
                     product1.setName(product.getName());
@@ -173,10 +182,10 @@ public class ProductDaoImpl implements ProductDao {
 
 
             } else {
-                throw new NullException("You cannot edit this product");
+                throw new NullException(messageSource.getMessage("message3",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("This product ID is wrong");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -199,13 +208,11 @@ public class ProductDaoImpl implements ProductDao {
                 String text = product.getName() + "  got deactivated by admin";
                 notificationService.sendToSeller(seller1, subject, text);
             } else {
-                throw new NotFoundException("This product is already de-activated");
+                throw new NotFoundException(messageSource.getMessage("message7",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("This product is not found");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
-
-
     }
 
     @Override
@@ -226,10 +233,10 @@ public class ProductDaoImpl implements ProductDao {
                 String text = product.getName() + "  got activated by admin";
                 notificationService.sendToSeller(seller1, subject, text);
             } else {
-                throw new NotFoundException("This product is already activated");
+                throw new NotFoundException(messageSource.getMessage("message8",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("This product is not found");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -239,13 +246,13 @@ public class ProductDaoImpl implements ProductDao {
         int result = categoryRepository.checkIfLeaf(categoryId);
         if (result == 1) {
             if (product.getName().equals(categoryRepository.findById(categoryId).get().getName()) || product.getName().equals(product.getBrand())) {
-                throw new NullException("Name of category and product is cannot be same");
+                throw new NullException(messageSource.getMessage("message9",params,LocaleContextHolder.getLocale()));
             }
 
             Product product1 = modelMapper.map(product, Product.class);
             addProduct(product1, categoryId);
         } else {
-            throw new NullException("This category is not a leaf category");
+            throw new NullException(messageSource.getMessage("message4",params,LocaleContextHolder.getLocale()));
         }
 
         Long productId = productRepository.findProduct(product.getName());
@@ -292,12 +299,12 @@ public class ProductDaoImpl implements ProductDao {
                     return viewProductDTO;
 
                 } else {
-                    throw new NotFoundException("You cannot view this product");
+                    throw new NotFoundException(messageSource.getMessage("message10",params,LocaleContextHolder.getLocale()));
                 }
 
 
         } else {
-            throw new NotFoundException("This product is not present");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -355,7 +362,7 @@ public class ProductDaoImpl implements ProductDao {
         }
 
         else {
-            throw new NotFoundException("This product is not present or it has no product variation ");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
         return viewProductDTO;
@@ -414,7 +421,7 @@ public class ProductDaoImpl implements ProductDao {
         }
 
         else {
-            throw new NotFoundException("This product is not present or it has no product variation ");
+            throw new NotFoundException(messageSource.getMessage("message6",params,LocaleContextHolder.getLocale()));
         }
 
         return viewProductDTO;
@@ -445,10 +452,10 @@ public class ProductDaoImpl implements ProductDao {
 
                 return viewProductDTOList;
             } else {
-                throw new NotFoundException("Category is not a leaf category");
+                throw new NotFoundException(messageSource.getMessage("message4",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException("category with this id is not present");
+            throw new NotFoundException(messageSource.getMessage("message5",params,LocaleContextHolder.getLocale()));
 
         }
     }
@@ -477,7 +484,7 @@ public class ProductDaoImpl implements ProductDao {
         }
 
         else {
-            throw new NotFoundException("This ID iw wrong");
+            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
     }
 

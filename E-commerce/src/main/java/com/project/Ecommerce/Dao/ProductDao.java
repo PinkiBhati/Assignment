@@ -25,7 +25,7 @@ public interface ProductDao {
     public List<ViewProductDTO> getProductDetails(Integer pageNo, Integer pageSize, String sortBy);
     public ViewProductForCustomerDTO viewProduct(Long id);
     public void deleteProduct( Long productId);
-    public void editProduct(ProductDTO product, Long productId);
+    public void updateProduct(ProductDTO product, Long productId);
     long getId(String productName);
 
     public  List<ViewProductForCustomerDTO> getAllProducts(Integer pageNo, Integer pageSize, String sortBy);

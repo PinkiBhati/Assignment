@@ -18,4 +18,5 @@ public interface UploadDao {
 
     public ResponseEntity downloadImage(String filename, HttpServletRequest request) throws IOException;
 
+    public ResponseEntity<Object> downloadImageForVariation(String imageName, HttpServletRequest request) throws IOException;
 }

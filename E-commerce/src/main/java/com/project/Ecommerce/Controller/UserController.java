@@ -5,15 +5,10 @@ import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Repos.AddressRepository;
-import com.project.Ecommerce.Repos.CustomerRepository;
-import com.project.Ecommerce.Repos.UserRepository;
-import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
@@ -22,15 +17,7 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     AddressRepository addressRepository;
-    @Autowired
-    CustomerRepository customerRepository;
-    @Autowired
-    GetCurrentDetails getCurrentDetails;
-    @Autowired
-    private TokenStore tokenStore;
     @Autowired
     private UserDao userDao;
 
@@ -73,17 +60,7 @@ public class UserController {
     }
 
 
-
-//EXTRA
-
     /*@Secured({"ROLE_CUSTOMER","ROLE_SELLER"})
-    @Lazy
-    @PutMapping("/editUsername")
-    public String editUsername(@RequestBody UserDTO user) {
-        return userDao.editUsername(user);
-    }*/
-
-    @Secured({"ROLE_CUSTOMER","ROLE_SELLER"})
     @ApiOperation("This URI is for Customer and Seller to update his E-mail ID")
     @Lazy
     @PutMapping("/editEmail")
@@ -99,7 +76,7 @@ public class UserController {
     @PutMapping("/editEmail/{token}")
     public String SetNewEmail(@RequestBody UserDTO user, @PathVariable String token) {
         return userDao.verifyNewEmail(token, user);
-    }
+    }*/
 
 
 

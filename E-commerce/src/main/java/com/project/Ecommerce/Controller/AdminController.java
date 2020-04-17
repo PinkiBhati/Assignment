@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,57 +38,54 @@ public class AdminController {
     CategoryRepository categoryRepository;
 
 
-    @ApiOperation(value = "URI in which Admin can activate a particular user with given ID")
-    @PutMapping("/activate/{userId}")
-    public void activateUser(@PathVariable(name = "userId") Long userId) {
-        adminDao.activateCustomerAndSeller(userId);
-    }
-
-
-    @ApiOperation(value = "URI in which Admin can deactivate a particular user with given ID")
-    @PutMapping("/deactivate/{userId}")
-    public void deactivateUser(@PathVariable(name = "userId") Long userId) {
-        adminDao.deActivateCustomerAndSeller(userId);
-    }
-
-   /* @ApiOperation(value = "URI in which Admin can view all the registered Customers")
-    @GetMapping("/allCustomers")
-    public List<Object[]> getAllCustomers() {
-
-        List<Object[]> objects = userRepository.findCustomers();
-        if (objects.isEmpty()) {
-            throw new UserNotFoundException("There are no active Customers right now.");
-        }
-        return objects;
-    }*/
-
+    @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can view all the registered Customers")
-    @GetMapping("/allCustomers")
+    @GetMapping("/viewAllCustomers")
     public ResponseEntity<List<ListCustomerDTO>> viewCustomer(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                                   @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
+                                                              @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                                              @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
         List<ListCustomerDTO> list = adminDao.getAllCustomers(pageNo, pageSize, sortBy);
         return new ResponseEntity<List<ListCustomerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can view all the registered Sellers")
-    @GetMapping("/allSellers")
+    @GetMapping("/viewAllSellers")
     public ResponseEntity<List<ListSellerDTO>> getAllSellers(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                               @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                               @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+                                                             @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                                             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
     {
         List<ListSellerDTO> list = adminDao.getAllSellers(pageNo, pageSize, sortBy);
         return new ResponseEntity<List<ListSellerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
 
     }
 
+    @Secured("ROLE_ADMIN")
+    @ApiOperation(value = "URI in which Admin can activate a particular user with given ID")
+    @PatchMapping("/activateAccount/{userId}")
+    public void activateUser(@PathVariable(name = "userId") Long userId) {
+        adminDao.activateCustomerAndSeller(userId);
+    }
 
+
+    @Secured("ROLE_ADMIN")
+    @ApiOperation(value = "URI in which Admin can deactivate a particular user with given ID")
+    @PatchMapping("/deactivateAccount/{userId}")
+    public void deactivateUser(@PathVariable(name = "userId") Long userId) {
+        adminDao.deActivateCustomerAndSeller(userId);
+    }
+
+
+
+
+    @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can lock an user's  account")
     @PutMapping("/lockAccount/{userId}")
     public String lockUser(@PathVariable(name = "userId") Long userId) {
         return adminDao.lockUser(userId);
     }
 
+    @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can unlock an user's account")
     @PutMapping("/unLockAccount/{userId}")
     public String unlockUser(@PathVariable(name = "userId") Long userId) {

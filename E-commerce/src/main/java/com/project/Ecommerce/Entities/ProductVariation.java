@@ -25,7 +25,7 @@ public class ProductVariation {
     private double price;
     private String metadata;
 
-
+    @Transient
     @Convert(converter = HashMapConverter.class)
     private Map<String,Object> infoAttributes;
     boolean isActive;

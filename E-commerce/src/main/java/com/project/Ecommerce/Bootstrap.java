@@ -319,8 +319,8 @@ public class Bootstrap implements ApplicationRunner {
             seller.setLastName("Bhati");
             seller.addRoles(role1);
             seller.setCreatedBy("Priti");
-            seller.setEnabled(true);
-            seller.setActive(true);
+            seller.setEnabled(false);
+            seller.setActive(false);
             seller.setAddresses(addressSet);
             seller.setCompanyContact("+919843928689");
             seller.setCompanyName("Tommy Hilfiger");
@@ -373,8 +373,7 @@ public class Bootstrap implements ApplicationRunner {
             productVariation.setProduct(product);
             productVariation.setActive(true);
             Map<String,Object> attributes = new HashMap<>();
-            attributes.put("size","L");
-            attributes.put("color","black");
+            attributes.put("SIZE","L");
             productVariation.setInfoAttributes(attributes);
             String  info = objectMapper.writeValueAsString(attributes);
             productVariation.setMetadata(info);
@@ -386,10 +385,14 @@ public class Bootstrap implements ApplicationRunner {
             productVariation1.setPrice(1500.12);
             productVariation1.setQuantityAvailable(4);
             productVariation1.setActive(true);
+            Map<String,Object> attributes1 = new HashMap<>();
+            attributes1.put("SIZE","M");
+            productVariation1.setInfoAttributes(attributes);
+            String  info2 = objectMapper.writeValueAsString(attributes);
+            productVariation1.setMetadata(info2);
+            System.out.println(objectMapper.readValue(info,HashMap.class));
             productVariation1.setProduct(product);
             productVariationSet.add(productVariation1);
-
-
             ProductVariation productVariation2 = new ProductVariation();
             productVariation2.setPrice(1000.00);
             productVariation2.setQuantityAvailable(10);

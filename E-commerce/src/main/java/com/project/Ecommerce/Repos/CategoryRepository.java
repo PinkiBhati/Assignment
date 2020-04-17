@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Repos;
 
 import com.project.Ecommerce.Entities.Category;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,6 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
     public Object[] getCategoryName(@Param("id") Long id);
 
     @Query(value = "select * from category",nativeQuery = true)
-    public List<Object[]> getAllCategories();
+    public List<Object[]> getAllCategories(Pageable pageable);
 
 }

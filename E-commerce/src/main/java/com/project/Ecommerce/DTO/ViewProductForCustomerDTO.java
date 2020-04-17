@@ -1,9 +1,12 @@
 package com.project.Ecommerce.DTO;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.Column;
 import java.util.List;
 
-public class ViewProductDTO {
+@Component
+public class ViewProductForCustomerDTO {
 
     @Column(unique = true,nullable = false)
     private String productName;
@@ -16,8 +19,7 @@ public class ViewProductDTO {
     String categoryName;
     List<String> fieldName;
     List<String> values;
-
-
+    List<String> links;
 
     public String getProductName() {
         return productName;
@@ -91,4 +93,11 @@ public class ViewProductDTO {
         this.values = values;
     }
 
+    public List<String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<String> links) {
+        this.links = links;
+    }
 }

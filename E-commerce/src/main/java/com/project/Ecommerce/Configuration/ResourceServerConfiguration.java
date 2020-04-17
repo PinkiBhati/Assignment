@@ -144,7 +144,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 
                 //Seller accessible URI's
-                .antMatchers("/seller/home").hasAnyRole("SELLER")
+
                 .antMatchers("/getAllProductVariations/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/viewAllCategory").hasAnyRole("SELLER")
                 .antMatchers("/uploadVariationPic/{id}").hasAnyRole("SELLER")
@@ -154,9 +154,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/viewSingleProductVariation/{productVariationId}").hasAnyRole("SELLER")
                 .antMatchers("/getCustomerAccount").hasAnyRole("SELLER")
                 .antMatchers("/getProducts").hasAnyRole("SELLER")
-                .antMatchers("/addProduct/{categoryId}").hasAnyRole("SELLER")
-                .antMatchers("/editProduct/{productId}").hasAnyRole("SELLER")
-                .antMatchers("/deleteProduct/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/addProductVariations/{productId}").hasAnyRole("SELLER")
                 .antMatchers("/editProductVariations/{productVariationId}").hasAnyRole("SELLER")
                 .antMatchers("/deleteProductVariation/{productVariationId}").hasAnyRole("SELLER")
@@ -164,16 +161,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/refundOrder/{orderStatusId}").hasAnyRole("SELLER")
 
 
-                //Seller-Admin
-                .antMatchers("/detailsOfSeller").hasAnyRole("ADMIN", "SELLER")
-                .antMatchers("/editSellerDetails").hasAnyRole("ADMIN", "SELLER")
                 .antMatchers("getSubcategories").hasAnyRole("ADMIN", "SELLER")
                 .antMatchers("/upload").hasAnyRole("ADMIN", "SELLER")
                 .antMatchers("/uploadSm").hasAnyRole("ADMIN", "SELLER")
-
-
-
-                .antMatchers("/doLogout").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")
 
 
                 .antMatchers("/getReviews/{product_id}").hasAnyRole("ADMIN", "CUSTOMER", "SELLER")

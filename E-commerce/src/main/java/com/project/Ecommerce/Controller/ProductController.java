@@ -83,9 +83,10 @@ public class ProductController {
 
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to update a product he owns")
-    @PostMapping("/editProduct/{productId}")
-    public void editProduct( @RequestBody ProductDTO product, @PathVariable Long productId) {
-       productDao.editProduct(product,productId);
+    @PutMapping("/updateProduct/{productId}")
+    public String updateProduct( @RequestBody ProductDTO product, @PathVariable Long productId) {
+       productDao.updateProduct(product,productId);
+       return "product is successfully updated";
 
     }
 

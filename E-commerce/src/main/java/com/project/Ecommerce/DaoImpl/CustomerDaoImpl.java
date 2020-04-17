@@ -1,7 +1,6 @@
 package com.project.Ecommerce.DaoImpl;
 
 import com.project.Ecommerce.DTO.AddressDTO;
-import com.project.Ecommerce.DTO.CustomerDTO;
 import com.project.Ecommerce.DTO.ProfileDTO;
 import com.project.Ecommerce.Dao.CustomerDao;
 import com.project.Ecommerce.Dao.UploadDao;
@@ -14,12 +13,9 @@ import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -225,6 +221,7 @@ public class CustomerDaoImpl implements CustomerDao {
         return "success";
     }
 
+    //request
     @Override
     public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException
     {

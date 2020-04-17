@@ -147,24 +147,7 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-    @Override
-    public String editUsername(UserDTO user) {
-        User user2 = userRepository.findByUsername(user.getUsername());
-        if (user2 == null) {
-            String username = getCurrentDetails.getUser();
-            User user1 = userRepository.findByUsername(username);
-            user1.setUsername(user.getUsername());
-            user1.setModifiedBy(username);
-            userRepository.save(user1);
-            return "success";
-        } else {
-            throw new AlreadyExists("Username is not available");
-        }
-
-    }
-
-
-    @Lazy
+   /* @Lazy
     public String editEmail(UserDTO user) {
         User user1 = modelMapper.map(user, User.class);
         String username = getCurrentDetails.getUser();
@@ -206,7 +189,7 @@ public class UserDaoImpl implements UserDao {
 
 
     }
-
+*/
 
     @Override
     public String editPassword(UserDTO user) {

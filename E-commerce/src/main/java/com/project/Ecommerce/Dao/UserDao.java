@@ -9,9 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface UserDao {
     public String update(AddressDTO address, Long addressId);
     public String deleteUser();
-    public String verifyNewEmail(String token, UserDTO user);
     public String addNewAddress( Address address);
-    public String editUsername( UserDTO user);
-    public String editEmail( UserDTO user);
+    /*public String verifyNewEmail(String token, UserDTO user);
+    public String editEmail( UserDTO user);*/
     public String editPassword( UserDTO user);
 }
