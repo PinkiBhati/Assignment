@@ -5,6 +5,7 @@ import com.project.Ecommerce.DTO.FilterDTO;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Entities.Category;
+import com.project.Ecommerce.Entities.CategoryMetadataField;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
@@ -13,6 +14,8 @@ import com.project.Ecommerce.Repos.ProductRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,16 +99,14 @@ public class CategoryController {
     }
 
     @ApiOperation("This URI is for Admin to get all the categories")
-   /* @GetMapping("/viewAllCategories")
-    public List<Object[]> viewAllCategories()
-    {
-        return categoryDao.viewAllCategories();
-
-    }*/
     @GetMapping("/viewAllCategories")
-    public List<ViewCategoriesDTO> viewAllCategories()
+    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategories(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
+                                                     @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
     {
-        return categoryDao.viewAllCategoriesForAdmin();
+        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesForAdmin(pageNo, pageSize, sortBy);
+        return new ResponseEntity<List<ViewCategoriesDTO>>(list, new HttpHeaders(), HttpStatus.OK);
+
 
     }
 

@@ -10,6 +10,9 @@ import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -207,12 +210,13 @@ public class CategoryDaoImpl implements CategoryDao {
     //change
 
    @Override
-    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin()
+    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin(Integer pageNo, Integer pageSize, String sortBy)
     {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
         List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
-        List<Object[]> list= categoryRepository.getAllCategories();
+        List<Object[]> list= categoryRepository.getAllCategories(paging);
         for (Object[] objects: list)
         {
             ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
