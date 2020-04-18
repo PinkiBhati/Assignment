@@ -206,7 +206,7 @@ public class ProductDaoImpl implements ProductDao {
                 System.out.println(seller1.getUsername());
                 String subject = "Regarding deactivation";
                 String text = product.getName() + "  got deactivated by admin";
-                notificationService.sendToSeller(seller1, subject, text);
+                notificationService.sendMailToUser(seller1, subject, text);
             } else {
                 throw new NotFoundException(messageSource.getMessage("message7",params,LocaleContextHolder.getLocale()));
             }
@@ -231,7 +231,7 @@ public class ProductDaoImpl implements ProductDao {
                 System.out.println(seller1.getUsername());
                 String subject = "Regarding Activation";
                 String text = product.getName() + "  got activated by admin";
-                notificationService.sendToSeller(seller1, subject, text);
+                notificationService.sendMailToUser(seller1, subject, text);
             } else {
                 throw new NotFoundException(messageSource.getMessage("message8",params,LocaleContextHolder.getLocale()));
             }

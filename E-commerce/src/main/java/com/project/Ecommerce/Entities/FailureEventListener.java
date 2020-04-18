@@ -19,6 +19,9 @@ public class FailureEventListener {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    NotificationService notificationService;
+
     @EventListener
     public void AuthenticationFailEvent(AuthenticationFailureBadCredentialsEvent event)
     {
@@ -35,7 +38,11 @@ public class FailureEventListener {
                     User user = userRepository.findByUsername(username);
                     count++;
                     user.setAccountNonLocked(false);
+
                     userRepository.save(user);
+                    String subject="Regarding account Locked";
+                    String text="Your account is locked ";
+                    notificationService.sendMailToUser(user,subject,text);
 
                 }
                 else {

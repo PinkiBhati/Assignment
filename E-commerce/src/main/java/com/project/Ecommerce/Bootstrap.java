@@ -326,7 +326,7 @@ public class Bootstrap implements ApplicationRunner {
             seller.setCompanyName("Tommy Hilfiger");
             seller.setGst("27AAACS8577K2ZO");
             seller.setPassword(passwordEncoder.encode("admins"));
-            seller.setUsername("bhatipinki05@gmail.com");
+            seller.setUsername("bhatipinki056@gmail.com");
 
             seller1.setFirstName("Arti");
             seller1.setLastName("Sharma");

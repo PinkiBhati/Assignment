@@ -46,19 +46,6 @@ public class NotificationService {
         System.out.println("Email Sent!");
     }
 
-    @Async
-    public void sendToCustomer(User user) throws MailException
-    {
-        System.out.println("hii");
-        System.out.println("Sending email...");
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(user.getUsername());
-        mail.setFrom("bhatipinki056@gmail.com");
-        mail.setSubject("account is locked");
-        mail.setText("YOUR ACCOUNT IS LOCKED");
-        javaMailSender.send(mail);
-        System.out.println("Email Sent!");
-    }
 
     @Async
     public void sendToAdmin(User user,String text) throws MailException
@@ -76,7 +63,7 @@ public class NotificationService {
     }
 
     @Async
-    public  void sendToSeller(User seller, String subject, String text)throws MailException
+    public  void sendMailToUser(User seller, String subject, String text)throws MailException
     {
         System.out.println("Sending email...");
         SimpleMailMessage mail = new SimpleMailMessage();
@@ -87,5 +74,6 @@ public class NotificationService {
         javaMailSender.send(mail);
         System.out.println("Email Sent!");
     }
+
 
 }
