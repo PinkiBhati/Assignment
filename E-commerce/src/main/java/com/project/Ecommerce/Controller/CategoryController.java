@@ -5,8 +5,6 @@ import com.project.Ecommerce.DTO.FilterDTO;
 import com.project.Ecommerce.DTO.ViewCategoriesDTO;
 import com.project.Ecommerce.Dao.CategoryDao;
 import com.project.Ecommerce.Entities.Category;
-import com.project.Ecommerce.Entities.CategoryMetadataField;
-import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldRepository;
 import com.project.Ecommerce.Repos.CategoryMetadataFieldValuesRepository;
 import com.project.Ecommerce.Repos.CategoryRepository;

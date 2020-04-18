@@ -6,7 +6,7 @@ import com.project.Ecommerce.DTO.ListSellerDTO;
 import com.project.Ecommerce.Dao.AdminDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Entities.User;
-import com.project.Ecommerce.ExceptionHandling.NotFoundException;
+import com.project.Ecommerce.ExceptionHandling.AlreadyExists;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
 import com.project.Ecommerce.Repos.ProductRepository;
@@ -14,7 +14,6 @@ import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -60,7 +59,7 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account activation");
-                mail.setText("Your account has been activated by admin you can now login");
+                mail.setText("Your account has been activated by Admin. You can login now ");
                 System.out.println("now starting");
                 javaMailSender.send(mail);
                 userRepository.save(user1);
@@ -91,7 +90,7 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("pinkibhati056@gmail.com");
                 mail.setSubject("Regarding account deactivation");
-                mail.setText("your account has been deactivated by admin you cant  login now");
+                mail.setText("Your account has been deactivated by Admin. You cannot login now");
                 javaMailSender.send(mail);
                 System.out.println("Email Sent!");
             }
@@ -118,7 +117,7 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account status");
-                mail.setText("Your account has been locked by admin you can not login now");
+                mail.setText("Your account has been locked by Admin. You can not login now");
                 javaMailSender.send(mail);
                 System.out.println("Email Sent!");
                 return "account has been locked";
@@ -146,7 +145,7 @@ public class AdminDaoImpl implements AdminDao {
                 mail.setTo(user1.getUsername());
                 mail.setFrom("bhatipinki056@gmail.com");
                 mail.setSubject("Regarding account status");
-                mail.setText("your account has been unlocked by admin you can login now");
+                mail.setText("Your account has been unlocked by Admin ,you can login now");
                 javaMailSender.send(mail);
                 System.out.println("Email Sent!");
                 return "account has been locked";

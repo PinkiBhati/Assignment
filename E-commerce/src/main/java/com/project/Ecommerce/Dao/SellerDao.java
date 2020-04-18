@@ -13,8 +13,6 @@ import java.util.List;
 public interface SellerDao {
 
     public String getAnCustomerAccount(Customer customer);
-    public List<Object[]> getSellerDetails();
-    public String editSellerDetails( Seller seller);
     public SellerProfileDTO viewProfileOfSeller();
     public void updateProfileForSeller(SellerProfileDTO sellerProfileDTO);
 

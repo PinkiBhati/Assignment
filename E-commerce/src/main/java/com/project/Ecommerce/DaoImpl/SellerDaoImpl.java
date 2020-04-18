@@ -11,12 +11,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -47,65 +45,6 @@ public class SellerDaoImpl implements SellerDao {
     Long[] params={};
 
 
-    @Override
-    public List<Object[]> getSellerDetails() {
-        String username = getCurrentlyLoggedInUser.getCurrentUser();
-        List<Object[]> objects = sellerRepository.getDetails(username);
-        return objects;
-    }
-
-    @Transactional
-    @Override
-    public String getAnCustomerAccount(Customer customer) {
-        if (customer.getContact() != null) {
-            if (customer.getContact().matches("(\\+91|0)[0-9]{10}")) {
-                String username = getCurrentlyLoggedInUser.getCurrentUser();
-                User seller = userRepository.findByUsername(username);
-                customerRepository.insertContact(customer.getContact(), seller.getId());
-                Set<Role> roles = seller.getRoles();
-                Role role = new Role();
-                role.setRoleName("ROLE_CUSTOMER");
-                roles.add(role);
-                seller.setRoles(roles);
-                Set<User> users = new HashSet<>();
-                role.setUsers(users);
-                userRepository.save(seller);
-                return "success";
-            } else {
-                throw new PatternMismatchException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
-            }
-        } else {
-            throw new NullException(messageSource.getMessage("message47",params , LocaleContextHolder.getLocale()));
-        }
-
-    }
-
-    @Override
-    public String editSellerDetails(Seller seller) {
-        String user = getCurrentlyLoggedInUser.getCurrentUser();
-        Seller user1 = sellerRepository.findByUsername(user);
-        if (seller.getCompanyName() != null) {
-            user1.setCompanyName(seller.getCompanyName());
-        }
-        if (seller.getCompanyContact() != null) {
-            if (seller.getCompanyContact().matches("(\\+91|0)[0-9]{10}")) {
-                user1.setCompanyContact(seller.getCompanyContact());
-            } else {
-                throw new PatternMismatchException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
-            }
-        }
-        if (seller.getGst() != null) {
-
-            if (seller.getGst().matches("\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")) {
-                user1.setGst(seller.getGst());
-            } else {
-                throw new PatternMismatchException(messageSource.getMessage("message30",params , LocaleContextHolder.getLocale()));
-            }
-        }
-        user1.setModifiedBy(user);
-        sellerRepository.save(user1);
-        return "success";
-    }
 
     @Override
     public SellerProfileDTO viewProfileOfSeller()
@@ -126,6 +65,8 @@ public class SellerDaoImpl implements SellerDao {
         }
         return sellerProfileDTO;
     }
+
+
 
     @Override
     public void updateProfileForSeller( SellerProfileDTO sellerProfileDTO)
@@ -171,8 +112,33 @@ public class SellerDaoImpl implements SellerDao {
                 seller.setGst(sellerProfileDTO.getGst());
             }
         }
-
-       sellerRepository.save(seller);
+        sellerRepository.save(seller);
     }
 
+
+    //extra
+    @Transactional
+    @Override
+    public String getAnCustomerAccount(Customer customer) {
+        if (customer.getContact() != null) {
+            if (customer.getContact().matches("(\\+91|0)[0-9]{10}")) {
+                String username = getCurrentlyLoggedInUser.getCurrentUser();
+                User seller = userRepository.findByUsername(username);
+                customerRepository.insertContact(customer.getContact(), seller.getId());
+                Set<Role> roles = seller.getRoles();
+                Role role = new Role();
+                role.setRoleName("ROLE_CUSTOMER");
+                roles.add(role);
+                seller.setRoles(roles);
+                Set<User> users = new HashSet<>();
+                role.setUsers(users);
+                userRepository.save(seller);
+                return "success";
+            } else {
+                throw new PatternMismatchException(messageSource.getMessage("message28",params , LocaleContextHolder.getLocale()));
+            }
+        } else {
+            throw new NullException(messageSource.getMessage("message47",params , LocaleContextHolder.getLocale()));
+        }
+    }
 }

@@ -199,6 +199,10 @@ public class CategoryDaoImpl implements CategoryDao {
             }
 
         }
+        else
+        {
+            throw new NotFoundException(messageSource.getMessage("message49",params, LocaleContextHolder.getLocale()));
+        }
             return viewCategoriesDTOList;
         }
 

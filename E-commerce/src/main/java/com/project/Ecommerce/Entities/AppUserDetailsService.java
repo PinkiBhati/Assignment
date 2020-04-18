@@ -29,22 +29,12 @@ public class AppUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    int count;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user= userRepository.findByUsername(username);
 
-        user.setCount(user.getCount()+1);
-        userRepository.save(user);
-
-        if (user.getCount()>3)
-        {
-            System.out.println("setting false");
-            user.setAccountNonLocked(false);
-            userRepository.save(user);
-            notificationService.sendToCustomer(user);
-        }
 
         System.out.println("Trying to authenticate user ::" + username);
         UserDetails userDetails = userDaoImpl.loadUserByUsername(username);

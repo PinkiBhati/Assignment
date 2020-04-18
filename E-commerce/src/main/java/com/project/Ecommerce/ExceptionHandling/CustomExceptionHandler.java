@@ -59,8 +59,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ProductVariationException.class)
-    public final ResponseEntity<Object> handleProductVariationNotFoundExceptions(ProductVariationException ex, WebRequest request) {
+    @ExceptionHandler(ProductVariationNotFoundException.class)
+    public final ResponseEntity<Object> handleProductVariationNotFoundExceptions(ProductVariationNotFoundException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);

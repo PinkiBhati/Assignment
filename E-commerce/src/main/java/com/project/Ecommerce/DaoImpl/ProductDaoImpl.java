@@ -9,6 +9,7 @@ import com.project.Ecommerce.Dao.UploadDao;
 import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
+import com.project.Ecommerce.ExceptionHandling.ProductNotFoundException;
 import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.modelmapper.ModelMapper;
@@ -133,7 +134,7 @@ public class ProductDaoImpl implements ProductDao {
             }
 
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
     }
 
@@ -184,7 +185,7 @@ public class ProductDaoImpl implements ProductDao {
                 throw new NullException(messageSource.getMessage("message3",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -210,7 +211,7 @@ public class ProductDaoImpl implements ProductDao {
                 throw new NotFoundException(messageSource.getMessage("message7",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
     }
 
@@ -235,7 +236,7 @@ public class ProductDaoImpl implements ProductDao {
                 throw new NotFoundException(messageSource.getMessage("message8",params,LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -303,7 +304,7 @@ public class ProductDaoImpl implements ProductDao {
 
 
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
     }
@@ -361,7 +362,7 @@ public class ProductDaoImpl implements ProductDao {
         }
 
         else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
 
         return viewProductDTO;
@@ -483,7 +484,7 @@ public class ProductDaoImpl implements ProductDao {
         }
 
         else {
-            throw new NotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
         }
     }
 

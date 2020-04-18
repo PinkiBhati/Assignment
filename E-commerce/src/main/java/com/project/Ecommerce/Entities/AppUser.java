@@ -16,7 +16,6 @@ public class AppUser implements UserDetails {
     private boolean isAccountNonLocked;
     private boolean isAccountNonExpired;
 
-    private static int count=3;
 
     public AppUser(String username, String password, List<GrantAuthorityImpl> grantAuthorities,boolean isEnabled,boolean isAccountNonLocked,boolean isAccountNonExpired) {
         this.username= username;

@@ -30,14 +30,14 @@ public class UserController {
 
 
     @Secured("ROLE_CUSTOMER")
-    @ApiOperation("This URI is for Customer  and Seller to add address, But Seller can add only one address")
+    @ApiOperation("This URI is for Customer to add address")
     @PostMapping("/addNewAddress")
     public String addNewAddress(@Valid @RequestBody Address address) {
         return userDao.addNewAddress(address);
     }
 
     @Secured("ROLE_CUSTOMER")
-    @ApiOperation("This URI is for All Users to delete his account")
+    @ApiOperation("This URI is for Customer to delete his address")
     @DeleteMapping("/deleteAddress/{AddressId}")
     public String deleteAddress(@PathVariable(value = "AddressId") Long AddressId) {
         addressRepository.deleteAddress(AddressId);

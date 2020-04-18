@@ -10,14 +10,13 @@ import com.project.Ecommerce.Entities.ProductVariation;
 import com.project.Ecommerce.Entities.Seller;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
+import com.project.Ecommerce.ExceptionHandling.ProductNotFoundException;
+import com.project.Ecommerce.ExceptionHandling.ProductVariationNotFoundException;
 import com.project.Ecommerce.Repos.*;
 import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,7 +88,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
         Optional<Product> productOptional = productRepository.findById(productId);
 
         if (!productOptional.isPresent()) {
-            throw new NotFoundException(messageSource.getMessage("message34",params , LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params , LocaleContextHolder.getLocale()));
         } else {
             Product product1 = productOptional.get();
             if (product1.getIsActive() == true) {
@@ -222,7 +221,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                 throw new NullException(messageSource.getMessage("message39",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NullException(messageSource.getMessage("message40",params , LocaleContextHolder.getLocale()));
+            throw new NullException(messageSource.getMessage("message42",params , LocaleContextHolder.getLocale()));
         }
 
     }
@@ -294,7 +293,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
             if (productVariation.isPresent()) {
                 return uploadDao.uploadSingleImageForProductVariation(file, productVariation.get());
             } else {
-                throw new RuntimeException();
+                throw new ProductVariationNotFoundException(messageSource.getMessage("message40",params , LocaleContextHolder.getLocale()));
             }
         } else {
             throw new NotFoundException(messageSource.getMessage("message43",params , LocaleContextHolder.getLocale()));
@@ -324,7 +323,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                 throw new NotFoundException(messageSource.getMessage("message44",params , LocaleContextHolder.getLocale()));
             }
         } else {
-            throw new NotFoundException(messageSource.getMessage("message1",params , LocaleContextHolder.getLocale()));
+            throw new ProductNotFoundException(messageSource.getMessage("message1",params , LocaleContextHolder.getLocale()));
         }
         return productVariationDTOList;
     }

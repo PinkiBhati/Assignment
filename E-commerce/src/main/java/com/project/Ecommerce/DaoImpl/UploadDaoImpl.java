@@ -100,18 +100,6 @@ public class UploadDaoImpl implements UploadDao
             return new ResponseEntity<>("User profile image successfully  added", HttpStatus.OK);
         }
 
-        @Override
-        public ResponseEntity<Object> uploadMultipleFiles(MultipartFile[] files) throws IOException {
-            for (MultipartFile multipartFile : files) {
-                File convertFile = new File("/home/pinki/session/E-commerce/src/main/resources/upload/images" + multipartFile.getOriginalFilename());
-                convertFile.createNewFile();
-                FileOutputStream fileOutputStream = new FileOutputStream(convertFile);
-                System.out.println(convertFile.getAbsolutePath());
-                fileOutputStream.write(multipartFile.getBytes());
-                fileOutputStream.close();
-            }
-            return new ResponseEntity<>("file added", HttpStatus.OK);
-        }
 
     @Override
     public ResponseEntity downloadImage(String filename, HttpServletRequest request) throws IOException {

@@ -43,8 +43,8 @@ public class SellerController {
 
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to get a Customer Account")
-    @PutMapping("/getCustomerAccount")
-    public String getCustomerAccount(@RequestBody Customer customer)
+    @PutMapping("/getNewAccountAsCustomer")
+    public String getNewAccountAsCustomer(@RequestBody Customer customer)
     {
         return  sellerDao.getAnCustomerAccount(customer);
     }
