@@ -202,13 +202,9 @@ public class UserDaoImpl implements UserDao {
                 user1.setPassword(passwordEncoder.encode(user.getPassword()));
                 user1.setModifiedBy(username);
                 userRepository.save(user1);
-
-                SimpleMailMessage mail = new SimpleMailMessage();
-                mail.setTo(user1.getUsername());
-                mail.setFrom("bhatipinki056@gmail.com");
-                mail.setSubject("password changed status");
-                mail.setText("your password has been successfully changed");
-                javaMailSender.send(mail);
+                String subject="password changed status";
+                String text="your password has been successfully changed";
+                notificationService.sendMailToUser(user1,subject,text);
 
             } else {
                 throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));

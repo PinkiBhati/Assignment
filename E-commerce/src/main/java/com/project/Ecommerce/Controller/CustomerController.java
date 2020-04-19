@@ -70,8 +70,6 @@ public class CustomerController {
 
     }
 
-
-
     @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer so that he can get A account as a seller also")
     @PutMapping("/getSellerAccount")
@@ -80,6 +78,21 @@ public class CustomerController {
         return customerDao.getAnSellerAccount(seller);
 
     }
+
+    @Secured("ROLE_CUSTOMER")
+    @ApiOperation("This URI is for Customer to upload his profile picture")
+    @PostMapping("/uploadProfilePic")
+    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        return customerDao.uploadFile(file);
+    }
+
+    @Secured("ROLE_CUSTOMER")
+    @ApiOperation("This URI is for Customer to view his profile image")
+    @GetMapping("/viewProfileImage")
+    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException {
+        return customerDao.viewProfileImage(request);
+    }
+
 
     @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to get his details ")
@@ -106,20 +119,6 @@ public class CustomerController {
 
         return customerDao.cancelOrder(orderStatusId);
 
-    }
-
-    @Secured("ROLE_CUSTOMER")
-    @ApiOperation("This URI is for Customer to upload his profile picture")
-    @PostMapping("/uploadProfilePic")
-    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        return customerDao.uploadFile(file);
-    }
-
-    @Secured("ROLE_CUSTOMER")
-    @ApiOperation("This URI is for Customer to view his profile image")
-    @GetMapping("/viewProfileImage")
-    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException {
-        return customerDao.viewProfileImage(request);
     }
 
 }
