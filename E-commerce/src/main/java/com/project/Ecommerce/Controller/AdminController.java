@@ -63,15 +63,17 @@ public class AdminController {
     @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can activate a particular user with given ID")
     @PatchMapping("/activateAccount/{userId}")
-    public void activateUser(@PathVariable(name = "userId") Long userId) {
+    public String activateUser(@PathVariable(name = "userId") Long userId) {
         adminDao.activateCustomerAndSeller(userId);
+        return "successfully activated";
     }
 
     @Secured("ROLE_ADMIN")
     @ApiOperation(value = "URI in which Admin can deactivate a particular user with given ID")
     @PatchMapping("/deactivateAccount/{userId}")
-    public void deactivateUser(@PathVariable(name = "userId") Long userId) {
+    public String deactivateUser(@PathVariable(name = "userId") Long userId) {
         adminDao.deActivateCustomerAndSeller(userId);
+        return "Successfully deactivated";
     }
 
     @Secured("ROLE_ADMIN")

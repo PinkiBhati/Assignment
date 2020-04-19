@@ -84,7 +84,6 @@ public class RegisterDaoImpl implements RegisterDao {
 
     }
 
-    @Async
     @Override
     public String registerSeller(SellerDTO seller) {
         if (seller.getPassword().equals(seller.getConfirmPassword())) {
@@ -108,12 +107,10 @@ public class RegisterDaoImpl implements RegisterDao {
             userRepository.save(seller1);
 
             if (userRepository.existsById(seller1.getId())) {
-                SimpleMailMessage mail = new SimpleMailMessage();
-                mail.setTo(seller1.getUsername());
-                mail.setFrom("bhatipinki056@gmail.com");
-                mail.setSubject("Regarding account activation");
-                mail.setText("you account has been created you can access it once admin verifies it");
-                javaMailSender.send(mail);
+
+                String subject="Regarding account activation";
+                String text="you account has been created you can access it once admin verifies it";
+                notificationService.sendMailToUser(seller1,subject,text);
 
             }
             return "success";
@@ -146,7 +143,7 @@ public class RegisterDaoImpl implements RegisterDao {
         else {
             for (Token token: tokenRepository.findAll())
             {
-                if(user.getUsername().equals(token.getName())&& user.getActive()==false)
+                if(user.getUsername().equals(token.getName())&& user.getActive()==false&&user.getEnabled()==false)
                 {
                     tokenRepository.deleteById(token.getId());
 

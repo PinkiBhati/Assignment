@@ -1,10 +1,13 @@
 package com.project.Ecommerce.DaoImpl;
 
 import com.project.Ecommerce.DTO.AddressDTO;
+import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.TokenDao;
 import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.*;
+import com.project.Ecommerce.ExceptionHandling.NotFoundException;
+import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
 import com.project.Ecommerce.Repos.AddressRepository;
 import com.project.Ecommerce.Repos.RoleRepository;
@@ -82,48 +85,43 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public String update(AddressDTO address, Long addressId) {
+    public void update(AddressDTO address, Long addressId) {
         String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user = userRepository.findByUsername(username);
-        Set<Address> addressSet= user.getAddresses();
+        Set<Address> addresses = user.getAddresses();
+        Optional<Address> address1 = addressRepository.findById(addressId);
+        int count=0;
+        if (address1.isPresent())
         {
-            for (Address address1: addressSet)
-            {
-                if(addressId.equals(address1.getId()))
-                {
-                    address1= modelMapper.map(address,Address.class);
-                    if(address.getAddressLine()!=null)
-                    {
-                        address1.setAddressLine(address.getAddressLine());
-                    }
-                    if(address.getCity()!=null)
-                    {
-                        address1.setCity(address.getCity());
-                    }
-                    if(address.getState()!=null)
-                    {
-                        address1.setState(address.getState());
-                    }
-
-                    if(address.getZipCode()!=null)
-                    {
-                        address1.setZipCode(address.getZipCode());
-                    }
-                    if(address.getCountry()!=null)
-                    {
-                        address1.setCountry(address.getCountry());
-                    }
-                    user.setModifiedBy(username);
-                    address1.setId(addressId);
-                    address1.setUser(user);
-                    addressRepository.save(address1);
+            for (Address address2 : addresses) {
+                if (address1.get().getId() == address2.getId()) {
+                    if (address.getAddressLine() != null)
+                        address2.setAddressLine(address.getAddressLine());
+                    if (address.getCity() != null)
+                        address2.setCity(address.getCity());
+                    if (address.getCountry() != null)
+                        address2.setCountry(address.getCountry());
+                    if (address.getState() != null)
+                        address2.setState(address.getState());
+                    if (address.getZipCode() != null)
+                        address2.setZipCode(address.getZipCode());
+                    address2.setUser(user);
+                    address2.setId(addressId);
+                    addressRepository.save(address2);
+                    count++;
                 }
             }
+            if (count==0)
+            {
+                throw new NullException("you cannot update this address");
+            }
         }
-        return "Success";
+        else
+        {
+            throw new NotFoundException("not found");
+        }
 
     }
-
 
     @Override
     public String deleteUser() {
@@ -194,12 +192,12 @@ public class UserDaoImpl implements UserDao {
 */
 
     @Override
-    public String editPassword(UserDTO user) {
+    public String editPassword(PasswordDTO passwordDTO) {
         String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user1 = userRepository.findByUsername(username);
-        if (user.getPassword() != null && user.getConfirmPassword() != null) {
-            if (user.getPassword().equals(user.getConfirmPassword())) {
-                user1.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (passwordDTO.getPassword() != null && passwordDTO.getConfirmPassword() != null) {
+            if (passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())) {
+                user1.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
                 user1.setModifiedBy(username);
                 userRepository.save(user1);
                 String subject="password changed status";

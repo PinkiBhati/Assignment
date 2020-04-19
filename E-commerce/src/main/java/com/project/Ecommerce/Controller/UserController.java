@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.DTO.AddressDTO;
+import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.Address;
@@ -21,11 +22,11 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
-    @Secured({"ROLE_CUSTOMER","ROLE_SELLER"})
-    @ApiOperation("This URI is for Customer And Seller to update his/her password")
+    @Secured({"ROLE_CUSTOMER","ROLE_SELLER","ROLE_ADMIN"})
+    @ApiOperation("This URI is for all registered users to update his/her password")
     @PutMapping("/updatePassword")
-    public String updatePassword(@RequestBody UserDTO user) {
-        return userDao.editPassword(user);
+    public String updatePassword(@Valid @RequestBody PasswordDTO password) {
+        return userDao.editPassword(password);
     }
 
 
@@ -47,8 +48,9 @@ public class UserController {
     @Secured({"ROLE_CUSTOMER","ROLE_SELLER"})
     @ApiOperation("This URI is for Customer and Seller to update his address")
     @PutMapping("/updateAddress/{addressId}")
-    public void update(@Valid @RequestBody AddressDTO address, @PathVariable Long addressId) {
-        userDao.update(address, addressId);
+    public String updateAddress(@RequestBody AddressDTO address, @PathVariable(value = "addressId") Long addressId) {
+         userDao.update(address, addressId);
+         return "success";
     }
 
     @Secured({"ROLE_CUSTOMER","ROLE_SELLER"})

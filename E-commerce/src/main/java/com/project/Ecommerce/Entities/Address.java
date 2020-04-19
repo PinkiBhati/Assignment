@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class Address {
     @Id
     @GeneratedValue

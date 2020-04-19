@@ -109,7 +109,7 @@ public class Bootstrap implements ApplicationRunner {
             Address address5 = new Address();
             address5.setCity("delhi");
             address5.setCountry("india");
-            address5.setLabel("office");
+            address5.setLabel("HOME");
             address5.setZipCode(110095);
             address5.setState("delhi");
             address5.setAddressLine("sadar colony");
@@ -311,7 +311,7 @@ public class Bootstrap implements ApplicationRunner {
             address1.setZipCode(110010);
             address1.setCountry("India");
             address1.setCity("delhi");
-            address1.setLabel("HOME");
+            address1.setLabel("OFFICE");
             address1.setUser(seller);
             addressSet.add(address1);
 

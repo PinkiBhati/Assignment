@@ -79,7 +79,6 @@ public class AdminDaoImpl implements AdminDao {
                 String subject="Regarding account deactivation";
                 String text="Your account has been deactivated by Admin. You cannot login now";
                 notificationService.sendMailToUser(user1,subject,text);
-
                 System.out.println("Email Sent!");
             }
         } else {
