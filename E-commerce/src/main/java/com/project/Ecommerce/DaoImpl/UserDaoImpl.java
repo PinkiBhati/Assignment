@@ -107,6 +107,7 @@ public class UserDaoImpl implements UserDao {
                         address2.setZipCode(address.getZipCode());
                     address2.setUser(user);
                     address2.setId(addressId);
+                    address2.setModifiedBy(user.getUsername());
                     addressRepository.save(address2);
                     count++;
                 }

@@ -21,6 +21,20 @@ public class Category {
     private String name;
 
 
+    @Column(name = "createdDate")
+    @CreatedDate
+    private LocalDateTime createdOn;
+
+    @Column(name = "modifiedDate")
+    @LastModifiedDate
+    private LocalDateTime modifiedOn;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="parent_id")
     private Category category;
@@ -88,6 +102,39 @@ public class Category {
 
     public void setCategoryMetadataFieldValues(Set<CategoryMetadataFieldValues> categoryMetadataFieldValues) {
         this.categoryMetadataFieldValues = categoryMetadataFieldValues;
+    }
+
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
+    }
+
+    public void setModifiedOn(LocalDateTime modifiedOn) {
+        this.modifiedOn = modifiedOn;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     @Override

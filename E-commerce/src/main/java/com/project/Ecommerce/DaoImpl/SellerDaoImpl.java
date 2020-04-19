@@ -112,6 +112,7 @@ public class SellerDaoImpl implements SellerDao {
                 seller.setGst(sellerProfileDTO.getGst());
             }
         }
+        seller.setModifiedBy(seller.getUsername());
         sellerRepository.save(seller);
     }
 

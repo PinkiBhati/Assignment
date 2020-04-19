@@ -114,6 +114,68 @@ public class CustomerDaoImpl implements CustomerDao {
         return customer;
     }
 
+
+    @Override
+    public ProfileDTO viewProfile()
+    {
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
+        Customer customer = customerRepository.findByUsername(username);
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setFirstName(customer.getFirstName());
+        profileDTO.setLastName(customer.getLastName());
+        profileDTO.setContactNo(customer.getContact());
+        profileDTO.setMiddleName(customer.getMiddleName());
+        return profileDTO;
+    }
+
+    @Override
+    public String updateProfile(ProfileDTO customer)
+    {
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
+        Customer customer1 = customerRepository.findByUsername(username);
+        if (customer.getFirstName()!=null)
+            customer1.setFirstName(customer.getFirstName());
+        if (customer.getMiddleName()!=null)
+            customer1.setMiddleName(customer.getMiddleName());
+        if (customer.getLastName()!=null)
+            customer1.setLastName(customer.getLastName());
+        if (customer.getContactNo()!=null)
+        {
+            if (customer.getContactNo().matches("(\\+91|0)[0-9]{10}"))
+            {
+                customer1.setContact(customer.getContactNo());
+            }
+            else
+            {
+                throw new PatternMismatchException(messageSource.getMessage("message28",params, LocaleContextHolder.getLocale()));
+            }
+        }
+        customer1.setEnabled(true);
+        customerRepository.save(customer1);
+        return "success";
+    }
+
+
+    @Override
+    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException
+    {
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
+        Customer customer = customerRepository.findByUsername(username);
+        String filename = customer.getId().toString();
+        System.out.println(filename);
+        return uploadDao.downloadImage(filename, request);
+
+    }
+
+    @Override
+    public ResponseEntity<Object> uploadFile(MultipartFile file) throws IOException
+    {
+        String username = getCurrentlyLoggedInUser.getCurrentUser();
+        Customer customer = customerRepository.findByUsername(username);
+        return uploadDao.uploadSingleImage(file, customer);
+    }
+
+
     @Transactional
     @Override
     public String getAnSellerAccount(Seller seller) {
@@ -183,63 +245,4 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
 
-    @Override
-    public ProfileDTO viewProfile()
-    {
-        String username = getCurrentlyLoggedInUser.getCurrentUser();
-        Customer customer = customerRepository.findByUsername(username);
-        ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setFirstName(customer.getFirstName());
-        profileDTO.setLastName(customer.getLastName());
-        profileDTO.setContactNo(customer.getContact());
-        profileDTO.setMiddleName(customer.getMiddleName());
-        return profileDTO;
-    }
-
-    @Override
-    public String updateProfile(ProfileDTO customer)
-    {
-        String username = getCurrentlyLoggedInUser.getCurrentUser();
-        Customer customer1 = customerRepository.findByUsername(username);
-        if (customer.getFirstName()!=null)
-            customer1.setFirstName(customer.getFirstName());
-        if (customer.getMiddleName()!=null)
-            customer1.setMiddleName(customer.getMiddleName());
-        if (customer.getLastName()!=null)
-            customer1.setLastName(customer.getLastName());
-        if (customer.getContactNo()!=null)
-        {
-            if (customer.getContactNo().matches("(\\+91|0)[0-9]{10}"))
-            {
-                customer1.setContact(customer.getContactNo());
-            }
-            else
-            {
-                throw new PatternMismatchException(messageSource.getMessage("message28",params, LocaleContextHolder.getLocale()));
-            }
-        }
-        customer1.setEnabled(true);
-        customerRepository.save(customer1);
-        return "success";
-    }
-
-
-    @Override
-    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException
-    {
-        String username = getCurrentlyLoggedInUser.getCurrentUser();
-        Customer customer = customerRepository.findByUsername(username);
-        String filename = customer.getId().toString();
-        System.out.println(filename);
-        return uploadDao.downloadImage(filename, request);
-
-    }
-
-    @Override
-    public ResponseEntity<Object> uploadFile(MultipartFile file) throws IOException
-    {
-        String username = getCurrentlyLoggedInUser.getCurrentUser();
-        Customer customer = customerRepository.findByUsername(username);
-        return uploadDao.uploadSingleImage(file, customer);
-    }
 }

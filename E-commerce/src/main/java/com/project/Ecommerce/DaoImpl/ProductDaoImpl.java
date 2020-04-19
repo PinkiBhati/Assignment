@@ -23,6 +23,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -90,6 +91,8 @@ public class ProductDaoImpl implements ProductDao {
         product1.setCancellable(product.getIsCancellable());
         product1.setDescription(product.getDescription());
         product1.setName(product.getName());
+        product1.setCreatedBy(seller.getUsername());
+        product1.setCreatedOn(LocalDateTime.now());
         product1.setSellers(seller);
         product1.setCategoriesInProduct(categoryRepository.findById(categoryId).get());
         productSet.add(product1);
@@ -178,6 +181,7 @@ public class ProductDaoImpl implements ProductDao {
                     product1.setDescription(product.getDescription());
                 }
 
+                product1.setModifiedBy(seller1.getUsername());
                 productRepository.save(product1);
 
 
@@ -375,15 +379,15 @@ public class ProductDaoImpl implements ProductDao {
         String fileBasePath = currentPath +"/src/main/resources/productVariation/";
         File dir = new File(fileBasePath);
         Optional<Product> productOptional = productRepository.findById(id);
-        Product product= productOptional.get();
+
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
         List<String > links=new ArrayList<>();
         ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
-        Set<ProductVariation> productVariationSet= product.getProductVariations();
+        if (productOptional.isPresent()&&productOptional.get().getIsActive()==true&&productOptional.get().getProductVariations().isEmpty()==false) {
 
-        if (productOptional.isPresent()&&product.getIsActive()==true&&productVariationSet.isEmpty()==false) {
-
+            Product product= productOptional.get();
+            Set<ProductVariation> productVariationSet= product.getProductVariations();
             viewProductDTO.setProductName(product.getName());
             viewProductDTO.setBrand(product.getBrand());
             viewProductDTO.setCancellable(product.getIsCancellable());
@@ -418,13 +422,14 @@ public class ProductDaoImpl implements ProductDao {
 
 
             }
+            return viewProductDTO;
         }
 
         else {
             throw new NotFoundException(messageSource.getMessage("message6",params,LocaleContextHolder.getLocale()));
         }
 
-        return viewProductDTO;
+
     }
 
     @Override
@@ -432,9 +437,6 @@ public class ProductDaoImpl implements ProductDao {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         List<ViewProductForCustomerDTO> viewProductDTOList= new ArrayList<>();
-        List<String> fields= new ArrayList<>();
-        List<String> values=new ArrayList<>();
-        List<String> links= new ArrayList<>();
         String currentPath = System.getProperty("user.dir");
         String fileBasePath = currentPath +"/src/main/resources/productVariation/";
         File dir = new File(fileBasePath);

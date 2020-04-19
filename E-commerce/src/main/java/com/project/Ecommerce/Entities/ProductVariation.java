@@ -1,10 +1,15 @@
 package com.project.Ecommerce.Entities;
 
 import com.project.Ecommerce.Utilities.HashMapConverter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +34,21 @@ public class ProductVariation {
     @Convert(converter = HashMapConverter.class)
     private Map<String,Object> infoAttributes;
     boolean isActive;
+
+    @Column(name = "createdDate")
+    @CreatedDate
+    private LocalDateTime createdOn;
+
+    @Column(name = "modifiedDate")
+    @LastModifiedDate
+    private LocalDateTime modifiedOn;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -113,6 +133,39 @@ public class ProductVariation {
 
     public void setInfoAttributes(Map<String, Object> infoAttributes) {
         this.infoAttributes = infoAttributes;
+    }
+
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
+    }
+
+    public void setModifiedOn(LocalDateTime modifiedOn) {
+        this.modifiedOn = modifiedOn;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public void addCarts(Cart cart)

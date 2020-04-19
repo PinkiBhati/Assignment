@@ -69,8 +69,11 @@ public class ForgetPassword {
             } else {
                 User user2 = userRepository.findByUsername(token1.getName());
                 user2.setPassword(new BCryptPasswordEncoder().encode(password));
+                String subject="Regarding Password change";
+                String text="Your password has been successfully changed";
                 userRepository.save(user2);
                 tokenRepository.delete(token1);
+                notificationService.sendMailToUser(user2,subject,text);
             }
         }
     }

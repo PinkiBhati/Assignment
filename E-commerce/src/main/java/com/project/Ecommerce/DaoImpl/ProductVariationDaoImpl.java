@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -129,6 +130,8 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                         String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
                         productVariation.setMetadata(info);
                         productVariation.setActive(true);
+                        productVariation.setCreatedBy(seller1.getUsername());
+                        productVariation.setCreatedOn(LocalDateTime.now());
                         productVariationRepository.save(productVariation);
                     } else {
                         throw new NotFoundException(messageSource.getMessage("message35",params , LocaleContextHolder.getLocale()));
@@ -207,6 +210,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                         productVariation2.setActive(productVariation.getisActive());
                         productVariation2.setQuantityAvailable(productVariation.getQuantityAvailable());
                         productVariation2.setPrice(productVariation.getPrice());
+                        productVariation2.setModifiedBy(seller.getUsername());
                         String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
                         productVariation2.setMetadata(info);
                         productVariationRepository.save(productVariation2);

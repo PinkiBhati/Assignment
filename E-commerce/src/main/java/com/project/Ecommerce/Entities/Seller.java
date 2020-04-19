@@ -28,6 +28,21 @@ public class Seller extends User {
     @Pattern(regexp = "(\\+91|0)[0-9]{10}")
     private String companyContact;
 
+    @Column(name = "createdDate")
+    @CreatedDate
+    private LocalDateTime createdOn;
+
+    @Column(name = "modifiedDate")
+    @LastModifiedDate
+    private LocalDateTime modifiedOn;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+
     @OneToMany(mappedBy = "sellers",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     Set<Product> products ;
 
@@ -61,6 +76,46 @@ public class Seller extends User {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    @Override
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    @Override
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    @Override
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
+    }
+
+    @Override
+    public void setModifiedOn(LocalDateTime modifiedOn) {
+        this.modifiedOn = modifiedOn;
+    }
+
+    @Override
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    @Override
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     @Override

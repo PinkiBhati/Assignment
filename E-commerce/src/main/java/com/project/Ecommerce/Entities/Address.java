@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Address {
     @Id
     @GeneratedValue
@@ -27,7 +28,7 @@ public class Address {
     @Column(nullable = false)
     private String label;
 
-   /* @Column(name = "createdDate")
+    @Column(name = "createdDate")
     @CreatedDate
     private LocalDateTime createdOn;
 
@@ -39,7 +40,7 @@ public class Address {
     private String createdBy;
 
     @LastModifiedBy
-    private String modifiedBy;*/
+    private String modifiedBy;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -109,7 +110,6 @@ public class Address {
     public void setLabel(String label) {
         this.label = label;
     }
-/*
 
     public LocalDateTime getCreatedOn() {
         return createdOn;
@@ -142,7 +142,6 @@ public class Address {
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
-*/
 
     @Override
     public String toString() {
