@@ -207,12 +207,29 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                     if (count == map.size()) {
                         Optional<ProductVariation> productVariation1 = productVariationRepository.findById(productVariationId);
                         ProductVariation productVariation2 = productVariation1.get();
-                        productVariation2.setActive(productVariation.getisActive());
-                        productVariation2.setQuantityAvailable(productVariation.getQuantityAvailable());
-                        productVariation2.setPrice(productVariation.getPrice());
+                        if(productVariation.getisActive()!=null)
+                        {
+                            productVariation2.setActive(productVariation.getisActive());
+                        }
+                        if(productVariation.getQuantityAvailable()!=null)
+                        {
+                            productVariation2.setQuantityAvailable(productVariation.getQuantityAvailable());
+                        }
+
+                        if(productVariation.getInfoAttributes()!=null)
+                        {
+                            String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
+                            productVariation2.setMetadata(info);
+
+                        }
+
+                        if(productVariation.getPrice()!=null)
+                        {
+                            productVariation2.setPrice(productVariation.getPrice());
+                        }
+
                         productVariation2.setModifiedBy(seller.getUsername());
-                        String info = objectMapper.writeValueAsString(productVariation.getInfoAttributes());
-                        productVariation2.setMetadata(info);
+
                         productVariationRepository.save(productVariation2);
                     } else {
                         throw new NotFoundException(messageSource.getMessage("message38",params , LocaleContextHolder.getLocale()));

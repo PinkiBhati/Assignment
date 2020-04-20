@@ -3,6 +3,7 @@ package com.project.Ecommerce.Entities;
 
 
 import com.project.Ecommerce.DaoImpl.UserDaoImpl;
+import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -34,11 +35,17 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user= userRepository.findByUsername(username);
-
-
         System.out.println("Trying to authenticate user ::" + username);
-        UserDetails userDetails = userDaoImpl.loadUserByUsername(username);
-        return userDetails;
+        if(user!=null)
+        {
+            UserDetails userDetails = userDaoImpl.loadUserByUsername(username);
+            return userDetails;
+        }
+        else {
+            throw new NotFoundException("USER NOT FOUND");
+        }
+
+
     }
 
 

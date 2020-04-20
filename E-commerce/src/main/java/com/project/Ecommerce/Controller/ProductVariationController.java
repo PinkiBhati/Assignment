@@ -50,25 +50,28 @@ public class ProductVariationController {
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for seller to add a new product variation to a product he owns")
     @PostMapping("/addProductVariations/{productId}")
-    public void addNewProductVariation(@Valid @RequestBody ProductVariation productVariation, @PathVariable Long productId) throws JsonProcessingException {
+    public String addNewProductVariation(@Valid @RequestBody ProductVariation productVariation, @PathVariable Long productId) throws JsonProcessingException {
 
         productVariationDao.addNewProductVariation(productVariation, productId);
+        return "successfully added";
 
     }
 
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to update a product variation associated to a product he owns")
     @PutMapping("/editProductVariations/{productVariationId}")
-    public void updateProductVariation(@RequestBody ProductVariation productVariation, @PathVariable Long productVariationId) throws JsonProcessingException {
+    public String updateProductVariation(@RequestBody ProductVariation productVariation, @PathVariable Long productVariationId) throws JsonProcessingException {
 
         productVariationDao.editProductVariation(productVariation,productVariationId);
+        return "successfully updated";
     }
 
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to delete a product Variation of a product which he owns")
     @DeleteMapping("/deleteProductVariation/{productVariationId}")
-    public void deleteProductVariation(@PathVariable int productVariationId) {
+    public String deleteProductVariation(@PathVariable int productVariationId) {
         productVariationDao.removeProductVariation(productVariationId);
+        return "successfully deleted";
     }
 
 

@@ -114,12 +114,12 @@ public class UserDaoImpl implements UserDao {
             }
             if (count==0)
             {
-                throw new NullException("you cannot update this address");
+                throw new NullException(messageSource.getMessage("message51",params , LocaleContextHolder.getLocale()));
             }
         }
         else
         {
-            throw new NotFoundException("not found");
+            throw new NotFoundException(messageSource.getMessage("message52",params , LocaleContextHolder.getLocale()));
         }
 
     }

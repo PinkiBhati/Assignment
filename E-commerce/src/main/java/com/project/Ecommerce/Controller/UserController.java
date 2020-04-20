@@ -2,7 +2,6 @@ package com.project.Ecommerce.Controller;
 
 import com.project.Ecommerce.DTO.AddressDTO;
 import com.project.Ecommerce.DTO.PasswordDTO;
-import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.UserDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Repos.AddressRepository;

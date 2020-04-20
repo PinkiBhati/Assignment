@@ -27,13 +27,13 @@ public class ProductVariation {
 
     @Column(nullable = false)
     @Positive
-    private double price;
+    private Double price;
     private String metadata;
 
     @Transient
     @Convert(converter = HashMapConverter.class)
     private Map<String,Object> infoAttributes;
-    boolean isActive;
+    Boolean isActive;
 
     @Column(name = "createdDate")
     @CreatedDate
@@ -76,11 +76,11 @@ public class ProductVariation {
         this.quantityAvailable = quantityAvailable;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -88,14 +88,14 @@ public class ProductVariation {
         return product;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return isActive;
     }
 
-    public boolean getisActive(){
+    public Boolean getisActive(){
         return  isActive;
     }
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 
