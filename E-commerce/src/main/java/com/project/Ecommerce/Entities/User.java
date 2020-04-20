@@ -53,7 +53,6 @@ public class User {
     private Boolean isEnabled;
     private boolean isAccountNonLocked;
     private boolean isAccountNonExpired;
-    private int count;
 
 
 
@@ -98,15 +97,6 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
 

@@ -248,7 +248,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public void addNewProduct(ProductDTO product, Long categoryId) {
         int result = categoryRepository.checkIfLeaf(categoryId);
-        if (result == 1) {
+        if (result == 0) {
             if (product.getName().equals(categoryRepository.findById(categoryId).get().getName()) || product.getName().equals(product.getBrand())) {
                 throw new NullException(messageSource.getMessage("message9",params,LocaleContextHolder.getLocale()));
             }
@@ -320,14 +320,16 @@ public class ProductDaoImpl implements ProductDao {
         String fileBasePath = currentPath +"/src/main/resources/productVariation/";
         File dir = new File(fileBasePath);
         Optional<Product> productOptional = productRepository.findById(productId);
-        Product product= productOptional.get();
+
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
         List<String > links=new ArrayList<>();
         ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
-        Set<ProductVariation> productVariationSet= product.getProductVariations();
+
 
         if (productOptional.isPresent()) {
+            Product product= productOptional.get();
+            Set<ProductVariation> productVariationSet= product.getProductVariations();
 
             viewProductDTO.setProductName(product.getName());
             viewProductDTO.setBrand(product.getBrand());

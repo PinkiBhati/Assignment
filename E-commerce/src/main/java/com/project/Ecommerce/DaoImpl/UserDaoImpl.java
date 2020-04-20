@@ -141,6 +141,7 @@ public class UserDaoImpl implements UserDao {
         User user = userRepository.findByUsername(username);
         address.setLabel("HOME");
         address.setUser(user);
+        address.setCreatedBy(user.getUsername());
         user.addAddress(address);
         user.setModifiedBy(username);
         userRepository.save(user);

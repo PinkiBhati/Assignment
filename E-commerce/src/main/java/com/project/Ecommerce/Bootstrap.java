@@ -69,7 +69,7 @@ public class Bootstrap implements ApplicationRunner {
             user.setActive(true);
             user.setCreatedBy("pinki");
             user.setContact("+917564389210");
-            user.setPassword(passwordEncoder.encode("admin"));
+            user.setPassword(passwordEncoder.encode("Admin@123"));
             user.setUsername("bhatipinki0@gmail.com");
             Role role = new Role();
             role.setRoleName("ROLE_ADMIN");
@@ -98,8 +98,10 @@ public class Bootstrap implements ApplicationRunner {
             user1.setEnabled(true);
             user1.setActive(true);
             user1.setContact("09711247133");
-            user1.setPassword(passwordEncoder.encode("customer"));
             user1.setUsername("pinki6@gmail.com");
+            user1.setCreatedBy(user1.getUsername());
+            user1.setPassword(passwordEncoder.encode("Customer@123"));
+
             Role role5 = new Role();
             role5.setRoleName("ROLE_CUSTOMER");
             userSet.add(user1);
@@ -325,8 +327,8 @@ public class Bootstrap implements ApplicationRunner {
             seller.setCompanyContact("+919843928689");
             seller.setCompanyName("Tommy Hilfiger");
             seller.setGst("27AAACS8577K2ZO");
-            seller.setPassword(passwordEncoder.encode("admins"));
-            seller.setUsername("bhatipinki056@gmail.com");
+            seller.setPassword(passwordEncoder.encode("Admins@123"));
+            seller.setUsername("bhatipinki05@gmail.com");
 
             seller1.setFirstName("Arti");
             seller1.setLastName("Sharma");
@@ -500,9 +502,17 @@ public class Bootstrap implements ApplicationRunner {
             categoryMetadataField.setName("SIZE");
             categoryMetadataFieldRepository.save(categoryMetadataField);
 
+            CategoryMetadataField categoryMetadataField1 = new CategoryMetadataField();
+            categoryMetadataField1.setName("COLOR");
+            categoryMetadataFieldRepository.save(categoryMetadataField1);
+
             CategoryMetadataFieldValuesId categoryMetadataFieldValuesId= new CategoryMetadataFieldValuesId();
             categoryMetadataFieldValuesId.setCid(category4.getId());
             categoryMetadataFieldValuesId.setMid(categoryMetadataField.getId());
+
+            CategoryMetadataFieldValuesId categoryMetadataFieldValuesId1= new CategoryMetadataFieldValuesId();
+            categoryMetadataFieldValuesId1.setCid(category4.getId());
+            categoryMetadataFieldValuesId1.setMid(categoryMetadataField1.getId());
 
             CategoryMetadataFieldValues categoryMetadataFieldValues= new CategoryMetadataFieldValues();
             categoryMetadataFieldValues.setFieldValues("L,M,S");
@@ -510,11 +520,19 @@ public class Bootstrap implements ApplicationRunner {
             categoryMetadataFieldValues.setCategoryMetadataField(categoryMetadataField);
             categoryMetadataFieldValues.setCategory(category4);
 
+            CategoryMetadataFieldValues categoryMetadataFieldValues2= new CategoryMetadataFieldValues();
+            categoryMetadataFieldValues2.setFieldValues("Blue,Black,Red");
+            categoryMetadataFieldValues2.setCategoryMetadataFieldValuesId(categoryMetadataFieldValuesId1);
+            categoryMetadataFieldValues2.setCategoryMetadataField(categoryMetadataField1);
+            categoryMetadataFieldValues2.setCategory(category4);
+
             Set<CategoryMetadataFieldValues> categoryMetadataFieldValues1 = new HashSet<>();
             categoryMetadataFieldValues1.add(categoryMetadataFieldValues);
+            categoryMetadataFieldValues1.add(categoryMetadataFieldValues2);
             category4.setCategoryMetadataFieldValues(categoryMetadataFieldValues1);
 
             categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues);
+            categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues2);
 
 
         }

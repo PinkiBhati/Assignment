@@ -8,6 +8,7 @@ import com.project.Ecommerce.Entities.*;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.Repos.*;
+import com.project.Ecommerce.Utilities.GetCurrentlyLoggedInUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,6 +30,9 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Autowired
     CategoryMetadataFieldRepository categoryMetadataFieldRepository;
+
+    @Autowired
+    GetCurrentlyLoggedInUser getCurrentlyLoggedInUser;
 
     @Autowired
     private MessageSource messageSource;
@@ -65,6 +69,7 @@ public class CategoryDaoImpl implements CategoryDao {
             Optional<Category> category1 = categoryRepository.findById(parentCategoryId);
             if (category1.isPresent()) {
                 category.setCategory(category1.get());
+                category.setCreatedBy(getCurrentlyLoggedInUser.getCurrentUser());
                 categoryRepository.save(category);
             }
             else
@@ -84,6 +89,7 @@ public class CategoryDaoImpl implements CategoryDao {
         if (categoryRepository.findById(categoryId).isPresent()) {
             Category category1 = categoryRepository.findById(categoryId).get();
             category1.setName(category.getName());
+            category1.setModifiedBy(getCurrentlyLoggedInUser.getCurrentUser());
             categoryRepository.save(category1);
 
         } else {

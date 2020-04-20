@@ -7,11 +7,8 @@ import com.project.Ecommerce.Dao.RegisterDao;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -27,14 +24,12 @@ public class RegisterController {
 
 
     @ApiOperation("This URI is for everyone to register as CUSTOMER")
-    @Lazy
     @PostMapping("/customerRegistration")
     public String customerRegistration(@Valid @RequestBody CustomerDTO customer) {
         return registerDao.registerCustomer(customer);
     }
 
     @ApiOperation("This URI is for everyone to register as SELLER")
-    @Lazy
     @PostMapping("/sellerRegistration")
     public String sellerRegistration(@Valid @RequestBody SellerDTO seller) {
         return registerDao.registerSeller(seller);

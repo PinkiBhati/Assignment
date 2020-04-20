@@ -41,6 +41,8 @@ public class SellerController {
     }
 
 
+    //extra
+
     @Secured("ROLE_SELLER")
     @ApiOperation("This URI is for Seller to get a Customer Account")
     @PutMapping("/getNewAccountAsCustomer")

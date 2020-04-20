@@ -7,7 +7,6 @@ import com.project.Ecommerce.Dao.AdminDao;
 import com.project.Ecommerce.Entities.Address;
 import com.project.Ecommerce.Entities.NotificationService;
 import com.project.Ecommerce.Entities.User;
-import com.project.Ecommerce.ExceptionHandling.AlreadyExists;
 import com.project.Ecommerce.ExceptionHandling.NullException;
 import com.project.Ecommerce.ExceptionHandling.UserNotFoundException;
 import com.project.Ecommerce.Repos.ProductRepository;
@@ -28,9 +27,9 @@ public class AdminDaoImpl implements AdminDao {
     @Autowired
     ProductRepository productRepository;
 
-
     @Autowired
     NotificationService notificationService;
+
     @Autowired
     UserRepository userRepository;
 
@@ -201,9 +200,5 @@ public class AdminDaoImpl implements AdminDao {
               return userList;
 
     }
-
-
-
-
 }
 
