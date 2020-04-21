@@ -222,19 +222,18 @@ public class CategoryDaoImpl implements CategoryDao {
         List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
-        List<Object[]> list= categoryRepository.getAllCategories(paging);
-        for (Object[] objects: list)
+
+        for (Category category1: categoryRepository.findAll(paging))
         {
             ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
-            viewCategoriesDTO.setName(objects[1].toString());
-            Category category= categoryRepository.findById(categoryRepository.getIdOfParentCategory(viewCategoriesDTO.getName())).get();
-            if(categoryRepository.checkIfLeaf(category.getId())==0)
+            viewCategoriesDTO.setName(category1.getName());
+            if(categoryRepository.checkIfLeaf(category1.getId())==0)
             {
-                List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+                List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category1.getId());
                 for (Long l : longList) {
                     CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
                     fields.add(categoryMetadataField.getName());
-                    values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                    values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category1.getId(), l));
                     viewCategoriesDTO.setValues(values);
                     viewCategoriesDTO.setFieldName(fields);
 
