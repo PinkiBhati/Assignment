@@ -69,8 +69,6 @@ public class TokenDaoImpl implements TokenDao {
         return uu;
     }
 
-//agar verify krega tbhi token delete hoga vrna bs isExpired true hojaega db m rhega
-
     @Lazy
     @Scheduled(cron = "0 0/2 * * * *")
     public void purgeExpired() {
