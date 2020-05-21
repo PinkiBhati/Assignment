@@ -61,12 +61,9 @@ return (seconds[0]*60 + seconds[1]);
 console.log(secondsArray);
 
 console.log("5. Reduce to get total using .filter and .map")
-for( let ele of secondsArray)
-{
-total +=ele;
-}
 
-console.log(total);
+const reducer= (acc,current)=>acc+current;
+console.log(secondsArray.reduce(reducer));
 </script>
 </body>
 </html>
