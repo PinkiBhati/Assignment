@@ -41,7 +41,8 @@ public class NotificationService {
         mail.setTo(user.getUsername());
         mail.setFrom("bhatipinki056@gmail.com");
         mail.setSubject("Here is your token to verify your account");
-        mail.setText(tokenDao.getToken(user));
+        mail.setText("To confirm your account, please click here : "
+                +"http://localhost:3000/activate/"+tokenDao.getToken(user));
         javaMailSender.send(mail);
         System.out.println("Email Sent!");
     }

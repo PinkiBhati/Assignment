@@ -8,9 +8,18 @@ import java.util.List;
 @Component
 public class ViewCategoriesDTO
 {
+    String categoryId;
     String name;
     List<String> fieldName;
     List<String> values;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public String getName() {
         return name;

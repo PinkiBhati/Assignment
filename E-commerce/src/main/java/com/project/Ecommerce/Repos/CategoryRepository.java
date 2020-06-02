@@ -17,7 +17,7 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
     @Query(value = "select exists(select * from category where parent_id=:parent_id)",nativeQuery = true)
     int checkIfLeaf(@Param("parent_id") Long parent_id);
 
-    @Query(value = "select name from category where parent_id in(select id from category where name=:name)",nativeQuery = true)
+    @Query(value = "select name,id from category where parent_id in(select id from category where name=:name)",nativeQuery = true)
     List<Object[]> getSubCategory(@Param("name") String name);
 
     @Query(value = "select name from category where parent_id in(select id from category where id=:id)",nativeQuery = true)
@@ -26,7 +26,7 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
     @Query(value = "select id from category where name=:name",nativeQuery = true)
     Long getIdOfParentCategory(@Param("name") String name);
 
-    @Query(value = "select name from category where parent_id not in (select id from category where parent_id is null)", nativeQuery = true)
+    @Query(value = "select name,id from category where parent_id not in (select id from category where parent_id is null)", nativeQuery = true)
     public List<Object[]> getSubcategory();
 
     @Query(value = "select parent_id from category where id=:id",nativeQuery = true)

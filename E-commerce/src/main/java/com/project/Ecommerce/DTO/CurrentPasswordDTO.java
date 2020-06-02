@@ -6,11 +6,14 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
 @Component
-public class PasswordDTO {
+public class CurrentPasswordDTO {
 
-
+    @Column(nullable=false)
+    @NotEmpty(message = "Password cant be null")
+    @Size(min=8)
+    @ValidPassword
+    private String currentPassword;
 
     @Column(nullable=false)
     @NotEmpty(message = "Password cant be null")
@@ -20,7 +23,13 @@ public class PasswordDTO {
 
     private String confirmPassword;
 
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
 
     public String getPassword() {
         return password;

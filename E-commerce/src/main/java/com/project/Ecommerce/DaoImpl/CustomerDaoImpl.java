@@ -89,9 +89,9 @@ public class CustomerDaoImpl implements CustomerDao {
             throw new NotFoundException(messageSource.getMessage("message29",params, LocaleContextHolder.getLocale()));
         }
         for (Address address: addressSet)
-        {
+        {   if(address.isDeleted()== false){
             AddressDTO addressDTO= modelMapper.map(address,AddressDTO.class);
-            addressDTOList.add(addressDTO);
+            addressDTOList.add(addressDTO);}
         }
 
         return addressDTOList;

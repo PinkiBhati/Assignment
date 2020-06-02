@@ -36,7 +36,7 @@ public class CategoryMetadataFieldController {
 
     @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to delete A categoryMetadata Field Name associated to the ID provided")
-    @DeleteMapping("/deleteCategoryMetadataField/{id}")
+    @DeleteMapping("/categoryMetadataField/{id}")
     public String deleteCategoryMetadataField(@PathVariable(value = "id") Long id) {
         categoryMetadataFieldDao.deleteCategoryMetadataField(id);
         return "CategoryMetadataField is successfully deleted";

@@ -9,6 +9,7 @@ import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class TokenDaoImpl implements TokenDao {
     NotificationService notificationService;
 
 
-    public void verifyToken(String tokenValue) {
+    public ResponseEntity verifyToken(String tokenValue) {
 
         Token token1 = null;
         for (Token token : tokenRepository.findAll()) {
@@ -46,6 +47,7 @@ public class TokenDaoImpl implements TokenDao {
 
                 notificationService.sendNotification(userRepository.findByUsername(token1.getName()));
                 tokenRepository.delete(token1);
+                return ResponseEntity.ok().body("your token has been expired");
             } else {
                 System.out.println("saving");
                 User user2 = userRepository.findByUsername(token1.getName());
@@ -54,6 +56,7 @@ public class TokenDaoImpl implements TokenDao {
                 System.out.println(user2.getUsername() + " " + user2.isEnabled());
                 userRepository.save(user2);
                 tokenRepository.delete(token1);
+                return  ResponseEntity.ok().body("Your account has been verified");
             }
         }
     }

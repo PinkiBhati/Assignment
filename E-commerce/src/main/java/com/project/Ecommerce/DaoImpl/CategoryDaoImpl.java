@@ -175,6 +175,7 @@ public class CategoryDaoImpl implements CategoryDao {
         if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
             ViewCategoriesDTO categoriesDTO = new ViewCategoriesDTO();
+            categoriesDTO.setCategoryId(category.getId().toString());
             categoriesDTO.setName(category.getName());
             viewCategoriesDTOList.add(categoriesDTO);
 
@@ -193,12 +194,14 @@ public class CategoryDaoImpl implements CategoryDao {
             } else {
                 ViewCategoriesDTO viewCategoriesDTO2= new ViewCategoriesDTO();
                 viewCategoriesDTO2.setName(category.getName());
+                viewCategoriesDTO2.setCategoryId(category.getId().toString());
 
                 List<Object[]> list = categoryRepository.getSubCategory(category.getName());
                 for (Object[] objects : list) {
 
                     ViewCategoriesDTO viewCategoriesDTO= new ViewCategoriesDTO();
                     viewCategoriesDTO.setName(objects[0].toString());
+                    viewCategoriesDTO.setCategoryId(objects[1].toString());
                     viewCategoriesDTOList.add(viewCategoriesDTO);
                 }
 
@@ -227,6 +230,7 @@ public class CategoryDaoImpl implements CategoryDao {
         {
             ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
             viewCategoriesDTO.setName(category1.getName());
+            viewCategoriesDTO.setCategoryId(category1.getId().toString());
             if(categoryRepository.checkIfLeaf(category1.getId())==0)
             {
                 List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category1.getId());
@@ -250,6 +254,29 @@ public class CategoryDaoImpl implements CategoryDao {
 
 
     @Override
+    public List<ViewCategoriesDTO> viewAllCategoriesExceptLeaf(Integer pageNo, Integer pageSize, String sortBy)
+    {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+        List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
+
+        for (Category category1: categoryRepository.findAll(paging))
+        {
+            if(categoryRepository.checkIfLeaf(category1.getId())==0)
+            {
+            }else{
+                ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
+                viewCategoriesDTO.setName(category1.getName());
+                viewCategoriesDTO.setCategoryId(category1.getId().toString());
+                viewCategoriesDTOS.add(viewCategoriesDTO);
+            }
+        }
+        return viewCategoriesDTOS;
+
+
+    }
+
+
+    @Override
     public List<ViewCategoriesDTO> viewAllCategoriesForSeller()
     {
         List<Object[]> list =  categoryRepository.getSubcategory();
@@ -258,11 +285,12 @@ public class CategoryDaoImpl implements CategoryDao {
         {
             ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
             viewCategoriesDTO.setName(objects[0].toString());
+            viewCategoriesDTO.setCategoryId(objects[1].toString());
             Long categoryId = categoryRepository.getIdOfParentCategory(objects[0].toString());
             Optional<Category> category = categoryRepository.findById(categoryId);
             Set<CategoryMetadataFieldValues> set = category.get().getCategoryMetadataFieldValues(); //L,M,S
             List<String> fields = new ArrayList<>();
-            for (CategoryMetadataFieldValues categoryMetadataFieldValues:set)
+            for (CategoryMetadataFieldValues categoryMetadataFieldValues : set)
             {
                 fields.add(categoryMetadataFieldValues.getFieldValues());
                 viewCategoriesDTO.setValues(fields);

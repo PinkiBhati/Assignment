@@ -57,6 +57,7 @@ public class SellerDaoImpl implements SellerDao {
         Set<Address> addressSet= seller.getAddresses();
         for (Address address: addressSet)
         {
+            sellerProfileDTO.setAddressId(address.getId());
             sellerProfileDTO.setCity(address.getCity());
             sellerProfileDTO.setCountry(address.getCountry());
             sellerProfileDTO.setAddressLine(address.getAddressLine());

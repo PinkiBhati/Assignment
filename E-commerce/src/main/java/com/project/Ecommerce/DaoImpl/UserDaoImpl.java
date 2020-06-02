@@ -1,6 +1,7 @@
 package com.project.Ecommerce.DaoImpl;
 
 import com.project.Ecommerce.DTO.AddressDTO;
+import com.project.Ecommerce.DTO.CurrentPasswordDTO;
 import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Dao.TokenDao;
@@ -197,21 +198,22 @@ public class UserDaoImpl implements UserDao {
     public String editPassword(PasswordDTO passwordDTO) {
         String username = getCurrentlyLoggedInUser.getCurrentUser();
         User user1 = userRepository.findByUsername(username);
-        if (passwordDTO.getPassword() != null && passwordDTO.getConfirmPassword() != null) {
-            if (passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())) {
-                user1.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
-                user1.setModifiedBy(username);
-                userRepository.save(user1);
-                String subject="password changed status";
-                String text="your password has been successfully changed";
-                notificationService.sendMailToUser(user1,subject,text);
+            if (passwordDTO.getPassword() != null && passwordDTO.getConfirmPassword() != null) {
+                if (passwordDTO.getPassword().equals(passwordDTO.getConfirmPassword())) {
+                    user1.setPassword(passwordEncoder.encode(passwordDTO.getPassword()));
+                    user1.setModifiedBy(username);
+                    userRepository.save(user1);
+                    String subject="password changed status";
+                    String text="your password has been successfully changed";
+                    notificationService.sendMailToUser(user1,subject,text);
 
+                } else {
+                    throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
+                }
             } else {
-                throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
+                throw new NullPointerException(messageSource.getMessage("message48",params , LocaleContextHolder.getLocale()));
             }
-        } else {
-            throw new NullPointerException(messageSource.getMessage("message48",params , LocaleContextHolder.getLocale()));
-        }
+
         return "success";
 
     }

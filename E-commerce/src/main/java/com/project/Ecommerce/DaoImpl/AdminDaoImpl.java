@@ -47,6 +47,7 @@ public class AdminDaoImpl implements AdminDao {
                 throw new NullException(messageSource.getMessage("message11",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setEnabled(true);
+                user1.setActive(true);
                 System.out.println("Sending email for account activation");
                 userRepository.save(user1);
                 String subject="Regarding account Activation";
@@ -73,6 +74,7 @@ public class AdminDaoImpl implements AdminDao {
                 throw new NullException(messageSource.getMessage("message13",params, LocaleContextHolder.getLocale()));
             } else {
                 user1.setEnabled(false);
+                user1.setActive(false);
                 userRepository.save(user1);
                 System.out.println("Sending email...");
                 String subject="Regarding account deactivation";

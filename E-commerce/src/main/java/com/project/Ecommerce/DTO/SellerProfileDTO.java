@@ -11,6 +11,7 @@ public class SellerProfileDTO {
     Boolean isActive;
     String companyContact;
     String companyName;
+    Long addressId;
     String gst;
     String city;
     String state;
@@ -40,6 +41,13 @@ public class SellerProfileDTO {
         this.id = id;
     }
 
+    public Long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
 
     public String getFirstName() {
         return firstName;

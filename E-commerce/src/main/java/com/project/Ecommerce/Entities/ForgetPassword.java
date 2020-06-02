@@ -1,10 +1,13 @@
 package com.project.Ecommerce.Entities;
 
+import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.Dao.TokenDao;
+import com.project.Ecommerce.ExceptionHandling.NotFoundException;
 import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -48,33 +51,38 @@ public class ForgetPassword {
             mail.setFrom("bhatipinki056@gmail.com");
             mail.setSubject("Regarding forgot password");
             String uu = tokenDao.getToken(user);
-            mail.setText(uu);
+            mail.setText("http://localhost:3000/setPassword/"+uu);
             javaMailSender.send(mail);
             System.out.println("Email Sent!");
         }
     }
-    public void setPassword(String tokenOnMail, String password) {
+
+    public ResponseEntity setPassword(String token_on_mail, PasswordDTO passwordDTO)
+    {
+        Long[] l = {};
         Token token1 = null;
         for (Token token : tokenRepository.findAll()) {
-            if (token.getRandomToken().equals(tokenOnMail)) {
+            if (token.getRandomToken().equals(token_on_mail)) {
                 token1 = token;
             }
         }
         if (token1 == null) {
-            System.out.println("invalid token");
+            throw new NotFoundException("Invalid Token");
         } else {
             if (token1.isExpired()) {
                 notificationService.sendNotification(userRepository.findByUsername(token1.getName()));
                 tokenRepository.delete(token1);
-            } else {
+                return ResponseEntity.ok().body("token has been expired check email for new token");
+            }
+            else {
                 User user2 = userRepository.findByUsername(token1.getName());
-                user2.setPassword(new BCryptPasswordEncoder().encode(password));
-                String subject="Regarding Password change";
-                String text="Your password has been successfully changed";
+                user2.setPassword(new BCryptPasswordEncoder().encode(passwordDTO.getPassword()));
                 userRepository.save(user2);
                 tokenRepository.delete(token1);
-                notificationService.sendMailToUser(user2,subject,text);
+                return ResponseEntity.ok().body("password has been successfully changed");
             }
         }
+
+
     }
 }

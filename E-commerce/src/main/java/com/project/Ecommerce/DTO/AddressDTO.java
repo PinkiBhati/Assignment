@@ -12,6 +12,7 @@ public class AddressDTO {
     private String state;
     private  String country;
     private Integer zipCode;
+    private Boolean isDeleted;
     private String addressLine;
 
     public Long getId() {
@@ -60,5 +61,13 @@ public class AddressDTO {
 
     public void setAddressLine(String addressLine) {
         this.addressLine = addressLine;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

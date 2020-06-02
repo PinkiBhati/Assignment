@@ -1,6 +1,7 @@
 package com.project.Ecommerce.Dao;
 
 import com.project.Ecommerce.DTO.AddressDTO;
+import com.project.Ecommerce.DTO.CurrentPasswordDTO;
 import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.DTO.UserDTO;
 import com.project.Ecommerce.Entities.Address;

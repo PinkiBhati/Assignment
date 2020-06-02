@@ -93,7 +93,7 @@ public class Bootstrap implements ApplicationRunner {
             Set<Role> roleSet = new HashSet<>();
             Set<Address> addresses5 = new HashSet<>();
             Customer user1 = new Customer();
-            user1.setFirstName("DemoCustomer");
+            user1.setFirstName("Priti");
             user1.setLastName("singh");
             user1.setEnabled(true);
             user1.setActive(true);
@@ -117,6 +117,17 @@ public class Bootstrap implements ApplicationRunner {
             address5.setAddressLine("sadar colony");
             addresses5.add(address5);
             address5.setUser(user1);
+            user1.setAddresses(addresses5);
+            Address address6 = new Address();
+            address6.setCity("punjab");
+            address6.setCountry("India");
+            address6.setLabel("HOME");
+            address6.setZipCode(110010);
+            address6.setState("delhi");
+            address6.setDeleted(false);
+            address6.setAddressLine("cavilry colony");
+            addresses5.add(address6);
+            address6.setUser(user1);
             user1.setAddresses(addresses5);
             userRepository.save(user1);
             Category category = new Category("Clothing");

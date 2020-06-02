@@ -21,8 +21,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 
@@ -76,13 +79,15 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(final HttpSecurity http) throws Exception {
 
         http
+
                 .authorizeRequests()
                 .antMatchers("/").anonymous()
                 .antMatchers(AUTH_WHITELIST).permitAll()
+                .antMatchers("/getUser/{email}").anonymous()
                 .antMatchers("/sellerRegistration").anonymous()
                 .antMatchers("/customerRegistration").anonymous()
                 .antMatchers("/forgotPassword/{email}").anonymous()
-                .antMatchers("/setPassword/{token}/{password}").anonymous()
+                .antMatchers("/setPassword/{token}").anonymous()
                 .antMatchers("/activateUser/{token}").anonymous()
                 .antMatchers("/reSendActivationLink/{emailId}").anonymous()
                 .anyRequest().authenticated()

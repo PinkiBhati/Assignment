@@ -27,6 +27,8 @@ public class Address {
     private String addressLine;
     @Column(nullable = false)
     private String label;
+    @Column
+    private boolean isDeleted;
 
     @Column(name = "createdDate")
     @CreatedDate
@@ -141,6 +143,15 @@ public class Address {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override

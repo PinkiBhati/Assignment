@@ -18,7 +18,7 @@ public interface AddressRepository extends PagingAndSortingRepository<Address,Lo
 
     @Modifying
     @Transactional
-    @Query(value = "delete address from address where id=:id",nativeQuery = true)
+    @Query(value = "update address set is_deleted=true where id=:id",nativeQuery = true)
     public void deleteAddress(@Param(value = "id") Long id);
 
 }

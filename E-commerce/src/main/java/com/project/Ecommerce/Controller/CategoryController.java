@@ -84,6 +84,19 @@ public class CategoryController {
     }
 
     @Secured("ROLE_ADMIN")
+    @ApiOperation("This URI is for Admin to get all the categories except leaf")
+    @GetMapping("/viewAllCategoriesExceptLeaf")
+    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategoriesExceptLeaf(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
+                                                                     @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
+                                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+    {
+        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesExceptLeaf(pageNo, pageSize, sortBy);
+        return new ResponseEntity<List<ViewCategoriesDTO>>(list, new HttpHeaders(), HttpStatus.OK);
+
+
+    }
+
+    @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for updating a Category Name")
     @PutMapping("/updateCategory/{categoryId}")
     public String updateCategory(@Valid @RequestBody Category category, @PathVariable(name = "categoryId") Long categoryId) {
@@ -92,7 +105,7 @@ public class CategoryController {
     }
 
 
-    @Secured("ROLE_SELLER")
+    @Secured({"ROLE_SELLER","ROLE_ADMIN"})
     @ApiOperation("This URI is for Seller to view all the categories")
     @GetMapping("/viewAllCategory")
     public List<ViewCategoriesDTO> viewAllCategory()
