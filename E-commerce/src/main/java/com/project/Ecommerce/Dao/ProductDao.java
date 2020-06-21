@@ -17,7 +17,7 @@ public interface ProductDao {
     public void activateProduct( Long productId);
     public ViewProductForCustomerDTO viewSingleProductForAdmin(Long productId);
     public  ViewProductDTO viewSingleProduct(Long productId);
-    public List<ViewProductForCustomerDTO> viewProducts(Long categoryId,Integer pageNo,Integer pageSize,String sortBy);
+    public List<ViewProductForCustomerDTO> viewProducts(Long categoryId);
     public List<ViewProductForCustomerDTO> viewSimilarProducts(Long productId,Integer pageNo, Integer pageSize,String sortBy);
 
     /*public List<Object[]> getAllProductForCustomer(String categoryName, Integer pageNo, Integer pageSize, String sortBy);*/
@@ -28,5 +28,5 @@ public interface ProductDao {
     public void updateProduct(ProductDTO product, Long productId);
     long getId(String productName);
 
-    public  List<ViewProductForCustomerDTO> getAllProducts(Integer pageNo, Integer pageSize, String sortBy);
+    public  List<ViewProductForCustomerDTO> getAllProducts();
 }

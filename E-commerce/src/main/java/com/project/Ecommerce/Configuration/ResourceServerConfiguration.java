@@ -49,6 +49,15 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/*").allowedOrigins("http://localhost:3000");
+            }
+        };
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -90,6 +99,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/setPassword/{token}").anonymous()
                 .antMatchers("/activateUser/{token}").anonymous()
                 .antMatchers("/reSendActivationLink/{emailId}").anonymous()
+                .antMatchers("/users/*").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

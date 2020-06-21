@@ -180,10 +180,10 @@ public class Bootstrap implements ApplicationRunner {
             product.setCancellable(true);
             product.setReturnable(true);
 
-            Product product1= new Product("Formal Shirts","Van Heusen");
+            Product product1= new Product("Formal Shirts","Tommy Hilfiger");
             product1.setDescription("This is Asia size,please confirm you size before purchase." +
                     "Please allow 1-2cm measuring deviation due to manual measurement.");
-            product1.setActive(false);
+            product1.setActive(true);
             product1.setCancellable(true);
             product1.setReturnable(true);
 
@@ -195,19 +195,19 @@ public class Bootstrap implements ApplicationRunner {
 
             Product product3= new Product("Regular Fit","Calvin Klein");
             product3.setDescription("This is a very nice regular fit jeans");
-            product3.setActive(true);
+            product3.setActive(false);
             product3.setCancellable(true);
             product3.setReturnable(true);
 
             Product product4= new Product("Joggers","Wrangler");
             product4.setDescription("Sport these jogger jeans and show off your casual side.");
-            product4.setActive(true);
+            product4.setActive(false);
             product4.setCancellable(true);
             product4.setReturnable(true);
 
             Product product5= new Product("Jackets","Belstaff");
             product5.setDescription("This is a very nice jacket");
-            product5.setActive(true);
+            product5.setActive(false);
             product5.setCancellable(true);
             product5.setReturnable(true);
 
@@ -240,20 +240,20 @@ public class Bootstrap implements ApplicationRunner {
 
             Product product10= new Product("Kurta","Biba");
             product10.setDescription("Here is the kurti by Vaamsi. Ideal for parties and festivals.");
-            product10.setActive(true);
+            product10.setActive(false);
             product10.setCancellable(true);
             product10.setReturnable(true);
 
             Product product11= new Product("Gloves","Adidas");
             product11.setDescription("Diya Home hand gloves are Cotton made Thin, Soft to touch and comfy for wearing.");
-            product11.setActive(true);
+            product11.setActive(false);
             product11.setCancellable(true);
             product11.setReturnable(true);
 
             Product product12= new Product("Stoles","Anekaant");
             product12.setDescription("When you're looking for that perfect " +
                     "finishing touch to add-on your sweet sense of style, simply toss on the fashion scarf");
-            product12.setActive(true);
+            product12.setActive(false);
             product12.setCancellable(true);
             product12.setReturnable(true);
 
@@ -400,8 +400,8 @@ public class Bootstrap implements ApplicationRunner {
             productVariation1.setActive(true);
             Map<String,Object> attributes1 = new HashMap<>();
             attributes1.put("SIZE","M");
-            productVariation1.setInfoAttributes(attributes);
-            String  info2 = objectMapper.writeValueAsString(attributes);
+            productVariation1.setInfoAttributes(attributes1);
+            String  info2 = objectMapper.writeValueAsString(attributes1);
             productVariation1.setMetadata(info2);
             System.out.println(objectMapper.readValue(info,HashMap.class));
             productVariation1.setProduct(product);
@@ -493,6 +493,14 @@ public class Bootstrap implements ApplicationRunner {
             productVariation11.setActive(true);
             productVariationSet.add(productVariation11);
             product8.setProductVariations(productVariationSet);
+
+            ProductVariation productVariation12 = new ProductVariation();
+            productVariation12.setPrice(1900.00);
+            productVariation12.setQuantityAvailable(4);
+            productVariation12.setProduct(product9);
+            productVariation12.setActive(true);
+            productVariationSet.add(productVariation12);
+            product9.setProductVariations(productVariationSet);
 
 
             productRepository.save(product);

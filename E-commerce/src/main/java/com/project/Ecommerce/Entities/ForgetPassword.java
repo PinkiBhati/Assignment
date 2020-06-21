@@ -3,10 +3,13 @@ package com.project.Ecommerce.Entities;
 import com.project.Ecommerce.DTO.PasswordDTO;
 import com.project.Ecommerce.Dao.TokenDao;
 import com.project.Ecommerce.ExceptionHandling.NotFoundException;
+import com.project.Ecommerce.ExceptionHandling.PasswordAndConfirmPasswordMismatchException;
 import com.project.Ecommerce.Repos.TokenRepository;
 import com.project.Ecommerce.Repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,6 +34,11 @@ public class ForgetPassword {
     TokenDao tokenDao;
 
     private JavaMailSender javaMailSender;
+
+
+    @Autowired
+    private MessageSource messageSource;
+    Long[] params={};
 
     @Autowired
     public  ForgetPassword(JavaMailSender javaMailSender) {
@@ -75,11 +83,17 @@ public class ForgetPassword {
                 return ResponseEntity.ok().body("token has been expired check email for new token");
             }
             else {
-                User user2 = userRepository.findByUsername(token1.getName());
-                user2.setPassword(new BCryptPasswordEncoder().encode(passwordDTO.getPassword()));
-                userRepository.save(user2);
-                tokenRepository.delete(token1);
-                return ResponseEntity.ok().body("password has been successfully changed");
+                if(passwordDTO.getPassword()== passwordDTO.getConfirmPassword()){
+                    User user2 = userRepository.findByUsername(token1.getName());
+                    user2.setPassword(new BCryptPasswordEncoder().encode(passwordDTO.getPassword()));
+                    userRepository.save(user2);
+                    tokenRepository.delete(token1);
+                    return ResponseEntity.ok().body("password has been successfully changed");
+                }
+                else {
+                    throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
+                }
+
             }
         }
 

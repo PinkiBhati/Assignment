@@ -86,11 +86,11 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, L
             " product.category_id = category.id where product.id = ?1",nativeQuery = true)
     List<Object[]> getSingleProduct(Long id);
 
-    @Query(value = "select id from product where is_active=true",nativeQuery = true)
-    List<Long> getAllProductsId(Pageable pageable);
+    @Query(value = "select id from product",nativeQuery = true)
+    List<Long> getAllProductsId();
 
-    @Query(value = "select id from product where is_active=true and category_id=:category_id",nativeQuery = true)
-    List<Long> getAllProductsOfCategory(@Param("category_id") Long category_id,Pageable pageable);
+    @Query(value = "select id from product where  category_id=:category_id",nativeQuery = true)
+    List<Long> getAllProductsOfCategory(@Param("category_id") Long category_id);
 
     @Query(value = "select id from product where seller_user_id=:seller_user_id",nativeQuery = true)
     List<Long> getAllProductsOfSeller(@Param("seller_user_id") Long seller_id,Pageable pageable);

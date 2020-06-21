@@ -88,7 +88,8 @@ public class ProductDaoImpl implements ProductDao {
         Product product1 = new Product();
         product1.setBrand(product.getBrand());
         product1.setActive(false);
-        product1.setCancellable(product.getIsCancellable());
+        product1.setCancellable(product.isCancellable());
+        product1.setReturnable(product.isReturnable());
         product1.setDescription(product.getDescription());
         product1.setName(product.getName());
         product1.setCreatedBy(seller.getUsername());
@@ -282,6 +283,7 @@ public class ProductDaoImpl implements ProductDao {
                 if ((product.getSellers().getUsername()).equals(seller.getUsername())) {
 
                     viewProductDTO.setProductName(product.getName());
+                    viewProductDTO.setProductId(product.getId());
                     viewProductDTO.setBrand(product.getBrand());
                     viewProductDTO.setCancellable(product.getIsCancellable());
                     viewProductDTO.setActive(product.getIsActive());
@@ -329,43 +331,45 @@ public class ProductDaoImpl implements ProductDao {
 
         if (productOptional.isPresent()) {
             Product product= productOptional.get();
-            Set<ProductVariation> productVariationSet= product.getProductVariations();
+                Set<ProductVariation> productVariationSet= product.getProductVariations();
 
-            viewProductDTO.setProductName(product.getName());
-            viewProductDTO.setBrand(product.getBrand());
-            viewProductDTO.setCancellable(product.getIsCancellable());
-            viewProductDTO.setActive(product.getIsActive());
-            viewProductDTO.setDescription(product.getDescription());
-            viewProductDTO.setReturnable(product.getIsReturnable());
-            Long categoryId = productRepository.getCategoryId(product.getId());
-            Category category = categoryRepository.findById(categoryId).get();
-            viewProductDTO.setCategoryName(category.getName());
-            List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
-            for (Long l : longList) {
-                CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
-                fields.add(categoryMetadataField.getName());
-                values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
-                viewProductDTO.setValues(values);
-                viewProductDTO.setFieldName(fields);
+                viewProductDTO.setProductName(product.getName());
+                viewProductDTO.setBrand(product.getBrand());
+                viewProductDTO.setProductId(product.getId());
+                viewProductDTO.setCancellable(product.getIsCancellable());
+                viewProductDTO.setActive(product.getIsActive());
+                viewProductDTO.setDescription(product.getDescription());
+                viewProductDTO.setReturnable(product.getIsReturnable());
+                Long categoryId = productRepository.getCategoryId(product.getId());
+                Category category = categoryRepository.findById(categoryId).get();
+                viewProductDTO.setCategoryName(category.getName());
+                List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category.getId());
+                for (Long l : longList) {
+                    CategoryMetadataField categoryMetadataField = categoryMetadataFieldRepository.findById(l).get();//Size is added into the list
+                    fields.add(categoryMetadataField.getName());
+                    values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category.getId(), l));
+                    viewProductDTO.setValues(values);
+                    viewProductDTO.setFieldName(fields);
 
-            }
-
-            for (ProductVariation productVariation : productVariationSet) {
-                if (dir.isDirectory()) {
-                    File arr[] = dir.listFiles();
-                    for (File file : arr) {
-                        if (file.getName().startsWith(productVariation.getId().toString() + "_0")) {
-                            links.add("http://localhost:8080/downloadProductVariationImage/"+file.getName());
-                        }
-                    }
                 }
 
+                for (ProductVariation productVariation : productVariationSet) {
+                    if (dir.isDirectory()) {
+                        File arr[] = dir.listFiles();
+                        for (File file : arr) {
+                            if (file.getName().startsWith(productVariation.getId().toString() + "_0")) {
+                                links.add("http://localhost:8080/downloadProductVariationImage/"+file.getName());
+                            }
+                        }
+                    }
 
-                viewProductDTO.setLinks(links);
+
+                    viewProductDTO.setLinks(links);
 
 
-            }
-        }
+                }
+
+        }//
 
         else {
             throw new ProductNotFoundException(messageSource.getMessage("message1",params,LocaleContextHolder.getLocale()));
@@ -386,11 +390,12 @@ public class ProductDaoImpl implements ProductDao {
         List<String> values=new ArrayList<>();
         List<String > links=new ArrayList<>();
         ViewProductForCustomerDTO viewProductDTO= new ViewProductForCustomerDTO();
-        if (productOptional.isPresent()&&productOptional.get().getIsActive()==true&&productOptional.get().getProductVariations().isEmpty()==false) {
+        if (productOptional.isPresent()) {
 
             Product product= productOptional.get();
             Set<ProductVariation> productVariationSet= product.getProductVariations();
             viewProductDTO.setProductName(product.getName());
+            viewProductDTO.setProductId(product.getId());
             viewProductDTO.setBrand(product.getBrand());
             viewProductDTO.setCancellable(product.getIsCancellable());
             viewProductDTO.setActive(product.getIsActive());
@@ -435,8 +440,8 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<ViewProductForCustomerDTO> viewProducts(Long categoryId,Integer pageNo, Integer pageSize,String sortBy) {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+    public List<ViewProductForCustomerDTO> viewProducts(Long categoryId) {
+
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         List<ViewProductForCustomerDTO> viewProductDTOList= new ArrayList<>();
         String currentPath = System.getProperty("user.dir");
@@ -447,7 +452,7 @@ public class ProductDaoImpl implements ProductDao {
             if (categoryRepository.checkIfLeaf(categoryId) == 0) {
                 Category category= categoryOptional.get();
 
-                for (Long l: productRepository.getAllProductsOfCategory(category.getId(),paging))
+                for (Long l: productRepository.getAllProductsOfCategory(category.getId()))
                 {
 
                         viewProductDTOList.add(viewProduct(l));
@@ -493,14 +498,14 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<ViewProductForCustomerDTO> getAllProducts(Integer pageNo, Integer pageSize, String sortBy) {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+    public List<ViewProductForCustomerDTO> getAllProducts() {
+//        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
         List<ViewProductForCustomerDTO> viewProductForCustomerDTOS = new ArrayList<>();
         List<String> fields = new ArrayList<>();
         List<String> values = new ArrayList<>();
         List<String> links = new ArrayList<>();
 
-        for (Long l : productRepository.getAllProductsId(paging)) {
+        for (Long l : productRepository.getAllProductsId()) {
 
             viewProductForCustomerDTOS.add(viewSingleProductForAdmin(l)) ;
 

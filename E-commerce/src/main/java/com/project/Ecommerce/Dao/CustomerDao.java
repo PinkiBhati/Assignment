@@ -17,9 +17,9 @@ public interface CustomerDao {
     public String editContact(Customer customer);
     public List<AddressDTO> getAddresses();
     public Customer getCustomer();
-    public ProfileDTO viewProfile();
+    public ProfileDTO viewProfile(HttpServletRequest request) throws IOException;
     public String updateProfile(ProfileDTO customer);
-    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException;
+    public String viewProfileImage(HttpServletRequest request) throws IOException;
     public String getAnSellerAccount(Seller seller);
     public ResponseEntity<Object> uploadFile(MultipartFile file) throws IOException;
     public String returnRequested(long orderStatusId);

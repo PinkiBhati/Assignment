@@ -19,8 +19,8 @@ public interface CategoryDao {
     public ResponseEntity addMainCategory(Category category);
     public List<ViewCategoriesDTO> viewSingleCategory( Long categoryId);
     /*public List<Object[]> viewAllCategories();*/
-    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin(Integer pageNo, Integer pageSize, String sortBy);
-    public List<ViewCategoriesDTO> viewAllCategoriesExceptLeaf(Integer pageNo, Integer pageSize, String sortBy);
+    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin();
+    public List<ViewCategoriesDTO> viewAllCategoriesExceptLeaf();
     public List<ViewCategoriesDTO> viewAllCategoriesForSeller();
     public List<Object[]> getSubCategory(Long categoryId);
 

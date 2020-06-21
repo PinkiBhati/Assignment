@@ -11,7 +11,7 @@ public class ProfileDTO
     private String lastName;
     private String contactNo;
     private boolean isActive;
-    private String link ="http://localhost:8080/viewProfileImage";
+    private String fileName;
 
     public String getFirstName() {
         return firstName;
@@ -54,12 +54,11 @@ public class ProfileDTO
         isActive = active;
     }
 
-
-    public String getLink() {
-        return link;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

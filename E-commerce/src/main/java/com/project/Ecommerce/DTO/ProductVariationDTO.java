@@ -10,6 +10,7 @@ import java.util.List;
 public class ProductVariationDTO {
     @Column(unique = true,nullable = false)
     private String name;
+    private Long variationId;
     @Column(nullable = false,unique = true)
     private String brand;
     private String description;
@@ -23,7 +24,13 @@ public class ProductVariationDTO {
     List<String> fields;
     List<String> values;
 
+    public Long getVariationId() {
+        return variationId;
+    }
 
+    public void setVariationId(Long variationId) {
+        this.variationId = variationId;
+    }
 
     public String getName() {
         return name;

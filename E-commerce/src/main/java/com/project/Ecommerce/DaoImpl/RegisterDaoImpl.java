@@ -115,7 +115,7 @@ public class RegisterDaoImpl implements RegisterDao {
             }
             return "success";
         } else {
-            throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message34",params , LocaleContextHolder.getLocale()));
+            throw new PasswordAndConfirmPasswordMismatchException(messageSource.getMessage("message45",params , LocaleContextHolder.getLocale()));
         }
 
     }

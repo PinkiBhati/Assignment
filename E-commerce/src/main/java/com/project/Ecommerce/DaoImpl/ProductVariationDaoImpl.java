@@ -270,6 +270,7 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
                 productVariationDTO.setDescription(product.getDescription());
                 productVariationDTO.setCancellable(product.getIsCancellable());
                 productVariationDTO.setActiveOfProduct(product.getIsActive());
+                productVariationDTO.setVariationId(productVariation.getId());
                 productVariationDTO.setActiveOfProductVariation(productVariation.getisActive());
                 productVariationDTO.setPrice(productVariation.getPrice());
                 productVariationDTO.setQuantityAvailable(productVariation.getQuantityAvailable());
@@ -329,13 +330,10 @@ public class ProductVariationDaoImpl implements ProductVariationDao {
         Seller seller1 = sellerRepository.findByUsername(seller);
 
         List<ProductVariationDTO> productVariationDTOList = new ArrayList<>();
-        List<String> fields = new ArrayList<>();
-        List<String> values = new ArrayList<>();
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
             if ((product.getSellers().getUsername()).equals(seller1.getUsername())) {
-                ProductVariationDTO productVariationDTO = new ProductVariationDTO();
                 for (ProductVariation productVariation : product.getProductVariations()) {
 
                     productVariationDTOList.add(getSingleProductVariation(productVariation.getId())) ;

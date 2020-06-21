@@ -91,7 +91,7 @@ public class ProductController {
     }
 
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
     @ApiOperation("This URI is for Customer to view a single Product and all its product variation")
     @GetMapping("/viewProduct/{productId}")
     public ViewProductForCustomerDTO viewProduct(@PathVariable Long productId)
@@ -99,14 +99,12 @@ public class ProductController {
         return productDao.viewProduct(productId);
     }
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
     @ApiOperation("This URI is for Customer to view all non-deleted active products along with there product variations  ")
     @GetMapping("/viewAllProductsForCustomer/{categoryId}")
-    public ResponseEntity<List<ViewProductForCustomerDTO>> viewProductsForCustomer(@PathVariable Long categoryId,@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                                                                   @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                                                                   @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+    public ResponseEntity<List<ViewProductForCustomerDTO>> viewProductsForCustomer(@PathVariable Long categoryId)
     {
-        List<ViewProductForCustomerDTO> list = productDao.viewProducts(categoryId,pageNo, pageSize, sortBy);
+        List<ViewProductForCustomerDTO> list = productDao.viewProducts(categoryId);
         return new ResponseEntity<List<ViewProductForCustomerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
     }
 
@@ -132,13 +130,11 @@ public class ProductController {
     }
 
 
-    @Secured("ROLE_ADMIN")
+    @Secured({"ROLE_ADMIN","ROLE_CUSTOMER"})
     @ApiOperation(value = "URI for Admin to get all products")
     @GetMapping("/getAllProductsForAdmin")
-    public ResponseEntity<List<ViewProductForCustomerDTO>> getAllProducts(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                                                         @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                                                         @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
-        List<ViewProductForCustomerDTO> list = productDao.getAllProducts(pageNo, pageSize, sortBy);
+    public ResponseEntity<List<ViewProductForCustomerDTO>> getAllProducts() {
+        List<ViewProductForCustomerDTO> list = productDao.getAllProducts();
         return new ResponseEntity<List<ViewProductForCustomerDTO>>(list, new HttpHeaders(), HttpStatus.OK);
     }
 

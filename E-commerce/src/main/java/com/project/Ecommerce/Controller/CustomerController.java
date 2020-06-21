@@ -40,9 +40,8 @@ public class CustomerController {
     @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to view his profile ")
     @GetMapping("/viewProfile")
-    public ProfileDTO viewProfile()
-    {
-        return customerDao.viewProfile();
+    public ProfileDTO viewProfile(HttpServletRequest request) throws IOException {
+        return customerDao.viewProfile(request);
     }
 
     @Secured("ROLE_CUSTOMER")
@@ -89,7 +88,7 @@ public class CustomerController {
     @Secured("ROLE_CUSTOMER")
     @ApiOperation("This URI is for Customer to view his profile image")
     @GetMapping("/viewProfileImage")
-    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException {
+    public String viewProfileImage(HttpServletRequest request) throws IOException {
         return customerDao.viewProfileImage(request);
     }
 

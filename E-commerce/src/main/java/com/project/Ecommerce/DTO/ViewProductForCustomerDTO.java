@@ -12,6 +12,7 @@ public class ViewProductForCustomerDTO {
     private String productName;
     @Column(nullable = false,unique = true)
     private String brand;
+    private Long productId;
     private String description;
     Boolean isCancellable;
     Boolean isReturnable;
@@ -20,6 +21,14 @@ public class ViewProductForCustomerDTO {
     List<String> fieldName;
     List<String> values;
     List<String> links;
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public String getProductName() {
         return productName;

@@ -98,7 +98,7 @@ public class CategoryDaoImpl implements CategoryDao {
         }
     }
 
-    @Override
+    /*@Override
     public FilterDTO getFilteringDetails(Long categoryId) {
         Optional<Category> categoryOptional= categoryRepository.findById(categoryId);
 
@@ -111,8 +111,6 @@ public class CategoryDaoImpl implements CategoryDao {
             List<String> stringListForField= new ArrayList<>();
             List<String> stringListForValues= new ArrayList<>();
             List<String> brands= new ArrayList<>();
-            Double minPrice=0D;
-            Double maxPrice=0D;
             Set<Double> doubleSet= new TreeSet<>();
 
             for (Long idOfMetadata : listOfMetadataIdsForParticularCategory) {
@@ -121,8 +119,10 @@ public class CategoryDaoImpl implements CategoryDao {
                 stringListForField.add(categoryMetadataField.getName());
                 stringListForValues.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(categoryId,idOfMetadata));
                 Set<Product> productSet= category.getProducts();
+                System.out.println(productSet+"product set");
                 for (Product product: productSet)
                 {
+                    System.out.println(product.getBrand()+"brannnndddsss");
                     brands.add(product.getBrand());
                     Set<ProductVariation> productVariationSet= product.getProductVariations();
                     for (ProductVariation productVariation: productVariationSet)
@@ -146,8 +146,55 @@ public class CategoryDaoImpl implements CategoryDao {
         }
 
 
-    }
+    }*/
+//hjkkljoigiygfi
+    @Override
+public FilterDTO getFilteringDetails(Long category_id) {
+    Optional<Category> category = categoryRepository.findById(category_id);
+    FilterDTO filteringDTO = new FilterDTO();
 
+    if (category.isPresent() && categoryRepository.checkIfLeaf(category_id) == 0) {
+        List<Long> longList = categoryMetadataFieldValuesRepository.getMetadataId(category_id);
+        filteringDTO.setCategoryName(category.get().getName());
+        List<String> fields = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        for (Long l : longList) {
+            Optional<CategoryMetadataField> categoryMetadataField = categoryMetadataFieldRepository.findById(l);
+            fields.add(categoryMetadataField.get().getName());
+            values.add(categoryMetadataFieldValuesRepository.getFieldValuesForCompositeKey(category_id, l));
+        }
+        filteringDTO.setFields(fields);
+        filteringDTO.setValues(values);
+        Set<Product> set = category.get().getProducts();
+        Double minPrice = 0.0;
+        Double maxPrice = 0.0;
+        TreeSet<Double> doubles = new TreeSet<>();
+        List<String> brands = new ArrayList<>();
+        for (Product product : set) {
+            brands.add(product.getBrand());
+            Set<ProductVariation> set1 = product.getProductVariations();
+            for (ProductVariation productVariation : set1) {
+                doubles.add(productVariation.getPrice());
+            }
+
+        }
+        filteringDTO.setBrands(brands);
+        Double[] d = doubles.toArray(new Double[doubles.size()]);
+        filteringDTO.setMaxPrice(d[d.length - 1]);
+        filteringDTO.setMinPrice(d[0]);
+
+
+    } else {
+        Long[] l =  {};
+        throw new NotFoundException(messageSource.getMessage("message18",params, LocaleContextHolder.getLocale()));
+    }
+    return filteringDTO;
+
+}
+
+
+
+//ugkjjkljldsjlsdjlfvcs
     @Override
     public ResponseEntity addMainCategory(Category category)
     {
@@ -219,14 +266,14 @@ public class CategoryDaoImpl implements CategoryDao {
     //change
 
    @Override
-    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin(Integer pageNo, Integer pageSize, String sortBy)
+    public List<ViewCategoriesDTO> viewAllCategoriesForAdmin()
     {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+
         List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
         List<String> fields= new ArrayList<>();
         List<String> values=new ArrayList<>();
 
-        for (Category category1: categoryRepository.findAll(paging))
+        for (Category category1: categoryRepository.findAll())
         {
             ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
             viewCategoriesDTO.setName(category1.getName());
@@ -254,16 +301,19 @@ public class CategoryDaoImpl implements CategoryDao {
 
 
     @Override
-    public List<ViewCategoriesDTO> viewAllCategoriesExceptLeaf(Integer pageNo, Integer pageSize, String sortBy)
+    public List<ViewCategoriesDTO> viewAllCategoriesExceptLeaf()
     {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Order.asc(sortBy)));
+
         List<ViewCategoriesDTO> viewCategoriesDTOS= new ArrayList<>();
 
-        for (Category category1: categoryRepository.findAll(paging))
+        for (Category category1: categoryRepository.findAll())
         {
-            if(categoryRepository.checkIfLeaf(category1.getId())==0)
+
+            if(categoryRepository.checkIfLeaf(category1.getId())==0 && categoryRepository.getCategoryParent(category1.getId())!=null)
             {
+                System.out.println(category1.getName()+"leaf");
             }else{
+                System.out.println(category1.getName());
                 ViewCategoriesDTO viewCategoriesDTO = new ViewCategoriesDTO();
                 viewCategoriesDTO.setName(category1.getName());
                 viewCategoriesDTO.setCategoryId(category1.getId().toString());

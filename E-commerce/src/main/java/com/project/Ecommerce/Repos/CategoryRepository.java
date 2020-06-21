@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CategoryRepository extends PagingAndSortingRepository<Category, Long> {
 
-    @Query(value = "select name from category where parent_id is null",nativeQuery = true)
+    @Query(value = "select name,id from category where parent_id is null",nativeQuery = true)
     List<Object[]> getMainCategory();
 
     @Query(value = "select exists(select * from category where parent_id=:parent_id)",nativeQuery = true)
@@ -20,7 +20,7 @@ public interface CategoryRepository extends PagingAndSortingRepository<Category,
     @Query(value = "select name,id from category where parent_id in(select id from category where name=:name)",nativeQuery = true)
     List<Object[]> getSubCategory(@Param("name") String name);
 
-    @Query(value = "select name from category where parent_id in(select id from category where id=:id)",nativeQuery = true)
+    @Query(value = "select name,id from category where parent_id in(select id from category where id=:id)",nativeQuery = true)
     List<Object[]> getSubCategoryWithId(@Param("id") Long id);
 
     @Query(value = "select id from category where name=:name",nativeQuery = true)

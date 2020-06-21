@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ViewProductDTO {
 
+    private Long productId;
     @Column(unique = true,nullable = false)
     private String productName;
     @Column(nullable = false,unique = true)
@@ -18,6 +19,13 @@ public class ViewProductDTO {
     List<String> values;
 
 
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
     public String getProductName() {
         return productName;

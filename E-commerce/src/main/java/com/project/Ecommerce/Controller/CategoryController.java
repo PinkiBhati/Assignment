@@ -73,11 +73,9 @@ public class CategoryController {
     @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to get all the categories")
     @GetMapping("/viewAllCategories")
-    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategories(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                                                     @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategories()
     {
-        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesForAdmin(pageNo, pageSize, sortBy);
+        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesForAdmin();
         return new ResponseEntity<List<ViewCategoriesDTO>>(list, new HttpHeaders(), HttpStatus.OK);
 
 
@@ -86,11 +84,9 @@ public class CategoryController {
     @Secured("ROLE_ADMIN")
     @ApiOperation("This URI is for Admin to get all the categories except leaf")
     @GetMapping("/viewAllCategoriesExceptLeaf")
-    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategoriesExceptLeaf(@RequestParam(name = "pageNo", required = true, defaultValue = "0") Integer pageNo,
-                                                                     @RequestParam(name = "pageSize", required = true, defaultValue = "10") Integer pageSize,
-                                                                     @RequestParam(name = "sortBy", defaultValue = "id") String sortBy)
+    public ResponseEntity<List<ViewCategoriesDTO>> viewAllCategoriesExceptLeaf()
     {
-        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesExceptLeaf(pageNo, pageSize, sortBy);
+        List<ViewCategoriesDTO> list = categoryDao.viewAllCategoriesExceptLeaf();
         return new ResponseEntity<List<ViewCategoriesDTO>>(list, new HttpHeaders(), HttpStatus.OK);
 
 
@@ -114,7 +110,7 @@ public class CategoryController {
     }
 
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
     @ApiOperation("This URI is for Filtering the data for a categoryId")
     @GetMapping("/filtering/{categoryId}")
     public FilterDTO filtering(@PathVariable(value = "categoryId") Long categoryId) {
@@ -130,7 +126,7 @@ public class CategoryController {
         return objects;
     }
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
     @ApiOperation("This URI is for getting all the Main Categories")
     @GetMapping("/getCategory")
     public List<Object[]> getCategories() {
@@ -138,7 +134,7 @@ public class CategoryController {
         return categoryDao.getAllMainCategory();
     }
 
-    @Secured("ROLE_CUSTOMER")
+    @Secured({"ROLE_CUSTOMER","ROLE_ADMIN"})
     @ApiOperation("This URI is for Customer to traverse the categories ")
     @GetMapping("/getCategory/{categoryId}")
     public List<Object[]> getSubCategory(@PathVariable(name = "categoryId")Long categoryId) {

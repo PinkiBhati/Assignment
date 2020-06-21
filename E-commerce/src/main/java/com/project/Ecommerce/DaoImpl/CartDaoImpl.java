@@ -6,6 +6,9 @@ import com.project.Ecommerce.Dao.OrderDao;
 import com.project.Ecommerce.Entities.Cart;
 import com.project.Ecommerce.Entities.Customer;
 import com.project.Ecommerce.Entities.ProductVariation;
+import com.project.Ecommerce.ExceptionHandling.NullException;
+import com.project.Ecommerce.ExceptionHandling.ProductNotFoundException;
+import com.project.Ecommerce.Repos.AddressRepository;
 import com.project.Ecommerce.Repos.CartRepository;
 import com.project.Ecommerce.Repos.CustomerRepository;
 import com.project.Ecommerce.Repos.ProductVariationRepository;
@@ -32,6 +35,8 @@ public class CartDaoImpl implements CartDao {
 
     @Autowired
     CustomerRepository customerRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
 
     @Override
@@ -40,17 +45,28 @@ public class CartDaoImpl implements CartDao {
         Customer user = customerRepository.findByUsername(username);
         Cart cart = new Cart();
         Optional<ProductVariation> productVariation = productVariationRepository.findById(productVariationId);
-        cart.setProductVariation(productVariation.get());
-        cart.setQuantity(quantity);
-        cart.setCustomer(user);
-        productVariation.get().addCarts(cart);
-        cartRepository.save(cart);
+        if(productVariation.isPresent()){
+            cart.setProductVariation(productVariation.get());
+            cart.setQuantity(quantity);
+            cart.setCustomer(user);
+            productVariation.get().addCarts(cart);
+            cartRepository.save(cart);
+        }
+        else {
+            throw new ProductNotFoundException("Product Variation is not present");
+        }
     }
 
 
     @Override
     public void deleteFromCart(Long productVariationId) {
-        cartRepository.deleteByProductVariationId(productVariationId);
+        Optional<ProductVariation> productVariation = productVariationRepository.findById(productVariationId);
+        if(productVariation.isPresent()){
+            cartRepository.deleteByProductVariationId(productVariationId);
+        }
+        else {
+            throw new ProductNotFoundException("Product Variation is not present");
+        }
     }
 
     @Override
@@ -75,23 +91,40 @@ public class CartDaoImpl implements CartDao {
     @Override
     public void placeOrderFromCart(Long cartId, String paymentMethod, Long AddressId) {
         Optional<Cart> cartOptional = cartRepository.findById(cartId);
-        Cart cart = cartOptional.get();
-        ProductVariation productVariation = cart.getProductVariation();
-        int quantity = cart.getQuantity();
-        orderDao.placeNewOrder(productVariation.getId(), quantity, paymentMethod, AddressId);
-        deleteFromCart(productVariation.getId());
+        if(cartOptional.isPresent()){
+            if(addressRepository.findById(AddressId).isPresent()){
+                Cart cart = cartOptional.get();
+                ProductVariation productVariation = cart.getProductVariation();
+                int quantity = cart.getQuantity();
+                orderDao.placeNewOrder(productVariation.getId(), quantity, paymentMethod, AddressId);
+                deleteFromCart(productVariation.getId());
+            }
+            else{
+                throw new NullException("Address is not present");
+            }
+        }
+        else {
+            throw new NullException("Cart Id is wrong");
+        }
+
 
 
     }
 
     @Override
     public void orderWholeCart(Long AddressId) {
-        for (Cart cart : cartRepository.findAll()) {
-            int quantity = cart.getQuantity();
-            ProductVariation productVariation = cart.getProductVariation();
-            orderDao.placeNewOrder(productVariation.getId(), quantity, "COD", AddressId);
-            emptyCart();
+        if(addressRepository.findById(AddressId).isPresent()){
+            for (Cart cart : cartRepository.findAll()) {
+                int quantity = cart.getQuantity();
+                ProductVariation productVariation = cart.getProductVariation();
+                orderDao.placeNewOrder(productVariation.getId(), quantity, "COD", AddressId);
+                emptyCart();
 
+            }
         }
+        else{
+            throw new NullException("Address is not present");
+        }
+
     }
 }

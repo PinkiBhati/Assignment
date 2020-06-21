@@ -70,9 +70,9 @@ public class UploadDaoImpl implements UploadDao
 
     @Override
           public ResponseEntity<Object> uploadSingleImage(MultipartFile file, Customer customer) throws IOException {
-            File convertFile = new File(currentPath +"/src/main/resources/users/images" + file.getOriginalFilename());
+            File convertFile = new File(currentPath +"/src/main/resources/static/users/images" + file.getOriginalFilename());
             convertFile.createNewFile();
-            String fileBasePath = currentPath +"/src/main/resources/users/";
+            String fileBasePath = currentPath +"/src/main/resources/static/users/";
             Path path = Paths.get(fileBasePath + convertFile.getName());
             FileOutputStream fileOutputStream = new FileOutputStream(convertFile);
             fileOutputStream.write(file.getBytes());
@@ -102,8 +102,8 @@ public class UploadDaoImpl implements UploadDao
 
 
     @Override
-    public ResponseEntity downloadImage(String filename, HttpServletRequest request) throws IOException {
-        String fileBasePath = currentPath +"/src/main/resources/users/";
+    public String downloadImage(String filename, HttpServletRequest request) throws IOException {
+        String fileBasePath = currentPath +"/src/main/resources/static/users/";
         File dir = new File(fileBasePath);
         Resource resource = null;
         String contentType = null;
@@ -125,10 +125,11 @@ public class UploadDaoImpl implements UploadDao
             }
         }
         System.out.println(contentType);
-        return ResponseEntity.ok()
+        return resource.getFilename();
+                /*ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+                .body(resource)*/
     }
 
     @Override

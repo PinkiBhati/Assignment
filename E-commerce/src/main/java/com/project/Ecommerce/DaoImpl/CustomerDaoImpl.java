@@ -45,7 +45,6 @@ public class CustomerDaoImpl implements CustomerDao {
     @Autowired
     ModelMapper modelMapper;
 
-
     @Autowired
     AddressRepository addressRepository;
 
@@ -116,8 +115,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
 
     @Override
-    public ProfileDTO viewProfile()
-    {
+    public ProfileDTO viewProfile(HttpServletRequest request) throws IOException {
         String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
         ProfileDTO profileDTO = new ProfileDTO();
@@ -125,6 +123,9 @@ public class CustomerDaoImpl implements CustomerDao {
         profileDTO.setLastName(customer.getLastName());
         profileDTO.setContactNo(customer.getContact());
         profileDTO.setMiddleName(customer.getMiddleName());
+        String filename = customer.getId().toString();
+        String image= uploadDao.downloadImage(filename,request);
+        profileDTO.setFileName(image);
         return profileDTO;
     }
 
@@ -157,7 +158,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
 
     @Override
-    public ResponseEntity<Object> viewProfileImage(HttpServletRequest request) throws IOException
+    public String viewProfileImage(HttpServletRequest request) throws IOException
     {
         String username = getCurrentlyLoggedInUser.getCurrentUser();
         Customer customer = customerRepository.findByUsername(username);
