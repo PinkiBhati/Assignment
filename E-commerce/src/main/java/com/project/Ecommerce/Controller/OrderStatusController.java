@@ -38,7 +38,7 @@ public class OrderStatusController {
     public void setStatus(@RequestBody OrderStatus orderStatus ,
                           @PathVariable Long productVariationId, @PathVariable Long orderStatusId) {
 
-        orderStatusDao.updateStatus(orderStatus,productVariationId,orderStatusId);
+        orderStatusDao.updateStatus(orderStatus, productVariationId,orderStatusId);
     }
 
 
